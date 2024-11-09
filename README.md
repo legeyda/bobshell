@@ -1,0 +1,1 @@
+This a libarary of reusable shell code for [shelduck](https://github.com/legeyda/shelduck) tool.
