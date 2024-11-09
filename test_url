@@ -1,0 +1,34 @@
+#!/bin/sh
+set -eu
+
+. ./mock_shelduck.sh
+. ./url.sh
+. ./assert.sh
+
+
+
+result=$(bobshell_base_url http://domain/dir/name)
+assert_equals http://domain/dir "$result"
+
+
+
+
+
+
+result=$(bobshell_resolve_url http://abs)
+assert_equals http://abs "$result"
+
+result=$(bobshell_resolve_url rel http://domain)
+assert_equals http://rel "$result"
+
+result=$(bobshell_resolve_url rel http://domain/base)
+assert_equals http://domain/rel "$result"
+
+result=$(bobshell_resolve_url rel http://domain/base/)
+assert_equals http://domain/base/rel "$result"
+
+( bobshell_resolve_url rel ) && bobshell_die 'error expected'
+
+
+
+success

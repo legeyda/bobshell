@@ -1,0 +1,74 @@
+#!/bin/sh
+set -eu
+
+. ./mock_shelduck.sh
+. ./string.sh
+. ./base.sh
+. ./assert.sh
+
+
+
+bobshell_split_key_value 1=2 = key value
+assert_equals 1 "$key"
+assert_equals 2 "$value"
+unset key value
+
+bobshell_split_key_value 1= = key value
+assert_equals 1 "$key"
+assert_equals '' "$value"
+unset key value
+
+bobshell_split_key_value '=2' = key value
+assert_equals '' "$key"
+assert_equals 2 "$value"
+unset key value
+
+bobshell_split_key_value '**=***' = key value
+assert_equals '**' "$key"
+assert_equals '***' "$value"
+unset key value
+
+bobshell_split_key_value abc = key value && bobshell_die 'error expected'
+assert_var_not_set key
+assert_var_not_set value
+
+bobshell_split_key_value '1
+2' '
+' key value
+assert_equals 1 "$key"
+assert_equals 2 "$value"
+unset key value
+
+bobshell_ends_with bobshell_echo echo || bobshell_die expected true
+bobshell_ends_with bobshell_echo echo result
+assert_equals bobshell_ "$result"
+
+
+
+bobshell_is_regex_match hello 'x.*'    && bobshell_die 'expected false'
+bobshell_is_regex_match hello 'h.*'    || bobshell_die 'expected true'
+bobshell_is_regex_match hello 'los$'   && bobshell_die 'expected false'
+bobshell_is_regex_match hello 'lo$'    && bobshell_die 'expected false (^ is implicitly prepended to regex)'
+bobshell_is_regex_match hello '.*lo$'  || bobshell_die 'expected true'
+bobshell_is_regex_match hello '^.*lo$' || bobshell_die 'expected true'
+
+
+result=
+bobshell_for_each_part '1 2 3' ' ' part 'eval result="$result$part"'
+assert_equals 123 "$result"
+
+result=
+bobshell_for_each_part '1 2 3
+4 5 6
+7 8 9' '
+' part 'printf %s $part'
+
+
+
+
+
+bobshel_contains hello el || bobshell_die true expected
+bobshel_contains hello x  && bobshell_die false expected || true
+
+
+success
