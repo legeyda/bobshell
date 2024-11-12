@@ -4,7 +4,7 @@
 
 
 bobshell_entry_point() {
-	#1set -eu
+	set -eu
 
 	bobshell_script_path=$(realpath "$0")
 	bobshell_main_pid=$$
