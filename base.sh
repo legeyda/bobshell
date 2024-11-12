@@ -21,8 +21,10 @@ bobshell_command_available() {
 # fun: bobshell_putvar VARNAME NEWVARVALUE
 # txt: установка значения переменной по динамическому имени
 bobshell_putvar() {
-  eval "$1='$2'"
+  eval "$1=\"\$2\""
 }
+
+
 
 # fun bobshell_getvar VARNAME
 # use: echo "$(getvar MSG)"
@@ -39,6 +41,26 @@ bobshell_require_not_empty() {
 	fi
 }
 
+bobshell_is_bash() {
+	test -n "${BASH_VERSION:-}"
+}
 
+bobshell_is_zsh() {
+	test -n "${ZSH_VERSION:-}"
+}
 
+bobshell_is_ksh() {
+	test -n "${KSH_VERSION:-}"
+}
 
+bobshell_list_functions() {
+	if bobshell_is_bash; then
+		compgen -A function
+	elif [ -n "${0:-}" ] && [ -f "${0}" ]; then
+		sed --regexp-extended 's/^( *function)? *([A-Za-z0_9_]+) *\( *\) *\{ *$/\2/g' "$0"
+	fi
+}
+
+bobshell_log() {
+  printf '%s: %s\n' "$0" "$*" >&2
+}

@@ -35,14 +35,18 @@ bobshell_substr() {
 }
 
 
-bobshell_split_key_value() {
+bobshell_split2() {
 	bobshell_require_not_empty "${2:-}" separator should not be empty
-	set -- "$1" "$2" "$3" "$4" "${1%%"$2"*}"
+	set -- "$1" "$2" "${3:-}" "${4:-}" "${1%%"$2"*}"
 	if [ "$1" = "$5" ]; then
 		return 1
 	fi
-	bobshell_putvar "$3" "$5"
-	bobshell_putvar "$4" "${1#*"$2"}"
+	if [ -n "${3:-}" ]; then
+		bobshell_putvar "$3" "$5"
+	fi
+	if [ -n "${4:-}" ]; then
+		bobshell_putvar "$4" "${1#*"$2"}"
+	fi
 }
 
 
@@ -60,7 +64,7 @@ bobshell_is_regex_match() {
 # txt: supports recursion
 bobshell_for_each_part() {
 	while [ -n "$1" ]; do
-		if ! bobshell_split_key_value \
+		if ! bobshell_split2 \
 				"$1" \
 				"$2" \
 				bobshell_for_each_part_current \
@@ -78,16 +82,41 @@ bobshell_for_each_part() {
 		bobshell_putvar "$bobshell_for_each_part_varname" "$bobshell_for_each_part_current"
 		$bobshell_for_each_part_command
 	done
-	unset part bobshell_for_each_part_rest bobshell_for_each_part_separator bobshell_for_each_part_varname bobshell_for_each_part_command
+	unset bobshell_for_each_part_rest bobshell_for_each_part_separator bobshell_for_each_part_varname bobshell_for_each_part_command "$3"
 }
 
 
+# txt: заменить в $1 все вхождения строки $2 на строку $3 и записать результат в переменную $4
+# use: replace_substring hello e E RES # sets RES to hEllo
+bobshell_substring() {
+  # https://freebsdfrau.gitbook.io/serious-shell-programming/string-functions/replace_substringall
+  replace_substring_result=
+  replace_substring_rest="$1"
+  assert_not_empty "$2" 'replace_substring: searched substring must not be empty'
+  while :; do
+      case "$replace_substring_rest" in *$2*)
+          replace_substring_result="$replace_substring_result${replace_substring_rest%%"$2"*}$3"
+          replace_substring_rest="${replace_substring_rest#*"$2"}"
+          continue
+      esac
+      break
+  done
+  replace_substring_result="$replace_substring_result${replace_substring_rest#*"$2"}"
+  putvar "${4:-replace_substring_result}" "$replace_substring_result"
+}
+
 
 bobshell_contains() {
-	printf %s "$1" | grep --silent -- "$2"
+	case "$1" in
+		*"$2"* ) return 0 ;;
+		*) return 1 ;;
+	esac
 }
 
 bobshell_assing_new_line() {
 	bobshell_putvar "$1" '
 '
 }
+
+bobshell_newline='
+'
