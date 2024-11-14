@@ -5,27 +5,43 @@ shelduck base.sh
 
 
 
-
-
-# use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
+# use: bobshell_starts_with hello he && echo "$rest" # prints llo
 bobshell_starts_with() {
-	set -- "$1" "$2" "${3:-}" "${1##"$2"}"
-	if [ -n "$2" ] && [ "$1" = "$4" ]; then
-		return 1
-	fi
-	if [ -n "${3:-}" ]; then
-		bobshell_putvar "$3" "$4"
-	fi
+	case "$1" in
+		("$2"*) return 0
+	esac
+	return 1
 }
 
-bobshell_ends_with() {
-	set -- "$1" "$2" "${3:-}" "${1%%"$2"}"
-	if [ -n "$2" ] && [ "$1" = "$4" ]; then
+# use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
+bobshell_remove_prefix() {
+	if [ -z "$2" ]; then
+		return 0
+	fi
+	set -- "$1" "$2" "$3" "${1#"$2"}"
+	if [ "$1" = "$4" ]; then
 		return 1
 	fi
-	if [ -n "${3:-}" ]; then
-		bobshell_putvar "$3" "$4"
+	bobshell_putvar "$3" "$4"	
+}
+
+# use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
+bobshell_ends_with() {
+	case "$1" in
+		(*"$2") return 0
+	esac
+	return 1
+}
+
+bobshell_remove_suffix() {
+	if [ -z "$2" ]; then
+		return 0
 	fi
+	set -- "$1" "$2" "$3" "${1%"$2"}"
+	if [ "$1" = "$4" ]; then
+		return 1
+	fi
+	bobshell_putvar "$3" "$4"
 }
 
 # fun: bobshell_contains STR PATTERN [LEFTPART [RIGHTPART]]
@@ -131,7 +147,7 @@ bobshell_quote() {
 	bobshell_quote_separator=''
 	for bobshell_quote_arg in "$@"; do
 		printf %s "$bobshell_quote_separator"
-		if bobshell_basic_regex_match "$bobshell_quote_arg" '[A-Za-z0-9_/\-]\+'; then
+		if bobshell_basic_regex_match "$bobshell_quote_arg" '[A-Za-z0-9_/\-\=]\+'; then
 			printf %s "$bobshell_quote_arg"
 		else
 			bobshell_quote_arg=$(bobshell_replace "$bobshell_quote_arg" "'" "'"'"'"'"'"'"'")

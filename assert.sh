@@ -43,7 +43,7 @@ assert_not_empty() {
 }
 
 assert_ok() {
-	"$@" || assertion_error success expected
+	"$@" || assertion_error ok expected
 }
 
 assert_error() {

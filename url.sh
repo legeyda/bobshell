@@ -5,11 +5,11 @@ shelduck ./string.sh
 
 
 bobshell_fetch_url() {
-	if bobshell_starts_with "$1" 'file://' file_name; then
+	if bobshell_remove_prefix "$1" 'file://' bobshell_fetch_url_file_path; then
 		# shellcheck disable=SC2154
-		# starts_with sets variable file_name indirectly
-		cat "$file_name"
-		unset file_name
+		# bobshell_remove_prefix sets variable bobshell_fetch_url_file_path indirectly
+		cat "$bobshell_fetch_url_file_path"
+		unset bobshell_fetch_url_file_path
 	elif bobshell_command_available curl; then
 		bobshell_fetch_url_with_curl "$1"
 	elif bobshell_command_available wget; then
@@ -27,20 +27,20 @@ bobshell_base_url() {
 
 #fun: bobshell_resolve_url URL [BASEURL]
 bobshell_resolve_url() {
-	if         bobshell_starts_with "$1" file:// \
-			|| bobshell_starts_with "$1" http:// \
-			|| bobshell_starts_with "$1" https:// \
-			|| bobshell_starts_with "$1" ftp:// \
-			|| bobshell_starts_with "$1" ftps:// \
+	if         bobshell_remove_prefix "$1" file:// \
+			|| bobshell_remove_prefix "$1" http:// \
+			|| bobshell_remove_prefix "$1" https:// \
+			|| bobshell_remove_prefix "$1" ftp:// \
+			|| bobshell_remove_prefix "$1" ftps:// \
 			; then
 		printf %s "$1"
 	elif [ -n "${2:-}" ]; then
 		printf %s "$2"
-		if ! bobshell_ends_with "$2" /; then
+		if ! bobshell_remove_suffix "$2" /; then
 			printf '/'
 		fi
 		bobshell_resolve_url_value="$1"
-		while bobshell_starts_with "$bobshell_resolve_url_value" './' bobshell_resolve_url_value; do
+		while bobshell_remove_prefix "$bobshell_resolve_url_value" './' bobshell_resolve_url_value; do
 			true
 		done
 		printf %s "$bobshell_resolve_url_value"

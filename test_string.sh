@@ -6,12 +6,31 @@ shelduck string.sh
 shelduck assert.sh
 
 
+test_starts_with() {
+	assert_ok bobshell_starts_with bobshell_echo bob
+	assert_error bobshell_starts_with bobshell_echo 123
+}
+
+test_remove_prefix() {
+	suffix=0
+	assert_ok bobshell_remove_prefix bobshell_echo bob suffix
+	assert_equals "shell_echo" "$suffix"
+	assert_error bobshell_remove_prefix bobshell_echo 123
+}
+
 
 test_ends_with() {
 	assert_ok bobshell_ends_with bobshell_echo echo
-	bobshell_ends_with bobshell_echo echo result
-	assert_equals bobshell_ "$result"
+	assert_error bobshell_starts_with bobshell_echo 123
 }
+
+test_remove_suffix() {
+	suffix=0
+	assert_ok bobshell_remove_suffix bobshell_echo echo prefix
+	assert_equals "bobshell_" "$prefix"
+	assert_error bobshell_remove_suffix bobshell_echo 123
+}
+
 
 
 _test_for_each_part() {

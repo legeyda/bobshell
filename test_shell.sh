@@ -54,6 +54,56 @@ test_command() {
 
 }
 
+
+
+BOBSHELL_MAIN_PID=$PPID
+export BOBSHELL_MAIN_PID
+is_subshell() {
+	test $PPID != $BOBSHELL_MAIN_PID
+}
+
+print_is_subshell() {
+	is_subshell && printf subshell || printf no_subshell
+}
+
+test_subshell() {
+	assert_error is_subshell
+	
+	# 
+	str=$(print_is_subshell)
+	assert_equals no_subshell "$str"
+
+	x=1
+	str=$(printf hello; x=2)
+	assert_equals 1 "$x"
+
+	str="hello_$(print_is_subshell)"
+	assert_equals hello_no_subshell "$str"
+
+	x=1
+	str="hello_$(printf hello; x=2)"
+	assert_equals 1 "$x"
+
+
+	str=$(VAR=x; VAR=hi print_is_subshell; printf %s $VAR)
+	assert_equals 'no_subshellx' "$str"
+
+	str=$(echo hello | print_is_subshell)
+	assert_equals no_subshell "$str"
+
+
+	# #
+	# str="hello-$()"
+
+	# #
+	# str=$(echo "$()")
+
+
+}
+
+
+
+
 test_xxx() {
 
 f() {

@@ -64,3 +64,4 @@ bobshell_list_functions() {
 bobshell_log() {
   printf '%s: %s\n' "$0" "$*" >&2
 }
+
