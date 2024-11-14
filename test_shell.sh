@@ -46,10 +46,10 @@ test_set_e() {
 
 test_command() {
 	#
-	sh -c 'set -e; x=$(false); printf %s s' && die error expected || true
+	assert_error sh -c 'set -e; x=$(false); printf %s s'
 
 	# todo
-	sh -c 'set -e; x=$(false); printf %s s' && die error expected || true
+	#assert_ok sh -c 'set -e; x=$(false); printf %s s'
 
 
 }

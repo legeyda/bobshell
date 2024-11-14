@@ -43,16 +43,9 @@ assert_not_empty() {
 }
 
 assert_ok() {
-	assert_result 0 "$@" 
+	"$@" || assertion_error success expected
 }
 
 assert_error() {
-	assert_not_equals 0 "$(print_result_code "$@")"
-}
-
-assert_result() {
-	assert_result_expected="$1"
-	shift
-	assert_result_actual=$(print_result_code "$@")
-	assert_equals "$assert_result_expected" "$assert_result_actual" "${2:-}"
+	"$@" && assertion_error failure expected || true
 }

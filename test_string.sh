@@ -8,7 +8,7 @@ shelduck assert.sh
 
 
 test_ends_with() {
-	bobshell_ends_with bobshell_echo echo || bobshell_die expected true
+	assert_ok bobshell_ends_with bobshell_echo echo
 	bobshell_ends_with bobshell_echo echo result
 	assert_equals bobshell_ "$result"
 }
@@ -35,9 +35,9 @@ test_replace() {
 
 
 test_contains() {
-	bobshell_contains hello el || bobshell_die true expected
-	bobshell_contains hello x  && bobshell_die false expected || true
-	bobshell_contains "hello 'there'" "'" || bobshell_die true expected
+	assert_ok bobshell_contains hello el
+	assert_error bobshell_contains hello x
+	assert_ok bobshell_contains "hello 'there'" "'"
 
 	bobshell_contains 1=2 = key value
 	assert_equals 1 "$key"
@@ -59,7 +59,7 @@ test_contains() {
 	assert_equals '***' "$value"
 	unset key value
 
-	bobshell_contains abc = key value && bobshell_die 'error expected'
+	assert_error bobshell_contains abc = key value
 	assert_var_not_set key
 	assert_var_not_set value
 
@@ -75,17 +75,18 @@ test_contains() {
 }
 
 test_basic_regex_match() {
-	bobshell_is_regex_match hello 'x.*'    && bobshell_die 'expected false'
-	bobshell_is_regex_match hello 'h.*'    || bobshell_die 'expected true'
-	bobshell_is_regex_match hello 'los$'   && bobshell_die 'expected false'
-	bobshell_is_regex_match hello 'lo$'    && bobshell_die 'expected false (^ is implicitly prepended to regex)'
-	bobshell_is_regex_match hello '.*lo$'  || bobshell_die 'expected true'
-	bobshell_is_regex_match hello '^.*lo$' || bobshell_die 'expected true'
-	bobshell_basic_regex_match 123 '[0-9]\+' || bobshell_die expected true
+	assert_error bobshell_is_regex_match hello 'x.*'
+	assert_ok bobshell_is_regex_match hello 'h.*'
+	assert_error bobshell_is_regex_match hello 'los$'
+	assert_error bobshell_is_regex_match hello 'lo$'
+	assert_ok bobshell_is_regex_match hello '.*lo$'
+	assert_ok bobshell_is_regex_match hello '^.*lo$'
+	assert_ok bobshell_basic_regex_match 123 '[0-9]\+'
 }
 
 test_extended_regex_match() {
-	bobshell_extended_regex_match 123 '[0-9]+' || bobshell_die expected true
+	assert_ok bobshell_extended_regex_match 123 '[0-9]+'
+	assert_error bobshell_extended_regex_match hello '[0-9]+'
 }
 
 test_quote() {

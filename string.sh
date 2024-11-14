@@ -5,21 +5,6 @@ shelduck base.sh
 
 
 
-# todo deprecated
-bobshell_split2() {
-	bobshell_contains "$@"
-}
-
-# todo deprecated
-bobshell_substring() {
-  replace_substring_result=$(bobshell_replace "$@")
-}
-
-
-
-
-
-
 
 
 # use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
