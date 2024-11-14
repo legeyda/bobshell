@@ -44,16 +44,18 @@ bobshell_remove_suffix() {
 	bobshell_putvar "$3" "$4"
 }
 
-# fun: bobshell_contains STR PATTERN [LEFTPART [RIGHTPART]]
+
+# fun: bobshell_contains STR SUBSTR
 bobshell_contains() {
-	bobshell_require_not_empty "${2:-}" separator should not be empty
-	if [ -z "${3:-}" ] && [ -z "${4:-}" ]; then
-		case "$1" in
-			*"$2"* ) return 0 ;;
-			*) return 1 ;;
-		esac
-	fi
-	set -- "$1" "$2" "${3:-}" "${4:-}" "${1#*"$2"}"
+	case "$1" in
+		(*"$2"*) return 0 ;;
+	esac
+	return 1
+}
+
+# fun: bobshell_contains STR SUBSTR [PREFIX [SUFFIX]]
+bobshell_split_once() {
+	set -- "$1" "$2" "$3" "$4" "${1#*"$2"}"
 	if [ "$1" = "$5" ]; then
 		return 1
 	fi
