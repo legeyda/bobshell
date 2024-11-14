@@ -27,16 +27,16 @@ bobshell_base_url() {
 
 #fun: bobshell_resolve_url URL [BASEURL]
 bobshell_resolve_url() {
-	if         bobshell_remove_prefix "$1" file:// \
-			|| bobshell_remove_prefix "$1" http:// \
-			|| bobshell_remove_prefix "$1" https:// \
-			|| bobshell_remove_prefix "$1" ftp:// \
-			|| bobshell_remove_prefix "$1" ftps:// \
+	if         bobshell_starts_with "$1" file:// \
+			|| bobshell_starts_with "$1" http:// \
+			|| bobshell_starts_with "$1" https:// \
+			|| bobshell_starts_with "$1" ftp:// \
+			|| bobshell_starts_with "$1" ftps:// \
 			; then
 		printf %s "$1"
 	elif [ -n "${2:-}" ]; then
 		printf %s "$2"
-		if ! bobshell_remove_suffix "$2" /; then
+		if ! bobshell_ends_with "$2" /; then
 			printf '/'
 		fi
 		bobshell_resolve_url_value="$1"

@@ -112,7 +112,7 @@ bobshell_extended_regex_match() {
 # txt: supports recursion
 bobshell_for_each_part() {
 	while [ -n "$1" ]; do
-		if ! bobshell_split2 \
+		if ! bobshell_split_once \
 				"$1" \
 				"$2" \
 				bobshell_for_each_part_current \
