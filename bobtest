@@ -1,0 +1,52 @@
+#!/bin/sh
+set -eu
+
+
+main() {
+	stdout_file=$(mktemp)
+	stderr_file=$(mktemp)
+	file_separator=
+	for x in "$@"; do
+		printf "$file_separator"
+		test_file "$x"
+		file_separator='\n'
+	done
+}
+
+test_file() {
+	script="$1"
+	script_real_path=$(realpath "$script")
+	printf 'file %s:\n' "$script"
+	function_names=$(sed --silent --regexp-extended 's/^( *function)? *(test_\w+) *\( *\) *\{ *$/\2/pg' "$script_real_path")
+	for func in $function_names; do
+		printf '  function %s... ' "$func"
+		if ! sh -c "set -eu; . '$SHELDUCK_LIB'; . '$script_real_path' ; set -x; '$func'" > "$stdout_file" 2> "$stderr_file"; then
+			printf 'failure\n\n'
+			printf '\n\nSTDOUT WAS:\n%s\n'
+			cat "$stdout_file"
+			
+ 			printf '\n\nSTDERR WAS:\n%s\n'
+			cat "$stderr_file"
+			
+			exit
+		fi
+		printf ' ok\n'
+	done
+}
+
+
+shelduck_exec() {
+	shelduck_resolve "$1"
+
+
+}
+
+
+
+test -r ./shelduck.sh && . ./shelduck.sh
+: "${SHELDUCK_BASE_URL:=file://./}"
+export SHELDUCK_BASE_URL
+shelduck base.sh
+
+
+main "$@"

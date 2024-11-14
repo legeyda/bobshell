@@ -1,5 +1,10 @@
 
 
+
+
+
+
+
 # todo use real shelduck
 shelduck() {
 	if [ -f "$1" ]; then

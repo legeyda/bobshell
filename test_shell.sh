@@ -1,15 +1,10 @@
 #!/bin/sh
 set -eu
 
-#. ./string.sh
-. ./mock_shelduck.sh
-shelduck ./base.sh
-shelduck ./assert.sh
+shelduck --alias die   base.sh
+shelduck assert.sh
+shelduck string.sh
 
-# shellcheck disable=SC2120
-die() {
-	bobshell_die "$@"
-}
 
 test_shell() {
 	# assert_empty         "$(Y=$(echo hello; die); echo "$Y")" # as expected: nothing printed
@@ -23,11 +18,6 @@ test_shell() {
 	# todo
 	# grep inside pipe
 	
-	# without set -e
-	sh -c 'false; true' || die ok expected
-
-	# with set -e
-	sh -c 'set -e; false; true' && die error expected || true
 	
 	# grep return nonzero status code when nothing found
 	output=$(sh -c 'set -e; x=$(printf hello | grep x); echo hi' && error expected || true)
@@ -44,18 +34,35 @@ test_shell() {
 
 	}
 
-	success
+}
+
+test_set_e() {
+	# without set -e
+	sh -c 'false; printf %s this should not have been printed; true' || die ok expected
+
+	# with set -e
+	sh -c 'set -e; false; true' && die error expected || true
+}
+
+test_command() {
+	#
+	sh -c 'set -e; x=$(false); printf %s s' && die error expected || true
+
+	# todo
+	sh -c 'set -e; x=$(false); printf %s s' && die error expected || true
+
+
 }
 
 test_xxx() {
-	echo i am here
+
+f() {
+	cat <<eof
+"$@"
+eof
 }
 
-
-test_shell
-test_xxx
-
-
-shelduck unittest.sh
-
-echo "ZERO IS $bobshell_script_path"
+	result=$(bobshell_quote "1 '2 3'")
+	result=$(eval "printf %s $result")
+	assert_equals "1 '2 3'" "$result"
+}

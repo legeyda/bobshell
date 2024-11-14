@@ -8,7 +8,7 @@ bobshell_entry_point() {
 
 	bobshell_script_path=$(realpath "$0")
 	bobshell_main_pid=$$
-	bobshell_script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+	bobshell_script_dir=$(CDPATH= cd -- "$bobshell_script_path" && pwd -P)
 	main "$@"
 }
 

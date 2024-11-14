@@ -37,9 +37,14 @@ bobshell_resolve_url() {
 	elif [ -n "${2:-}" ]; then
 		printf %s "$2"
 		if ! bobshell_ends_with "$2" /; then
-			printf %s/ "${2%/*}"
+			printf '/'
 		fi
-		printf %s "$1"
+		bobshell_resolve_url_value="$1"
+		while bobshell_starts_with "$bobshell_resolve_url_value" './' bobshell_resolve_url_value; do
+			true
+		done
+		printf %s "$bobshell_resolve_url_value"
+		unset bobshell_resolve_url_value
 	else
 		bobshell_die "bobshell_resolve_url: url is relaive, but not base url defined: $1" 
 	fi

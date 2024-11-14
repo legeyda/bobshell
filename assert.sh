@@ -37,7 +37,7 @@ assert_empty() {
 }
 
 assert_not_empty() {
-	if [ -n "$1" ]; then
+	if [ -z "$1" ]; then
 		assertion_error "actual value expected not to be empty${2:+: $2}"
 	fi
 }

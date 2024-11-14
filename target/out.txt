@@ -1,0 +1,176 @@
+#!/bin/sh
+set -eu
+
+# todo
+
+
+bobshell_die() {
+  # https://github.com/biox/pa/blob/main/pa
+  printf '%s: %s.\n' "$(basename "$0")" "${*:-error}" >&2
+  exit 1
+}
+
+
+# use isset unreliablevar
+bobshell_isset() {
+	eval "test '\${$1+defined}' = defined"
+}
+
+
+bobshell_command_available() {
+	command -v "$1" > /dev/null
+}
+
+# fun: bobshell_putvar VARNAME NEWVARVALUE
+# txt: установка значения переменной по динамическому имени
+bobshell_putvar() {
+  eval "$1=\"\$2\""
+}
+
+
+
+# fun bobshell_getvar VARNAME
+# use: echo "$(getvar MSG)"
+# txt: считывание значения переменной по динамическому имени
+bobshell_getvar() {
+  eval "printf %s \"\$$1\""
+}
+
+
+bobshell_require_not_empty() {
+	if [ -z "${1:-}" ]; then
+		shift
+		bobshell_die "$@"
+	fi
+}
+
+bobshell_is_bash() {
+	test -n "${BASH_VERSION:-}"
+}
+
+bobshell_is_zsh() {
+	test -n "${ZSH_VERSION:-}"
+}
+
+bobshell_is_ksh() {
+	test -n "${KSH_VERSION:-}"
+}
+
+bobshell_list_functions() {
+	if bobshell_is_bash; then
+		compgen -A function
+	elif [ -n "${0:-}" ] && [ -f "${0}" ]; then
+		sed --regexp-extended 's/^( *function)? *([A-Za-z0_9_]+) *\( *\) *\{ *$/\2/g' "$0"
+	fi
+}
+
+bobshell_log() {
+  printf '%s: %s\n' "$0" "$*" >&2
+}
+
+
+ # shelduck: alias for bobshell_die (from file://./base.sh)
+die() {
+	bobshell_die "$@"
+}
+
+# shelduck: source for file://./assert.sh
+
+
+success() {
+	printf '%s: all tests passed\n' "$0"
+}
+
+assertion_error() {
+	# https://github.com/biox/pa/blob/main/pa
+	printf '%s: assertion error: %s.\n' "$(basename "$0")" "${*:-error}" >&2
+	exit 1
+}
+
+
+
+assert_equals() {
+	if [ "$1" != "$2" ]; then
+		assertion_error "actual value <$2> expected to be equal to <$1>${3:+ $3}"
+	fi
+}
+
+assert_not_equals() {
+	if [ "$1" = "$2" ]; then
+		assertion_error "actual value <$2> expected not to be equal to <$1>${3:+: $3}"
+	fi
+}
+
+assert_var_not_set() {
+  if [ "$(eval "printf %s \"\${$1+set}\"")" = set ]; then
+    assertion_error "variable $1 was not expected to be set"
+  fi
+}
+
+assert_empty() {
+	if [ -n "$1" ]; then
+		assertion_error "actual value expected to be empty${2:+: $2}"
+	fi
+}
+
+assert_not_empty() {
+	if [ -n "$1" ]; then
+		assertion_error "actual value expected not to be empty${2:+: $2}"
+	fi
+}
+
+assert_ok() {
+	assert_result 0 "$@" 
+}
+
+assert_error() {
+	assert_not_equals 0 "$(print_result_code "$@")"
+}
+
+assert_result() {
+	assert_result_expected="$1"
+	shift
+	assert_result_actual=$(print_result_code "$@")
+	assert_equals "$assert_result_expected" "$assert_result_actual" "${2:-}"
+}
+
+
+test_shell() {
+	# assert_empty         "$(Y=$(echo hello; die); echo "$Y")" # as expected: nothing printed
+	# assert_not_empty "$(echo "$(echo hello; die)")" # strange: value printed after exit
+	# assert_empty "$(: "${Z:=$(die)}"; echo "$Z")"
+
+	# assert_error invoke_self eval 'alias run_test_alias_for_echo=echo; run_test_alias_for_echo'
+	# assert_equals hello "$(invoke_self eval 'run_test_alias_for_echo() { echo "$@"; }; run_test_alias_for_echo hello')"
+	# assert_equals hello "$(invoke_self eval 'superalias run_test_alias_for_echo=echo; run_test_alias_for_echo hello')"
+
+	# todo
+	# grep inside pipe
+	
+	# without set -e
+	sh -c 'false; true' || die ok expected
+
+	# with set -e
+	sh -c 'set -e; false; true' && die error expected || true
+	
+	# # grep return nonzero status code when nothing found
+	# output=$(sh -c 'set -e; x=$(printf hello | grep x); echo hi' && error expected || true)
+	# assert_empty "$output" hi is not printed
+
+	output=$(sh -c 'set -e; x=$(printf hello | grep x || true); echo hi' || die ok expected)
+	assert_equals hi "$output"
+
+	# 
+
+	unset -f fun
+	fun() {
+		set -- "$(printf hello; die in printf)"
+
+	}
+
+}
+
+test_xxx() {
+	echo i am here
+}
+
