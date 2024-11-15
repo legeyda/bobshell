@@ -7,7 +7,7 @@ bobshell_env_scope() {
 	bobshell_env_scope_command=
 	
 	while [ "${1:+defined}" = defined ]; do
-		bobshell_split_once "$1" = bobshell_env_scope_key bobshell_env_scope_value
+		bobshell_split_first "$1" = bobshell_env_scope_key bobshell_env_scope_value
 
 
 	done
