@@ -62,6 +62,10 @@ bobshell_list_functions() {
 }
 
 bobshell_log() {
-  printf '%s: %s\n' "$0" "$*" >&2
+	# printf format should be in "$@"
+	# shellcheck disable=SC2059
+	bobshell_log_message=$(printf "$@")
+	printf '%s: %s\n' "$0" "$bobshell_log_message" >&2
+	unset bobshell_log_message
 }
 
