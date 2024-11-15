@@ -1,8 +1,8 @@
 
 
-shelduck ssh.sh
-shelduck assert.sh
-shelduck string.sh
+shelduck import ssh.sh
+shelduck import assert.sh
+shelduck import string.sh
 
 _test_ssh_auth() {
 	 

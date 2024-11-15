@@ -1,8 +1,8 @@
 
 # fun: scope bobshell command [arg...]
 # use: bobshell_shauth git clone blabl
-shelduck notrace.sh
-shelduck string.sh
+shelduck import notrace.sh
+shelduck import string.sh
 
 
 bobshell_git_auth() {

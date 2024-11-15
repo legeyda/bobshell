@@ -2,8 +2,8 @@
 set -eu
 
 
-shelduck string.sh
-shelduck assert.sh
+shelduck import string.sh
+shelduck import assert.sh
 
 
 test_starts_with() {

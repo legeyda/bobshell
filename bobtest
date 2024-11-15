@@ -46,7 +46,7 @@ shelduck_exec() {
 test -r ./shelduck.sh && . ./shelduck.sh
 : "${SHELDUCK_BASE_URL:=file://./}"
 export SHELDUCK_BASE_URL
-shelduck base.sh
+shelduck import base.sh
 
 
 main "$@"

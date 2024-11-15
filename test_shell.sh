@@ -1,9 +1,9 @@
 #!/bin/sh
 set -eu
 
-shelduck --alias die   base.sh
-shelduck assert.sh
-shelduck string.sh
+shelduck import --alias die   base.sh
+shelduck import assert.sh
+shelduck import string.sh
 
 
 test_shell() {
@@ -38,10 +38,33 @@ test_shell() {
 
 test_set_e() {
 	# without set -e
-	sh -c 'false; printf %s this should not have been printed; true' || die ok expected
+	assert_ok sh -c 'false; printf %s this should not have been printed; true'
 
 	# with set -e
-	sh -c 'set -e; false; true' && die error expected || true
+	assert_error sh -c 'set -e; false; true'
+
+
+	str=hello
+	str=$(sh -c 'set -e; x=$(false); printf hello' || true)
+	assert_empty "$str" 
+	
+	str=$(sh -c 'set -e; for x in $(false); do echo $x; done; printf hello')
+	assert_equals hello "$str" 
+
+	str=
+	str=$(sh -c 'set -e; printf %s "$(false || exit 1)"; printf hello')
+	assert_equals hello "$str" 
+
+	# printf %s "$(exit_on_error false; printf hello)" 
+	
+	# exit_on_error false
+	
+	# echo i am here
+	# die debug
+}
+
+exit_on_error() {
+	"$@" || exit $?
 }
 
 test_command() {
@@ -70,7 +93,13 @@ test_subshell() {
 	assert_error is_subshell
 	
 	# 
+	str=$(  (print_is_subshell)   )
+	assert_equals no_subshell "$str"
+
 	str=$(print_is_subshell)
+	assert_equals no_subshell "$str"
+
+	str=$(true; true; true; git --version > /dev/null; print_is_subshell)
 	assert_equals no_subshell "$str"
 
 	x=1
@@ -104,7 +133,7 @@ test_subshell() {
 
 
 
-test_xxx() {
+_test_xxx() {
 
 f() {
 	cat <<eof

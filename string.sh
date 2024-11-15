@@ -1,7 +1,7 @@
 
 # STRING MANUPULATION
 
-shelduck base.sh
+shelduck import base.sh
 
 
 

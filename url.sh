@@ -1,7 +1,7 @@
 # shellcheck disable=SC2148
 
-shelduck ./base.sh
-shelduck ./string.sh
+shelduck import ./base.sh
+shelduck import ./string.sh
 
 
 bobshell_fetch_url() {

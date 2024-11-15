@@ -1,7 +1,7 @@
 
 
-shelduck base.sh
-shelduck assert.sh
+shelduck import base.sh
+shelduck import assert.sh
 
 
 
