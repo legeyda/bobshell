@@ -6,16 +6,25 @@
 bobshell_entry_point() {
 	set -eu
 
+
 	bobshell_main_pid=$$
-	bobshell_script_path=$(realpath "$0")
-	bobshell_script_dir=$(dirname "bobshell_script_path")
+	bobshell_script_path="${shelduck_run_script_path:-$0}"
+	bobshell_script_path=$(dirname "$bobshell_script_path")
+	bobshell_script_dir=$(dirname "$bobshell_script_path")
 	bobshell_script_dir=$(CDPATH= cd -- "$bobshell_script_dir" && pwd -P)
-	main "$@"
+
+	if [ -n "${shelduck_run_args:-}" ]; then
+		eval "main $shelduck_run_args"
+	else
+		main "$@"
+	fi
 }
 
 
 # invoke bobshell_entry_point if script is actually run, not sourced (see https://stackoverflow.com/a/28776166)
-if [ -n "${ZSH_VERSION:-}" ]; then 
+if [ -n "$shelduck_run_script_path" ]; then
+	bobshell_entry_point "$@"
+elif [ -n "${ZSH_VERSION:-}" ]; then 
 	case $ZSH_EVAL_CONTEXT in *:file) ;; *) bobshell_entry_point "$@";; esac
 elif [ -n "${KSH_VERSION:-}" ]; then
 	# shellcheck disable=SC2296 
