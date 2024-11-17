@@ -76,8 +76,8 @@ test_split_first() {
 	unset key value
 
 	assert_error bobshell_split_first abc = key value
-	assert_var_not_set key
-	assert_var_not_set value
+	assert_unset key
+	assert_unset value
 
 	bobshell_split_first '1
 2' '

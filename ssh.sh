@@ -3,81 +3,112 @@
 # use: bobshell_shauth git clone blabl
 shelduck import notrace.sh
 shelduck import string.sh
+shelduck import util.sh
+shelduck import locator.sh
 
 
-bobshell_git_auth() {
-
-  bobshell_ssh_init
-
-  if [ -z "${GIT_SSH_COMMAND:-}" ]; then
-    if [ -n "${BOBSHELL_SSH_KNOWN_HOSTS_FILE:-}" ]; then
-      GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-} -o $(bobshell_quote "UserKnownHostsFile=$BOBSHELL_SSH_KNOWN_HOSTS_FILE")"
-    fi
-
-    # shellcheck disable=SC2016
-    if [ "${BOBSHELL_SSH_USE_AGENT:-true}" != 'true' ] && [ -n "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
-      bobshell_git_auth_ssh_command="${GIT_SSH_COMMAND:-} -i '$(bobshell_quote "$BOBSHELL_SSH_IDENTITY_FILE")'"
-    elif [ -n "${BOBSHELL_SSH_PASSWORD:-}" ] && bobshell_command_available sshpass; then
-      set -- sshpass "-p$BOBSHELL_SSH_PASSWORD" "$@"
-    fi
-  fi
-
-  export GIT_SSH_COMMAND
-  "$@"
+# use: bobshell_ssh user@host echo hello
+bobshell_ssh() {
+	bobshell_ssh_auth ssh "$@"
 }
 
 
-# shelduck_sshauth
-bobshell_ssh_auth() {  
-  bobshell_ssh_init
 
-  # run
-  if [ -n "${BOBSHELL_SSH_KNOWN_HOSTS_FILE:-}" ]; then
-    bobshell_sshauth_executable="$1"
-    shift
-    set -- "$bobshell_sshauth_executable" -o "UserKnownHostsFile='$BOBSHELL_SSH_KNOWN_HOSTS_FILE'" "$@"
-    unset bobshell_sshauth_executable
-  fi
-
-  # shellcheck disable=SC2016
-  if [ "${BOBSHELL_SSH_USE_AGENT:-true}" != 'true' ] && [ -n "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
-    bobshell_sshauth_executable="$1"
-    shift
-    set -- "$bobshell_sshauth_executable" -i "$BOBSHELL_SSH_IDENTITY_FILE" "$@"
-    unset bobshell_sshauth_executable
-  elif [ -n "${BOBSHELL_SSH_PASSWORD:-}" ] && bobshell_command_available sshpass; then
-    set -- sshpass "-p$BOBSHELL_SSH_PASSWORD" "$@"
-  fi
-
-  "$@"
+bobshell_scp() {
+	bobshell_ssh_auth scp "$@"
 }
 
 
-bobshell_ssh_init() {
-  
-  # config
-  if [ -z "${BOBSHELL_SSH_KNOWN_HOSTS_FILE:-}" ] && [ -n "${BOBSHELL_SSH_KNOWN_HOSTS:-}" ]; then
-    BOBSHELL_SSH_KNOWN_HOSTS_FILE="$(mktemp)"
-    printf '%s\n' "$BOBSHELL_SSH_KNOWN_HOSTS" > "$BOBSHELL_SSH_KNOWN_HOSTS_FILE"
-  fi
 
+bobshell_ssh_auth() {
+		
+	if [ -n "${BOBSHELL_SSH_PORT:-}" ]; then
+		bobshell_sshauth_executable="$1"
+		shift
+		set -- "$bobshell_sshauth_executable" -p "$BOBSHELL_SSH_PORT" "$@"
+		unset bobshell_sshauth_executable
+	fi
 
-  if [ -n "${BOBSHELL_SSH_IDENTITY:-}" ]; then
-    if [ "${BOBSHELL_SSH_USE_AGENT:-true}" = 'true' ]; then
-      if [ -z "${SSH_AGENT_PID:-}" ]; then
-        eval "$(ssh-agent)"
-      fi
-      bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" | ssh-add -q -t 5 -
-    elif [ -z "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
-      BOBSHELL_SSH_IDENTITY_FILE="$(mktemp)"
-      chmod 600 "$BOBSHELL_SSH_IDENTITY_FILE" # ???
-      # shellcheck disable=SC2016
-      bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" > "$BOBSHELL_SSH_IDENTITY_FILE"
-    fi
-  fi
+	# ssh-keyscan -H host "$(dig +short host)""
+	if [ -z "${BOBSHELL_SSH_KNOWN_HOSTS_FILE:-}" ] && [ -n "${BOBSHELL_SSH_KNOWN_HOSTS:-}" ]; then
+		BOBSHELL_SSH_KNOWN_HOSTS_FILE="$(mktemp)"
+		printf '%s\n' "$BOBSHELL_SSH_KNOWN_HOSTS" > "$BOBSHELL_SSH_KNOWN_HOSTS_FILE"
+	fi
+	if [ -n "${BOBSHELL_SSH_KNOWN_HOSTS_FILE:-}" ]; then
+		bobshell_sshauth_executable="$1"
+		shift
+		set -- "$bobshell_sshauth_executable" -o "UserKnownHostsFile='$BOBSHELL_SSH_KNOWN_HOSTS_FILE'" "$@"
+		unset bobshell_sshauth_executable
+	fi
 
+	if [ -n "${BOBSHELL_SSH_IDENTITY:-}" ]; then
+		if [ "${BOBSHELL_SSH_USE_AGENT:-true}" == 'true' ]; then
+			if [ -z "${SSH_AGENT_PID:-}" ]; then
+				bobshell_eval_output ssh-agent
+				# todo copy_resource 'stdout:ssh-agent' eval:
+			fi
+			bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" | ssh-add -q -t 5 -
+		elif [ -z "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
+			BOBSHELL_SSH_IDENTITY_FILE="$(mktemp)"
+			chmod 600 "$BOBSHELL_SSH_IDENTITY_FILE" # ???
+			# shellcheck disable=SC2016
+			bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" > "$BOBSHELL_SSH_IDENTITY_FILE"
+		fi
+	fi
+
+	# shellcheck disable=SC2016
+	if [ -n "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
+		bobshell_sshauth_executable="$1"
+		shift
+		set -- "$bobshell_sshauth_executable" -i "$BOBSHELL_SSH_IDENTITY_FILE" "$@"
+		unset bobshell_sshauth_executable
+	fi
+
+	bobshell_maybe_sshpass "$@"
 }
 
+
+
+bobshell_maybe_sshpass() {
+	if [ -n "${BOBSHELL_SSH_PASSWORD:-}" ] && bobshell_command_available sshpass; then
+		set -- sshpass "-p$BOBSHELL_SSH_PASSWORD" "$@"
+	fi
+	"$@"
+}
+
+
+bobshell_ssh_keyscan() {
+	for bobshell_ssh_keyscan_host in "$@"; do
+		bobshell_ssh_keyscan_addr=$(dig +short "$bobshell_ssh_keyscan_host")
+		set -- "$@" "$bobshell_ssh_keyscan_addr"
+	done
+	unset bobshell_ssh_keyscan_host bobshell_ssh_keyscan_addr
+	bobshell_ssh_auth ssh-keyscan "$@"
+}
+
+
+
+# fun: bobshell_ssh_keygen FILE
+bobshell_ssh_keygen() {
+	bobshell_ssh_keygen_dir=$(dirname "$1")
+	mkdir -p "$bobshell_ssh_keygen_dir"
+	rm -f "$1" "$1.pub"
+	ssh-keygen -q -t ed25519 -b 2048 -N '' -f "$1"
+}
+
+
+
+# fun: bobshell_get_private_key FILEPATH LOCATOR
+bobshell_copy_private_key() {
+	bobshell_copy "file:$1" "$2"
+}
+
+
+
+# fun: bobshell_get_public_key FILEPATH LOCATOR
+bobshell_copy_public_key() {
+	bobshell_copy "file:$1.pub" "$2"
+}
 
 
 

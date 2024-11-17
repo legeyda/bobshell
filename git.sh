@@ -1,25 +1,26 @@
 
 
+shelduck import ssh.sh
+shelduck import string.sh
+
 bobshell_git() {
-	bobshell_git_init
-	GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-$BOBSHELL_GIT_SSH_COMMAND}" command git "$@"
+	bobshell_git_auth git "$@"
 }
 
 
-bobshell_git_init() {
-	#bobshell_git_known_hosts_file=$(bobshell_getvar )
-
-
-	if [ -z "${BOBSHELL_GIT_SSH_KNOWN_HOSTS_FILE:-}" ] && [ -n "${BOBSHELL_GIT_SSH_KNOWN_HOSTS}" ]; then
-		BOBSHELL_GIT_SSH_KNOWN_HOSTS_FILE="$(mktemp)"
-		printf %s "$BOBSHELL_GIT_SSH_KNOWN_HOSTS" > "$BOBSHELL_GIT_SSH_KNOWN_HOSTS_FILE"
+bobshell_git_auth() {
+	if ! bobshell_isset GIT_SSH_COMMAND; then
+		bobshell_git_auth_old_password="${BOBSHELL_SSH_PASSWORD:-}"
+		unset BOBSHELL_SSH_PASSWORD
+		bobshell_git_auth_command=$(bobshell_ssh_auth bobshell_quote)
+		if [ -n "$bobshell_git_auth_command" ]; then
+			GIT_SSH_COMMAND=$bobshell_git_auth_command
+		fi
+		BOBSHELL_SSH_PASSWORD="$bobshell_git_auth_old_password"
 	fi
-
-	if [ -z "${BOBSHELL_GIT_SSH_KEY_FILE:-}" ] && [ -n "${BOBSHELL_GIT_SSH_KEY}" ]; then
-		BOBSHELL_GIT_SSH_KEY_FILE="$(mktemp)"
-		printf %s "$BOBSHELL_GIT_SSH_KEY" > "$BOBSHELL_GIT_SSH_KEY_FILE"
+	if bobshell_isset GIT_SSH_COMMAND; then
+		export GIT_SSH_COMMAND
 	fi
-
-	# -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
-	export GIT_SSH_COMMAND="ssh '${BOBSHELL_GIT_SSH_KNOWN_HOSTS_FILE:+ -o "UserKnownHostsFile=$BOBSHELL_GIT_SSH_KNOWN_HOSTS_FILE"}' '${BOBSHELL_GIT_SSH_KEY_FILE:+ -i "$BOBSHELL_GIT_SSH_KEY_FILE"}' "
+	bobshell_maybe_sshpass "$@"
 }
+

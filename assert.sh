@@ -24,7 +24,7 @@ assert_not_equals() {
 	fi
 }
 
-assert_var_not_set() {
+assert_unset() {
   if [ "$(eval "printf %s \"\${$1+set}\"")" = set ]; then
     assertion_error "variable $1 was not expected to be set"
   fi
@@ -48,4 +48,11 @@ assert_ok() {
 
 assert_error() {
 	"$@" && assertion_error failure expected || true
+}
+
+assert_file_exists() {
+	if [ ! -f "$1" ]; then
+		printf '%s: no such file\n' "$1"
+		return 1
+	fi
 }

@@ -27,6 +27,7 @@ bobshell_base_url() {
 
 #fun: bobshell_resolve_url URL [BASEURL]
 bobshell_resolve_url() {
+	# todo by default BASEURL is $(realpath "$(pwd)")
 	if         bobshell_starts_with "$1" file:// \
 			|| bobshell_starts_with "$1" http:// \
 			|| bobshell_starts_with "$1" https:// \

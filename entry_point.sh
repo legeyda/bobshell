@@ -6,9 +6,10 @@
 bobshell_entry_point() {
 	set -eu
 
-	bobshell_script_path=$(realpath "$0")
 	bobshell_main_pid=$$
-	bobshell_script_dir=$(CDPATH= cd -- "$bobshell_script_path" && pwd -P)
+	bobshell_script_path=$(realpath "$0")
+	bobshell_script_dir=$(dirname "bobshell_script_path")
+	bobshell_script_dir=$(CDPATH= cd -- "$bobshell_script_dir" && pwd -P)
 	main "$@"
 }
 

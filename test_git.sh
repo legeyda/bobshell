@@ -1,8 +1,18 @@
 
 
-shelduck import base.sh
+shelduck import -a die base.sh
 shelduck import assert.sh
+shelduck import git.sh
 
+
+test_git() {
+	mkcd target/test-git
+	rm -rf ./* ./.git
+	which git
+	#bobshell_git clone git@github.com:legeyda/bobshell.git .
+
+	#die debug
+}
 
 
 test_branch_version() {
@@ -53,4 +63,26 @@ init_repo() {
 mkcd() {
 	mkdir -p "$1"
 	cd "$1"
+
+}
+
+test_git_auth() {
+	mkcd target/test-git
+	rm -rf ./* ./.git
+	BOBSHELL_SSH_KNOWN_HOSTS=$(ssh_keyscan github.com)
+	bobshell_git clone git@github.com:legeyda/bobshell.git .
+	
+
+
+
+
+}
+
+ssh_keyscan() {
+	for bobshell_ssh_keyscan_host in "$@"; do
+		bobshell_ssh_keyscan_addr=$(dig +short "$bobshell_ssh_keyscan_host")
+		set -- "$@" "$bobshell_ssh_keyscan_addr"
+	done
+	unset bobshell_ssh_keyscan_host bobshell_ssh_keyscan_addr
+	ssh-keyscan "$@"
 }

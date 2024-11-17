@@ -174,3 +174,18 @@ bobshell_quote() {
 	done
 	unset bobshell_quote_arg
 }
+
+
+# fun: bobshell_join SEPARATOR [ITEM...]
+bobshell_join() {
+	bobshell_join_separator="$1"
+	shift
+	for bobshell_join_item in "$@"; do
+		printf %s "$bobshell_join_item"
+		break
+	done
+	for bobshell_join_item in "$@"; do
+		printf %s "$bobshell_join_separator"
+		printf %s "$bobshell_join_item"
+	done
+}

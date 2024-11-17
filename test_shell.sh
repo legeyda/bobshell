@@ -130,7 +130,37 @@ test_subshell() {
 
 }
 
+test_for() {
+	# it is ok to unset variable inside for loop
+	x=$(print_args_unset 1 2 3)
+	assert_equals 123 "$x"
+}
 
+print_args_unset() {
+	for x in "$@"; do
+		set -- x "$@"
+		printf %s "$x"
+		unset x
+	done
+}
+
+
+test_var() {
+	y=
+	x=$(y=1; printf %s hello)
+	assert_equals hello "$x"
+	assert_empty "$y"
+
+	x=
+	y=
+	x=1 y=1 eval echo hello
+	assert_equals 1 "$x"
+	assert_equals  1 "$y"
+}
+
+f() {
+	x=
+}
 
 
 _test_xxx() {
