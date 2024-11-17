@@ -11,16 +11,16 @@ load_shelduck() {
 		exit 1
 	fi
 
-	: "${SHELDUCK_LIB:=$HOME/.cache/bobtest/shelduck.sh}"
-	if [ ! -r "$SHELDUCK_LIB" ]; then
-		SHELDUCK_LIB_DIR=$(dirname "$SHELDUCK_LIB")
-		mkdir -p "$SHELDUCK_LIB_DIR"
-		: "${SHELDUCK_LIB_URL:=https://raw.githubusercontent.com/legeyda/shelduck/refs/heads/main/shelduck.sh}"
-		curl --fail --silent --show-error --location --output - "$SHELDUCK_LIB_URL" > "$SHELDUCK_LIB"
+	: "${SHELDUCK_LIBRARY_PATH:=$HOME/.cache/bobtest/shelduck.sh}"
+	if [ ! -r "$SHELDUCK_LIBRARY_PATH" ]; then
+		SHELDUCK_LIBRARY_PATH_DIR=$(dirname "$SHELDUCK_LIBRARY_PATH")
+		mkdir -p "$SHELDUCK_LIBRARY_PATH_DIR"
+		: "${SHELDUCK_LIBRARY_PATH_URL:=https://raw.githubusercontent.com/legeyda/shelduck/refs/heads/main/shelduck.sh}"
+		curl --fail --silent --show-error --location --output - "$SHELDUCK_LIBRARY_PATH_URL" > "$SHELDUCK_LIBRARY_PATH"
 	fi
 
-	SHELDUCK_LIB=$(realpath "$SHELDUCK_LIB")
-	. "$SHELDUCK_LIB"
+	SHELDUCK_LIBRARY_PATH=$(realpath "$SHELDUCK_LIBRARY_PATH")
+	. "$SHELDUCK_LIBRARY_PATH"
 
 }
 

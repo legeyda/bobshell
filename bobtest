@@ -33,7 +33,7 @@ test_file() {
 # fun: test_function SCRIPT FUNCTION
 test_function() {
 	printf '  function %s... ' "$2"
-	if ! sh -c "set -eu; . '$SHELDUCK_LIB'; . '$1' ; set -x; '$2'" > "$stdout_file" 2> "$stderr_file"; then
+	if ! sh -c "set -eu; . '$SHELDUCK_LIBRARY_PATH'; . '$1' ; set -x; '$2'" > "$stdout_file" 2> "$stderr_file"; then
 		printf 'failure\n\n'
 		printf '\n\nSTDOUT WAS:\n%s\n'
 		cat "$stdout_file"
