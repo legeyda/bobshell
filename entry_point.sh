@@ -22,7 +22,7 @@ bobshell_entry_point() {
 
 
 # invoke bobshell_entry_point if script is actually run, not sourced (see https://stackoverflow.com/a/28776166)
-if [ -n "$shelduck_run_script_path" ]; then
+if [ -n "${shelduck_run_script_path:-}" ]; then
 	bobshell_entry_point "$@"
 elif [ -n "${ZSH_VERSION:-}" ]; then 
 	case $ZSH_EVAL_CONTEXT in *:file) ;; *) bobshell_entry_point "$@";; esac
