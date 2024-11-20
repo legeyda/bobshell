@@ -88,6 +88,6 @@ bobshell_ensure_secret_password() {
 		deploy_ensure_secret_password_tty="$(tty)"
 		assert_not_empty "$deploy_ensure_secret_password_tty" 'terminal not found, not interactive shell?'
 		printf %s "Password for secrets:" > "$(tty)"
-		read_secret BOBSHELL_SECRET_PASSWORD
+		bobshell_read_secret BOBSHELL_SECRET_PASSWORD
 	fi
 }

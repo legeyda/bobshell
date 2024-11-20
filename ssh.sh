@@ -9,12 +9,14 @@ shelduck import locator.sh
 
 # use: bobshell_ssh user@host echo hello
 bobshell_ssh() {
+	sleep "${BOBSHELL_SSH_DELAY:-0}"
 	bobshell_ssh_auth ssh "$@"
 }
 
 
 
 bobshell_scp() {
+	sleep "${BOBSHELL_SSH_DELAY:-0}"
 	bobshell_ssh_auth scp "$@"
 }
 

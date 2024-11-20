@@ -41,6 +41,13 @@ bobshell_require_not_empty() {
 	fi
 }
 
+bobshell_require_empty() {
+	if [ -z "${1:-}" ]; then
+		shift
+		bobshell_die "$@"
+	fi
+}
+
 bobshell_is_bash() {
 	test -n "${BASH_VERSION:-}"
 }
@@ -69,3 +76,10 @@ bobshell_log() {
 	unset bobshell_log_message
 }
 
+bobshell_rename_var() {
+	if [ "$1" = "$2" ]; then
+		return
+	fi
+	eval "$2=\$$1"
+	unset "$1"
+}

@@ -5,11 +5,11 @@ shelduck import ./string.sh
 
 
 bobshell_fetch_url() {
-	if bobshell_remove_prefix "$1" 'file://' bobshell_fetch_url_file_path; then
+	if bobshell_remove_prefix "$1" 'file://' bobshell_fetch_url_path; then
 		# shellcheck disable=SC2154
-		# bobshell_remove_prefix sets variable bobshell_fetch_url_file_path indirectly
-		cat "$bobshell_fetch_url_file_path"
-		unset bobshell_fetch_url_file_path
+		# bobshell_remove_prefix sets variable bobshell_fetch_url_path indirectly
+		cat "$bobshell_fetch_url_path"
+		unset bobshell_fetch_url_path
 	elif bobshell_command_available curl; then
 		bobshell_fetch_url_with_curl "$1"
 	elif bobshell_command_available wget; then
@@ -28,11 +28,13 @@ bobshell_base_url() {
 #fun: bobshell_resolve_url URL [BASEURL]
 bobshell_resolve_url() {
 	# todo by default BASEURL is $(realpath "$(pwd)")
-	if         bobshell_starts_with "$1" file:// \
-			|| bobshell_starts_with "$1" http:// \
-			|| bobshell_starts_with "$1" https:// \
-			|| bobshell_starts_with "$1" ftp:// \
-			|| bobshell_starts_with "$1" ftps:// \
+	if   bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
+		bobshell_resolve_url_path=$(realpath "$bobshell_resolve_url_path")
+		printf %s "$bobshell_resolve_url_path"
+	elif bobshell_starts_with "$1" http:// \
+	  || bobshell_starts_with "$1" https:// \
+	  || bobshell_starts_with "$1" ftp:// \
+	  || bobshell_starts_with "$1" ftps:// \
 			; then
 		printf %s "$1"
 	elif [ -n "${2:-}" ]; then

@@ -2,6 +2,7 @@
 
 shelduck import base.sh
 shelduck import string.sh
+shelduck import git.sh
 
 bobshell_unset_scope() {
 	for bobshell_unset_scope_argument in "$@"; do
@@ -56,9 +57,30 @@ bobshell_eval_output() {
 
 
 # txt: read -sr 
-read_secret() {
+bobshell_read_secret() {
   # https://github.com/biox/pa/blob/main/pa
   [ -t 0 ] && stty -echo
 	read -r "$1"
 	[ -t 0 ] &&  stty echo
 }
+
+
+
+bobshell_run_url() {
+	if bobshell_command_available "$1"; then
+		"$@"
+	elif [ -z "$1" ]; then
+		"$@"
+	elif bobshell_ends_with "$1" '.git'; then
+		bobshell_run_url_git "$@"
+	else
+		bobshell_die "bobshell_run_url: unrecognized parameters: $(boshell_quote "$@")"
+	fi
+}
+
+bobshell_run_url_git() {
+	bobshell_run_url_git_dir=$(mktemp -d)
+	bobshell_git clone "$1" "$bobshell_run_url_git_dir"
+	"$bobshell_run_url_git_dir/run" "$@"
+}
+

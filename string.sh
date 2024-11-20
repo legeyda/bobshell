@@ -7,6 +7,7 @@ shelduck import base.sh
 
 # use: bobshell_starts_with hello he && echo "$rest" # prints llo
 bobshell_starts_with() {
+	bobshell_require_empty "bobshell_starts_with takes 2 arguments, 3 given, did you mean bobshell_remove_prefix?"
 	case "$1" in
 		("$2"*) return 0
 	esac
@@ -27,6 +28,7 @@ bobshell_remove_prefix() {
 
 # use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
 bobshell_ends_with() {
+	bobshell_require_empty "bobshell_ends_with takes 2 arguments, 3 given, did you mean bobshell_remove_suffix?"
 	case "$1" in
 		(*"$2") return 0
 	esac
