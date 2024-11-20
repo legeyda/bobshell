@@ -30,7 +30,7 @@ bobshell_resolve_url() {
 	# todo by default BASEURL is $(realpath "$(pwd)")
 	if   bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
 		bobshell_resolve_url_path=$(realpath "$bobshell_resolve_url_path")
-		printf %s "$bobshell_resolve_url_path"
+		printf 'file://%s' "$bobshell_resolve_url_path"
 	elif bobshell_starts_with "$1" http:// \
 	  || bobshell_starts_with "$1" https:// \
 	  || bobshell_starts_with "$1" ftp:// \
