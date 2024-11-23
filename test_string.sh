@@ -128,3 +128,39 @@ test_quote() {
 	assert_equals "1 '2 3'" "$(bobshell_quote 1 '2 3')"
 	assert_equals "'hello '\"'\"'there'\"'\"''" "$(bobshell_quote "hello 'there'")"
 }
+
+
+test_strip_left() {
+	result=$(bobshell_strip_left '   blabla  ')
+	assert_equals 'blabla  ' "$result"
+}
+
+test_strip_right() {
+	result=$(bobshell_strip_right '  blabla  ')
+	assert_equals '  blabla' "$result"
+}
+
+test_strip() {
+	result=$(bobshell_strip '  blabla  ')
+	assert_equals blabla "$result"
+}
+
+# 
+test_mustache() {
+	template='hello, {{      name}}, greetings!'
+	name=bob
+
+	output=$(bobshell_mustache "$template")
+	assert_equals 'hello, bob, greetings!' "$output"
+}
+
+
+# 
+test_mustache_scope() {
+	template='hello, {{  name }}, message is: {{   msg}}!'
+	x_name=bob
+	x_msg='secret message'
+
+	output=$(bobshell_mustache "$template" x_)
+	assert_equals 'hello, bob, message is: secret message!' "$output"
+}

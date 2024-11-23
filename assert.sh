@@ -1,5 +1,7 @@
 
 
+shelduck import base.sh
+
 success() {
 	printf '%s: all tests passed\n' "$0"
 }
@@ -25,7 +27,7 @@ assert_not_equals() {
 }
 
 assert_unset() {
-  if [ "$(eval "printf %s \"\${$1+set}\"")" = set ]; then
+  if bobshell_isset "$1"; then
     assertion_error "variable $1 was not expected to be set"
   fi
 }

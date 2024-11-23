@@ -16,8 +16,9 @@ bobshell_handle_subcommand() {
 	if [ -z "${1:-}" ]; then
 		return
 	fi
-	# shellcheck disable=SC2145
-	run_"$@"
+	bobshell_handle_subcommand_target="$1"
+	shift
+	run_"$1" "$@"
 }
 
 run_usage() {

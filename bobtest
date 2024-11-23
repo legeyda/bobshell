@@ -1,13 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env shelduck_run
 set -eu
 
+shelduck import base.sh
+shelduck import string.sh
 
 main() {
 	stdout_file=$(mktemp)
 	stderr_file=$(mktemp)
 	file_separator=
 	for x in "$@"; do
-		printf "$file_separator"
+		printf %s "$file_separator"
 		test_file "$x"
 		file_separator='\n'
 	done
@@ -33,7 +35,7 @@ test_file() {
 # fun: test_function SCRIPT FUNCTION
 test_function() {
 	printf '  function %s... ' "$2"
-	if ! sh -c "set -eu; . '$SHELDUCK_LIBRARY_PATH'; . '$1' ; set -x; '$2'" > "$stdout_file" 2> "$stderr_file"; then
+	if ! ( set -eu; shelduck_run --command "set -x; $2" "file://$1") > "$stdout_file" 2> "$stderr_file"; then
 		printf 'failure\n\n'
 		printf '\n\nSTDOUT WAS:\n%s\n'
 		cat "$stdout_file"
@@ -47,13 +49,6 @@ test_function() {
 }
 
 
-
-
-test -r ./shelduck.sh && . ./shelduck.sh
-: "${SHELDUCK_BASE_URL:=file://./}"
-export SHELDUCK_BASE_URL
-shelduck import base.sh
-shelduck import string.sh
 
 
 main "$@"

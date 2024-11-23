@@ -1,5 +1,5 @@
-# todo
 
+shelduck import string.sh
 
 bobshell_die() {
   # https://github.com/biox/pa/blob/main/pa
@@ -10,7 +10,7 @@ bobshell_die() {
 
 # use isset unreliablevar
 bobshell_isset() {
-	eval "test '\${$1+defined}' = defined"
+	eval "test \"\${$1+defined}\" = defined"
 }
 
 
@@ -83,3 +83,45 @@ bobshell_rename_var() {
 	eval "$2=\$$1"
 	unset "$1"
 }
+
+bobshell_vars() {
+	bobshell_vars_list=$(set | sed -n 's/^\([A-Za-z_][A-Za-z_0-9]*\)=.*$/\1/pg' | sort -u)
+	for bobshell_vars_item in $bobshell_vars_list; do
+		if bobshell_isset "$bobshell_vars_item"; then
+			printf '%s ' "$bobshell_vars_item"
+		fi
+	done
+	unset bobshell_vars_list
+}
+
+# bobshell_not_empty "$@"
+bobshell_not_empty() {
+	test set = "${1+set}" 
+}
+
+#bobshell_map
+
+# fun: bobshell_foreach ITEM... -- COMMAND [ARG...]
+# bobshell_foreach() {
+# 	bobshell_foreach_items=
+# 	bobshell_foreach_command=
+# 	while bobshell_not_empty "$@"; do
+# 		if [ '--' = "$1" ]; then
+# 			shift
+# 			set -- "$@"
+# 			break
+# 		fi
+# 		bobshell_foreach_item=$(bobshell_quote "$1")
+# 		bobshell_foreach_items="$bobshell_foreach_items $1"
+# 		shift
+# 	done
+
+# 	bobshell_require_not_empty "$bobshell_foreach_command" "bobshell_foreach: command not set"
+
+# 	for bobshell_foreach_item in $bobshell_foreach_items; do
+# 		"$@" "$bobshell_foreach_item"
+# 	done
+# 	unset bobshell_foreach_item
+
+# 	unset bobshell_foreach_items bobshell_foreach_command
+# }

@@ -4,30 +4,6 @@ shelduck import base.sh
 shelduck import string.sh
 shelduck import git.sh
 
-bobshell_unset_scope() {
-	for bobshell_unset_scope_argument in "$@"; do
-		for bobshell_unset_scope_name in $(bobshell_var_names | grep "^$bobshell_unset_scope_argument" || true); do
-			unset "$bobshell_unset_scope_name"
-		done
-	done
-	unset bobshell_unset_scope_argument bobshell_unset_scope_name
-}
-
-# fun: bobshell_copy_scope RUNDOODLE_GIT_SSH_ BOBSHELL_SSH_
-bobshell_copy_scope() {
-	bobshell_unset_scope "$2"
-	for bobshell_copy_scope_name in $(bobshell_var_names | grep "^$1" || true); do
-		if bobshell_isset "$bobshell_copy_scope_name"; then
-			bobshell_copy_scope_value=$(bobshell_getvar "$1")
-			bobshell_putvar "$bobshell_copy_scope_name" "$bobshell_copy_scope_value"
-		fi
-	done
-}
-
-
-bobshell_var_names() {
-	set | sed --silent --regexp-extended 's/^([A-Za-z_][A-Za-z_0-9]*)=.*$/\1/pg' | sort
-}
 
 bobshell_current_seconds() {
 	date +%s
@@ -84,3 +60,13 @@ bobshell_run_url_git() {
 	"$bobshell_run_url_git_dir/run" "$@"
 }
 
+# txt: выполнить команду, восстановить после неё значения переменных окружения
+# use: X=1; Y=2; preserve_environment 'eval' 'X=2, Z=3'; echo "$X, $Y, $Z" # gives 1, 2, 3
+bobshell_preserve_env() {
+  bobshell_preserve_env_orig=
+  # shellcheck disable=SC2016
+  notrace eval 'bobshell_preserve_env_orig="$(set)"'
+  "$@"
+  notrace eval "$bobshell_preserve_env_orig"
+  unset bobshell_preserve_env_orig
+}

@@ -191,3 +191,50 @@ bobshell_join() {
 		printf %s "$bobshell_join_item"
 	done
 }
+
+
+
+bobshell_strip_left() {
+	bobshell_strip_left_value="$1"
+	while true; do
+		case "$bobshell_strip_left_value" in 
+			([[:space:]]*)
+				bobshell_strip_left_value="${bobshell_strip_left_value#?}" ;;
+			(*) break ;;
+		esac
+	done
+	printf %s "$bobshell_strip_left_value"
+}
+
+bobshell_strip_right() {
+	bobshell_strip_right_value="$1"
+	while true; do
+		case "$bobshell_strip_right_value" in 
+			(*[[:space:]])
+				bobshell_strip_right_value="${bobshell_strip_right_value%?}" ;;
+			(*) break ;;
+		esac
+	done
+	printf %s "$bobshell_strip_right_value"
+}
+
+bobshell_strip() {
+	bobshell_strip_value=$(bobshell_strip_left "$1")
+	bobshell_strip_right "$bobshell_strip_value"
+}
+
+
+# fun: mustache TEMPLATE [SCOPE]
+bobshell_mustache() {
+	bobshell_mustache_input="$1"
+	bobshell_mustache_scope="${2:-}"
+	while bobshell_split_first "$bobshell_mustache_input" '{{' bobshell_mustache_before bobshell_mustache_input; do
+		printf %s "$bobshell_mustache_before"
+		if ! bobshell_split_first "$bobshell_mustache_input" '}}' bobshell_mustache_before bobshell_mustache_input; then
+			bobshell_die "unclosed bracket"
+		fi
+		bobshell_mustache_name=$(bobshell_strip "$bobshell_mustache_before")
+		bobshell_getvar "$bobshell_mustache_scope$bobshell_mustache_name"
+	done
+	printf %s "$bobshell_mustache_input"
+}
