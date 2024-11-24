@@ -14,8 +14,6 @@ bobshell_install_init() {
 		: "${BOBSHELL_INSTALL_CACHEDIR:=/var/opt/cache}"
 		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_PREFIX/var}"
 		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=/etc/systemd/system}"
-
-		: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl}"
 	else
 		: "${BOBSHELL_INSTALL_PREFIX:=$HOME/.local}"
 		: "${BOBSHELL_INSTALL_SYSCONFDIR:=$HOME/.config}"
@@ -23,12 +21,12 @@ bobshell_install_init() {
 		: "${BOBSHELL_INSTALL_CACHEDIR:=$HOME/.cache}"
 		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_PREFIX/var}"
 		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=$HOME/.config/systemd/user}"
-
-		: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl --user}"
 	fi
 
 	: "${BOBSHELL_INSTALL_BINDIR:=$BOBSHELL_INSTALL_PREFIX/bin}"
 	: "${BOBSHELL_INSTALL_DATADIR:=$BOBSHELL_INSTALL_PREFIX/share}"
+
+	: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl}"
 
 }
 
@@ -71,14 +69,21 @@ bobshell_install_service() {
 	mkdir -p "$bobshell_install_service_dir"
 	bobshell_copy "$1" "file:$bobshell_install_service_dir/$2"
 
-	$BOBSHELL_INSTALL_SYSTEMCTL daemon-reload
-	$BOBSHELL_INSTALL_SYSTEMCTL enable "$2"
+	if [ 0 = "$(id -u)" ]; then
+		bobshell_install_service_arg=
+	else
+		bobshell_install_service_arg='--user'
+	fi
+	
+	$BOBSHELL_INSTALL_SYSTEMCTL $bobshell_install_service_arg daemon-reload
+	$BOBSHELL_INSTALL_SYSTEMCTL $bobshell_install_service_arg enable "$2"
 }
 
 
 
 bobshell_install_dirs() {
-	for bobshell_install_dirs_item in "$BOBSHELL_INSTALL_BINDIR" "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
+	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_BINDIR" 
+	for bobshell_install_dirs_item in "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
 		mkdir -p "$BOBSHELL_INSTALL_DESTDIR$bobshell_install_dirs_item/$BOBSHELL_INSTALL_NAME"
 	done
 }
