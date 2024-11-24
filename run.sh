@@ -4,6 +4,7 @@ shelduck import base.sh
 main() {
 	if [ -z "${1:-}" ]; then
 		run_usage >&2
+		bobshell_die
 	fi
 	on_start
 	bobshell_main "$@"
