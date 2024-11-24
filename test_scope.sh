@@ -54,8 +54,10 @@ test_scope_env() {
 	x_y=1
 	x_z=2
 	
-	str=$(bobshell_scope_env x_)
+	str=
+	bobshell_scope_env x_ var:str
 	assert_equals 'x_y=1
-x_z=2' "$str"
+x_z=2
+' "$str"
 
 }

@@ -222,19 +222,3 @@ bobshell_strip() {
 	bobshell_strip_value=$(bobshell_strip_left "$1")
 	bobshell_strip_right "$bobshell_strip_value"
 }
-
-
-# fun: mustache TEMPLATE [SCOPE]
-bobshell_mustache() {
-	bobshell_mustache_input="$1"
-	bobshell_mustache_scope="${2:-}"
-	while bobshell_split_first "$bobshell_mustache_input" '{{' bobshell_mustache_before bobshell_mustache_input; do
-		printf %s "$bobshell_mustache_before"
-		if ! bobshell_split_first "$bobshell_mustache_input" '}}' bobshell_mustache_before bobshell_mustache_input; then
-			bobshell_die "unclosed bracket"
-		fi
-		bobshell_mustache_name=$(bobshell_strip "$bobshell_mustache_before")
-		bobshell_getvar "$bobshell_mustache_scope$bobshell_mustache_name"
-	done
-	printf %s "$bobshell_mustache_input"
-}

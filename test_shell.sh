@@ -1,5 +1,3 @@
-#!/bin/sh
-set -eu
 
 shelduck import --alias die   base.sh
 shelduck import assert.sh
@@ -174,4 +172,23 @@ eof
 	result=$(bobshell_quote "1 '2 3'")
 	result=$(eval "printf %s $result")
 	assert_equals "1 '2 3'" "$result"
+}
+
+
+test_yyy() {
+	set -eu
+	#function_with_error
+	echo i am here
+	if function_with_error; then
+		echo 'expected to error' >&2
+	fi
+
+
+
+
+}
+
+function_with_error() {
+	function_does_not_exist 1 2 3
+	printf %s hello from function_with_error
 }

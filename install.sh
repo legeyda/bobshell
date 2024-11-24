@@ -13,12 +13,18 @@ bobshell_install_init() {
 		: "${BOBSHELL_INSTALL_PROFILE_FILE:=/etc/profile}"
 		: "${BOBSHELL_INSTALL_CACHEDIR:=/var/opt/cache}"
 		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_PREFIX/var}"
+		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=/etc/systemd/system}"
+
+		: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl}"
 	else
 		: "${BOBSHELL_INSTALL_PREFIX:=$HOME/.local}"
 		: "${BOBSHELL_INSTALL_SYSCONFDIR:=$HOME/.config}"
 		: "${BOBSHELL_INSTALL_PROFILE_FILE:=$HOME/.profile}"
 		: "${BOBSHELL_INSTALL_CACHEDIR:=$HOME/.cache}"
 		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_PREFIX/var}"
+		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=$HOME/.config/systemd/user}"
+
+		: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl --user}"
 	fi
 
 	: "${BOBSHELL_INSTALL_BINDIR:=$BOBSHELL_INSTALL_PREFIX/bin}"
@@ -26,34 +32,61 @@ bobshell_install_init() {
 
 }
 
+
+
 # fun: bobshell_install_binary SRCPATH [DESTNAME]
 # use: bobshell_install_binary target/exesrc.sh mysuperprog
 bobshell_install_executable() {
-	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_BINDIR"
-	install --no-target-directory --mode=u=rwx,go=rx "$1" "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_BINDIR${2:-$BOBSHELL_INSTALL_NAME}"
+	bobshell_install_executable_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_BINDIR"
+	mkdir -p "$bobshell_install_executable_dir"
+	bobshell_copy "$1" "file:$bobshell_install_executable_dir/$2"
+	chmod u=rwx,go=rx  "$bobshell_install_executable_dir/$2"
 }
 
-# fun: bobshell_install_data SRCPATH DESTNAME
-# use: bobshell_install_data target/exesrc.sh mysuperprogdata
+
+
+# fun: bobshell_install_data SRCLOCATOR DESTNAME
+# use: bobshell_install_data file:target/exesrc.sh mysuperprogdata
 bobshell_install_data() {
-	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_DATADIR/$BOBSHELL_INSTALL_NAME"
-	install --no-target-directory --mode=u=rw,go=r "$1" "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_DATADIR/$BOBSHELL_INSTALL_NAME/$2"
+	bobshell_install_data_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_DATADIR/$BOBSHELL_INSTALL_NAME"
+	mkdir -p "$bobshell_install_data_dir"
+	bobshell_copy "$1" "file:$bobshell_install_data_dir/$2"
+	chmod u=rw,go=r "$bobshell_install_data_dir/$2"
 }
+
+
 
 bobshell_install_config() {
-	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSCONFDIR/$BOBSHELL_INSTALL_NAME"
-	install --no-target-directory --mode=u=rw,go=r "$1" "$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSCONFDIR/$BOBSHELL_INSTALL_NAME/$2"
+	bobshell_install_config_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSCONFDIR/$BOBSHELL_INSTALL_NAME"
+	mkdir -p "$bobshell_install_config_dir"
+	bobshell_copy "$1" "file:$bobshell_install_config_dir/$2"
+	chmod u=rw,go=r "$bobshell_install_config_dir/$2"
 }
+
+
+# fun: bobshell_install_service SRCLOCATOR DESTNAME
+# use: bobshell_install_service file:target/myservice myservice.service
+bobshell_install_service() {
+	bobshell_install_service_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSTEMDDIR"
+	mkdir -p "$bobshell_install_service_dir"
+	bobshell_copy "$1" "file:$bobshell_install_service_dir/$2"
+
+	$BOBSHELL_INSTALL_SYSTEMCTL daemon-reload
+	$BOBSHELL_INSTALL_SYSTEMCTL enable "$2"
+}
+
 
 
 bobshell_install_dirs() {
-	for dir in "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
-		mkdir -p "$BOBSHELL_INSTALL_DESTDIR$dir/$BOBSHELL_INSTALL_NAME"
+	for bobshell_install_dirs_item in "$BOBSHELL_INSTALL_BINDIR" "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
+		mkdir -p "$BOBSHELL_INSTALL_DESTDIR$bobshell_install_dirs_item/$BOBSHELL_INSTALL_NAME"
 	done
 }
 
+
+
 bobshell_uninstall() {
-	for dir in "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
+	for dir in "$BOBSHELL_INSTALL_BINDIR" "$BOBSHELL_INSTALL_DATADIR" "$BOBSHELL_INSTALL_LOCALSTATEDIR" "$BOBSHELL_INSTALL_CACHEDIR"; do
 		rm -rf "$BOBSHELL_INSTALL_DESTDIR$dir/$BOBSHELL_INSTALL_NAME"
 	done
 }

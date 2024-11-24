@@ -1,14 +1,9 @@
-#!/bin/sh
-set -eu
-
-. ./mock_shelduck.sh
-. ./base.sh
-. ./assert.sh
 
 
-unset x
-bobshell_putvar x "<'x'>"
-assert_equals "<'x'>" "$x"
+shelduck import string.sh
+shelduck import assert.sh
 
-
-success
+test_isset_1() {
+	assert_ok bobshell_isset_1 1 2 3
+	assert_error bobshell_isset_1
+}

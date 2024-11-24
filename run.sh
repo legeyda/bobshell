@@ -5,7 +5,12 @@ main() {
 	if [ -z "${1:-}" ]; then
 		run_usage >&2
 	fi
+	on_start
 	bobshell_main "$@"
+}
+
+on_start() {
+	true # do nothing
 }
 
 bobshell_main() {
@@ -18,7 +23,7 @@ bobshell_handle_subcommand() {
 	fi
 	bobshell_handle_subcommand_target="$1"
 	shift
-	run_"$1" "$@"
+	"run_$bobshell_handle_subcommand_target" "$@"
 }
 
 run_usage() {

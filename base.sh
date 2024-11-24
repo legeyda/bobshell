@@ -13,6 +13,10 @@ bobshell_isset() {
 	eval "test \"\${$1+defined}\" = defined"
 }
 
+#  
+bobshell_isset_1() {
+	eval "test \"\${1+defined}\" = defined"
+}
 
 bobshell_command_available() {
 	command -v "$1" > /dev/null
@@ -47,6 +51,7 @@ bobshell_require_empty() {
 		bobshell_die "$@"
 	fi
 }
+
 
 bobshell_is_bash() {
 	test -n "${BASH_VERSION:-}"

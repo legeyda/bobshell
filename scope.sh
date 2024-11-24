@@ -1,6 +1,7 @@
 
 
 shelduck import base.sh
+shelduck import locator.sh
 
 
 bobshell_scope_names() {
@@ -16,12 +17,15 @@ bobshell_scope_names() {
 }
 
 
+
 bobshell_scope_unset() {
 	for bobshell_scope_unset_name in $(bobshell_scope_names "$@"); do
 		unset "$bobshell_scope_unset_name"
 	done
 	unset bobshell_scope_unset_name
 }
+
+
 
 bobshell_scope_export() {
 	for bobshell_scope_export_name in $(bobshell_scope_names "$@"); do
@@ -30,15 +34,21 @@ bobshell_scope_export() {
 	unset bobshell_scope_export_name
 }
 
+
+
 bobshell_scope_env() {
-	for bobshell_scope_env_name in $(bobshell_scope_names "$@"); do
-		printf '%s=' "$bobshell_scope_env_name"
+	bobshell_scope_env_result=
+	for bobshell_scope_env_name in $(bobshell_scope_names "$1"); do
+		bobshell_scope_env_result="$bobshell_scope_env_result$bobshell_scope_env_name="
 		bobshell_scope_env_value=$(bobshell_getvar "$bobshell_scope_env_name")
-		bobshell_quote "$bobshell_scope_env_value"
-		printf '\n'
+		bobshell_scope_env_value=$(bobshell_quote "$bobshell_scope_env_value")
+		bobshell_scope_env_result="$bobshell_scope_env_result$bobshell_scope_env_value$bobshell_newline"
 	done
-	unset bobshell_scope_env_name bobshell_scope_env_value
+	bobshell_copy var:bobshell_scope_env_result "$2"
+	unset bobshell_scope_env_result bobshell_scope_env_name bobshell_scope_env_value
 }
+
+
 
 # fun: bobshell_scope_copy RUNDOODLE_GIT_SSH_ BOBSHELL_SSH_
 bobshell_scope_copy() {
