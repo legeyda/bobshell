@@ -70,3 +70,11 @@ bobshell_preserve_env() {
   notrace eval "$bobshell_preserve_env_orig"
   unset bobshell_preserve_env_orig
 }
+
+bobshell_is_root() {
+	test 0 = "$(id -u)"
+}
+
+bobshell_is_not_root() {
+	test 0 != "$(id -u)"
+}

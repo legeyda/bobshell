@@ -192,3 +192,13 @@ function_with_error() {
 	function_does_not_exist 1 2 3
 	printf %s hello from function_with_error
 }
+
+test_assign_error() {
+	unset
+	assert_ok eval 'x=$(printf %s hello; return 0)'
+	assert_equals hello "$x"
+
+	x=
+	assert_error eval 'x=$(printf %s hello; return 1)'
+	assert_unset x
+}
