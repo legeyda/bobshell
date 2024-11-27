@@ -25,10 +25,13 @@ bobshell_base_url() {
 }
 
 
-#fun: bobshell_resolve_url URL [BASEURL]
+# fun: bobshell_resolve_url URL [BASEURL]
 bobshell_resolve_url() {
 	# todo by default BASEURL is $(realpath "$(pwd)")
-	if   bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
+	if bobshell_starts_with "$1" /; then
+		bobshell_resolve_url_path=$(realpath "$1")
+		printf 'file://%s' "$bobshell_resolve_url_path"
+	elif   bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
 		bobshell_resolve_url_path=$(realpath "$bobshell_resolve_url_path")
 		printf 'file://%s' "$bobshell_resolve_url_path"
 	elif bobshell_starts_with "$1" http:// \
@@ -37,19 +40,22 @@ bobshell_resolve_url() {
 	  || bobshell_starts_with "$1" ftps:// \
 			; then
 		printf %s "$1"
-	elif [ -n "${2:-}" ]; then
-		printf %s "$2"
-		if ! bobshell_ends_with "$2" /; then
+	else
+		bobshell_resolve_url_base="${2:-}"
+		if [ -n "$bobshell_resolve_url_base" ]; then
+			bobshell_resolve_url_base=$(pwd)
+		fi
+		printf %s "$bobshell_resolve_url_base"
+		if ! bobshell_ends_with "$bobshell_resolve_url_base" /; then
 			printf '/'
 		fi
+		# todo handle ..
 		bobshell_resolve_url_value="$1"
 		while bobshell_remove_prefix "$bobshell_resolve_url_value" './' bobshell_resolve_url_value; do
 			true
 		done
 		printf %s "$bobshell_resolve_url_value"
 		unset bobshell_resolve_url_value
-	else
-		bobshell_die "bobshell_resolve_url: url is relaive, but not base url defined: $1" 
 	fi
 }
 
