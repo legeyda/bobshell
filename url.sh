@@ -42,7 +42,7 @@ bobshell_resolve_url() {
 		printf %s "$1"
 	else
 		bobshell_resolve_url_base="${2:-}"
-		if [ -n "$bobshell_resolve_url_base" ]; then
+		if [ -z "$bobshell_resolve_url_base" ]; then
 			bobshell_resolve_url_base=$(pwd)
 		fi
 		printf %s "$bobshell_resolve_url_base"
