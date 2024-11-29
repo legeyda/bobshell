@@ -46,7 +46,7 @@ bobshell_ssh_auth() {
 	if [ -n "${BOBSHELL_SSH_IDENTITY:-}" ]; then
 		if [ "${BOBSHELL_SSH_USE_AGENT:-true}" == 'true' ]; then
 			if [ -z "${SSH_AGENT_PID:-}" ]; then
-				bobshell_eval_output ssh-agent
+				bobshell_eval_output ssh-agent >&2
 				# todo copy_resource 'stdout:ssh-agent' eval:
 			fi
 			bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" | ssh-add -q -t 5 -

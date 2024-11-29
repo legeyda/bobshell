@@ -1,6 +1,5 @@
 
 shelduck import string.sh
-shelduck import scope.sh
 shelduck import util.sh
 shelduck import locator.sh
 
@@ -10,37 +9,60 @@ bobshell_install_init() {
 	# https://www.gnu.org/prep/standards/html_node/Directory-Variables.html#Directory-Variables
 	
 	: "${BOBSHELL_INSTALL_DESTDIR:=}"
+	: "${BOBSHELL_INSTALL_ROOT:=}"
+	if [ -n "${BOBSHELL_INSTALL_ROOT:-}" ]; then
+		BOBSHELL_INSTALL_ROOT=$(realpath "$BOBSHELL_INSTALL_ROOT")
+	fi
 
-	: "${BOBSHELL_INSTALL_ROOT_PREFIX:=/opt}"
-	: "${BOBSHELL_INSTALL_ROOT_BINDIR:=$BOBSHELL_INSTALL_ROOT_PREFIX/bin}"
-	: "${BOBSHELL_INSTALL_ROOT_CONFDIR:=$BOBSHELL_INSTALL_ROOT_PREFIX/etc}"
-	: "${BOBSHELL_INSTALL_ROOT_DATADIR:=$BOBSHELL_INSTALL_ROOT_PREFIX/share}"
-	: "${BOBSHELL_INSTALL_ROOT_LOCALSTATEDIR:=$BOBSHELL_INSTALL_ROOT_PREFIX/var}"
-	: "${BOBSHELL_INSTALL_ROOT_CACHEDIR:=/var/opt/cache}"
-	: "${BOBSHELL_INSTALL_ROOT_SYSTEMDDIR:=/etc/systemd/system}"
-	: "${BOBSHELL_INSTALL_ROOT_PROFILE:=/etc/profile}"
+	: "${BOBSHELL_INSTALL_SYSTEM_PREFIX:=/opt}"
+	: "${BOBSHELL_INSTALL_SYSTEM_BINDIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_SYSTEM_PREFIX/bin}"
+	: "${BOBSHELL_INSTALL_SYSTEM_CONFDIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_SYSTEM_PREFIX/etc}"
+	: "${BOBSHELL_INSTALL_SYSTEM_DATADIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_SYSTEM_PREFIX/share}"
+	: "${BOBSHELL_INSTALL_SYSTEM_LOCALSTATEDIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_SYSTEM_PREFIX/var}"
+	: "${BOBSHELL_INSTALL_SYSTEM_CACHEDIR:=$BOBSHELL_INSTALL_ROOT/var/cache}"
+	: "${BOBSHELL_INSTALL_SYSTEM_SYSTEMDDIR:=$BOBSHELL_INSTALL_ROOT/etc/systemd/system}"
+	: "${BOBSHELL_INSTALL_SYSTEM_PROFILE:=$BOBSHELL_INSTALL_ROOT/etc/profile}"
 
-	: "${BOBSHELL_INSTALL_USER_PREFIX:=$HOME/.local}"
-	: "${BOBSHELL_INSTALL_USER_BINDIR:=$BOBSHELL_INSTALL_USER_PREFIX/bin}"
-	: "${BOBSHELL_INSTALL_USER_CONFDIR:=$HOME/.config}"
-	: "${BOBSHELL_INSTALL_USER_DATADIR:=$BOBSHELL_INSTALL_USER_PREFIX/share}"
-	: "${BOBSHELL_INSTALL_USER_LOCALSTATEDIR:=$BOBSHELL_INSTALL_USER_PREFIX/var}"
-	: "${BOBSHELL_INSTALL_USER_CACHEDIR:=$HOME/.cache}"
-	: "${BOBSHELL_INSTALL_USER_SYSTEMDDIR:=$HOME/.config/systemd/user}"
-	: "${BOBSHELL_INSTALL_USER_PROFILE:=$HOME/.profile}"
+	if bobshell_is_root; then
+		: "${BOBSHELL_INSTALL_USER_PREFIX:=}"
+		: "${BOBSHELL_INSTALL_USER_BINDIR:=}"
+		: "${BOBSHELL_INSTALL_USER_CONFDIR:=}"
+		: "${BOBSHELL_INSTALL_USER_DATADIR:=}"
+		: "${BOBSHELL_INSTALL_USER_LOCALSTATEDIR:=}"
+		: "${BOBSHELL_INSTALL_USER_CACHEDIR:=}"
+		: "${BOBSHELL_INSTALL_USER_SYSTEMDDIR:=}"
+		: "${BOBSHELL_INSTALL_USER_PROFILE:=}"
 
+		: "${BOBSHELL_INSTALL_PREFIX:=$BOBSHELL_INSTALL_SYSTEM_PREFIX}"
+		: "${BOBSHELL_INSTALL_BINDIR:=$BOBSHELL_INSTALL_SYSTEM_BINDIR}"
+		: "${BOBSHELL_INSTALL_CONFDIR:=$BOBSHELL_INSTALL_SYSTEM_CONFDIR}"
+		: "${BOBSHELL_INSTALL_DATADIR:=$BOBSHELL_INSTALL_SYSTEM_DATADIR}"
+		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_SYSTEM_LOCALSTATEDIR}"
+		: "${BOBSHELL_INSTALL_CACHEDIR:=$BOBSHELL_INSTALL_SYSTEM_CACHEDIR}"
+		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=$BOBSHELL_INSTALL_SYSTEM_SYSTEMDDIR}"
+		: "${BOBSHELL_INSTALL_PROFILE:=$BOBSHELL_INSTALL_SYSTEM_PROFILE}"
+	else
+		: "${BOBSHELL_INSTALL_USER_PREFIX:=$HOME/.local}"
+		: "${BOBSHELL_INSTALL_USER_BINDIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_USER_PREFIX/bin}"
+		: "${BOBSHELL_INSTALL_USER_CONFDIR:=$BOBSHELL_INSTALL_ROOT$HOME/.config}"
+		: "${BOBSHELL_INSTALL_USER_DATADIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_USER_PREFIX/share}"
+		: "${BOBSHELL_INSTALL_USER_LOCALSTATEDIR:=$BOBSHELL_INSTALL_ROOT$BOBSHELL_INSTALL_USER_PREFIX/var}"
+		: "${BOBSHELL_INSTALL_USER_CACHEDIR:=$BOBSHELL_INSTALL_ROOT$HOME/.cache}"
+		: "${BOBSHELL_INSTALL_USER_SYSTEMDDIR:=$BOBSHELL_INSTALL_ROOT$HOME/.config/systemd/user}"
+		: "${BOBSHELL_INSTALL_USER_PROFILE:=$BOBSHELL_INSTALL_ROOT$HOME/.profile}"
 
+		: "${BOBSHELL_INSTALL_PREFIX:=$BOBSHELL_INSTALL_USER_PREFIX}"
+		: "${BOBSHELL_INSTALL_BINDIR:=$BOBSHELL_INSTALL_USER_BINDIR}"
+		: "${BOBSHELL_INSTALL_CONFDIR:=$BOBSHELL_INSTALL_USER_CONFDIR}"
+		: "${BOBSHELL_INSTALL_DATADIR:=$BOBSHELL_INSTALL_USER_DATADIR}"
+		: "${BOBSHELL_INSTALL_LOCALSTATEDIR:=$BOBSHELL_INSTALL_USER_LOCALSTATEDIR}"
+		: "${BOBSHELL_INSTALL_CACHEDIR:=$BOBSHELL_INSTALL_USER_CACHEDIR}"
+		: "${BOBSHELL_INSTALL_SYSTEMDDIR:=$BOBSHELL_INSTALL_USER_SYSTEMDDIR}"
+		: "${BOBSHELL_INSTALL_PROFILE:=$BOBSHELL_INSTALL_USER_PROFILE}"
+	fi
 
-	# if [ 0 = "$(id -u)" ]; then
-	# 	bobshell_scope_copy BOBSHELL_INSTALL_ROOT_ BOBSHELL_INSTALL_
-	# else
-	# 	bobshell_scope_copy BOBSHELL_INSTALL_USER_ BOBSHELL_INSTALL_
-	# fi
-
-
-
+		
 	: "${BOBSHELL_INSTALL_SYSTEMCTL:=systemctl}"
-
 }
 
 
@@ -50,19 +72,16 @@ bobshell_install_init() {
 # fun: bobshell_install_service SRCLOCATOR DESTNAME
 # use: bobshell_install_service file:target/myservice myservice.service
 bobshell_install_service() {
-
-	if [ 0 = "$(id -u)" ]; then
-		bobshell_install_service_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_ROOT_SYSTEMDDIR"
-		bobshell_install_service_arg=
-	else
-		bobshell_install_service_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_USER_SYSTEMDDIR"
-		bobshell_install_service_arg='--user'
-	fi
-
+	bobshell_install_service_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSTEMDDIR"
 	mkdir -p "$bobshell_install_service_dir"
 	bobshell_copy "$1" "file:$bobshell_install_service_dir/$2"
 
 	
+	if [ 0 = "$(id -u)" ]; then
+		bobshell_install_service_arg=
+	else
+		bobshell_install_service_arg='--user'
+	fi
 	$BOBSHELL_INSTALL_SYSTEMCTL $bobshell_install_service_arg daemon-reload
 	$BOBSHELL_INSTALL_SYSTEMCTL $bobshell_install_service_arg enable "$2"
 }
@@ -74,62 +93,33 @@ bobshell_install_service() {
 
 
 
-
-
-# fun: bobshell_install_find_root_dir TYPE
-bobshell_install_getvar() {
-	if bobshell_is_root; then
-		bobshell_install_root_getvar "$@"
-	else
-		bobshell_install_user_getvar "$@"
-	fi
+# fun: bobshell_install_put SRC DIR DESTNAME MODE
+bobshell_install_put() {
+	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$2"
+	bobshell_copy "$1" "file:$BOBSHELL_INSTALL_DESTDIR$2/$3"
+	chmod "$4" "$BOBSHELL_INSTALL_DESTDIR$2/$3"
 }
-
-# fun: bobshell_install_find_dir TYPE
-bobshell_install_root_getvar() {
-	bobshell_getvar "BOBSHELL_INSTALL_ROOT_$1"
-}
-
-# fun: bobshell_install_user_getvar TYPE
-bobshell_install_user_getvar() {
-	bobshell_getvar "BOBSHELL_INSTALL_USER_$1"
-}
-
-
-
 
 # fun: bobshell_install_binary SRC DESTNAME
 # use: bobshell_install_binary target/exesrc.sh mysuperprog
 bobshell_install_put_executable() {
-	bobshell_install_put_executable_dir=$(bobshell_install_getvar BINDIR)
-	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$bobshell_install_put_executable_dir"
-	bobshell_install_put_executable_file="$bobshell_install_put_executable_dir/$2"
-	bobshell_copy "$1" "file:$BOBSHELL_INSTALL_DESTDIR$bobshell_install_put_executable_dir/$2" "$BOBSHELL_INSTALL_DESTDIR$bobshell_install_put_executable_file"
-}
-
-# fun: bobshell_install_put TYPE SRC DESTNAME
-bobshell_install_put() {
-	bobshell_install_put_dir=$(bobshell_install_getvar "$1")
-	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$bobshell_install_put_dir/$BOBSHELL_INSTALL_NAME"
-	bobshell_install_put_file="$bobshell_install_put_dir/$BOBSHELL_INSTALL_NAME/$3"
-	bobshell_copy "$2" "file:$bobshell_install_put_file"
-	chmod u=rw,go=r "$bobshell_install_put_file"
+	bobshell_install_put "$1" "$BOBSHELL_INSTALL_BINDIR" "$2" u=rwx,go=rx
 }
 
 bobshell_install_put_config() {
-	bobshell_install_put CONFDIR "$@"
+	bobshell_install_put "$1" "$BOBSHELL_INSTALL_CONFDIR/$BOBSHELL_INSTALL_NAME" "$2" u=rw,go=r
 }
 
 bobshell_install_put_data() {
-	bobshell_install_put DATADIR "$@"
+	bobshell_install_put "$1" "$BOBSHELL_INSTALL_DATADIR/$BOBSHELL_INSTALL_NAME" "$2" u=rw,go=r
 }
 
 bobshell_install_put_localstate() {
-	bobshell_install_put LOCALSTATEDIR "$@"
+	bobshell_install_put "$1" "$BOBSHELL_INSTALL_LOCALSTATEDIR/$BOBSHELL_INSTALL_NAME" "$2" u=rw,go=r
 }
 
 bobshell_install_put_cache() {
-	bobshell_install_put CACHEDIR "$@"
+	bobshell_install_put "$1" "$BOBSHELL_INSTALL_CACHEDIR/$BOBSHELL_INSTALL_NAME" "$2" u=rw,go=r
 }
 
 
@@ -137,66 +127,92 @@ bobshell_install_put_cache() {
 
 
 
-# bobshell_install_get TYPE NAME
+
+
+
+# fun: bobshell_install_find SYSTEMCANDIDATE USERCANDIDATE
 bobshell_install_find() {
-	if bobshell_is_not_root && bobshell_install_user_find "$@"; then
+	if bobshell_is_not_root && [ -f "$BOBSHELL_INSTALL_DESTDIR$2" ]; then
+		printf %s "$2"
 		return
 	fi
 
-	if bobshell_install_root_find "$@"; then
+	if [ -f "$BOBSHELL_INSTALL_DESTDIR$1" ]; then
+		printf %s "$1"
 		return
 	fi
 
 	return 1
 }
 
-
-bobshell_install_root_find() {
-	bobshell_install_root_find_dir=$(bobshell_install_root_getvar "$1")
-	bobshell_install_root_find_file="$bobshell_install_root_find_dir/$BOBSHELL_INSTALL_NAME/$2"
-	if [ ! -f "$bobshell_install_root_find_file" ]; then
-		return 1
-	fi
-	printf %s "$bobshell_install_root_find_file"
+bobshell_install_find_executable() {
+	bobshell_install_find "$BOBSHELL_INSTALL_SYSTEM_BINDIR/$1" "$BOBSHELL_INSTALL_USER_BINFDIR/$1"
 }
 
-bobshell_install_user_find() {
-	bobshell_install_user_find_dir=$(bobshell_install_root_getvar "$1")
-	bobshell_install_user_find_file="$bobshell_install_user_find_dir/$BOBSHELL_INSTALL_NAME/$2"
-	if [ ! -f "$bobshell_install_user_find_file" ]; then
-		return 1
-	fi
-	printf %s "$bobshell_install_user_find_file"
+bobshell_install_find_config() {
+	bobshell_install_find "$BOBSHELL_INSTALL_SYSTEM_CONFDIR/$BOBSHELL_INSTALL_NAME/$1" "$BOBSHELL_INSTALL_USER_CONFDIR/$BOBSHELL_INSTALL_NAME/$1"
+}
+
+bobshell_install_find_data() {
+	bobshell_install_find "$BOBSHELL_INSTALL_SYSTEM_DATADIR/$BOBSHELL_INSTALL_NAME/$1" "$BOBSHELL_INSTALL_USER_DATADIR/$BOBSHELL_INSTALL_NAME/$1"
+}
+
+bobshell_install_find_localstate() {
+	bobshell_install_find "$BOBSHELL_INSTALL_SYSTEM_LOCALSTATEDIR/$BOBSHELL_INSTALL_NAME/$1" "$BOBSHELL_INSTALL_USER_LOCALSTATEDIR/$BOBSHELL_INSTALL_NAME/$1"
+}
+
+bobshell_install_find_cache() {
+	bobshell_install_find "$BOBSHELL_INSTALL_SYSTEM_CACHEDIR/$BOBSHELL_INSTALL_NAME/$1" "$BOBSHELL_INSTALL_USER_CACHEDIR/$BOBSHELL_INSTALL_NAME/$1"
 }
 
 
 
-# fun: bobshell_install_get TYPE NAME DEST
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# fun: bobshell_install_get FUN NAME DEST
 bobshell_install_get() {
-	if ! bobshell_install_get_found=$(bobshell_install_find "$1" "$2"); then
+	bobshell_install_get_dest="$3"
+	set -- "$1" "$2"
+	if bobshell_install_get_found=$("$@"); then
+		bobshell_copy "file:$bobshell_install_get_found" "$bobshell_install_get_dest"
+		return
+	else
 		return 1
 	fi
-	bobshell_copy "file:$bobshell_install_get_found" "$3"
 }
 
+# fun: bobshell_install_get_executable NAME DEST
+bobshell_install_get_executable() {
+	bobshell_install_get bobshell_install_find_executable "$1" "$2"
+}
 
-
-
-# fun: bobshell_install_get_config app.conf
+# fun: bobshell_install_get_config NAME DEST
 bobshell_install_get_config() {
-	bobshell_install_get CONFDIR "$@"
+	bobshell_install_get bobshell_install_find_config "$1" "$2"
 }
 
 bobshell_install_get_data() {
-	bobshell_install_get DATADIR "$@"
+	bobshell_install_get bobshell_install_find_data "$1" "$2"
 }
 
 bobshell_install_get_localstate() {
-	bobshell_install_get LOCALSTATEDIR "$@"
+	bobshell_install_get bobshell_install_find_localstate "$1" "$2"
 }
 
 bobshell_install_get_cache() {
-	bobshell_install_get CACHE "$@"
+	bobshell_install_get bobshell_install_find_cache "$1" "$2"
 }
 
 

@@ -65,9 +65,9 @@ bobshell_run_url_git() {
 bobshell_preserve_env() {
   bobshell_preserve_env_orig=
   # shellcheck disable=SC2016
-  notrace eval 'bobshell_preserve_env_orig="$(set)"'
+  bobshell_preserve_env_orig="$(set)"
   "$@"
-  notrace eval "$bobshell_preserve_env_orig"
+  eval "$bobshell_preserve_env_orig"
   unset bobshell_preserve_env_orig
 }
 
@@ -77,4 +77,39 @@ bobshell_is_root() {
 
 bobshell_is_not_root() {
 	test 0 != "$(id -u)"
+}
+
+bobshell_eval() {
+	bobshell_eval_script=
+	bobshell_copy "$1" var:bobshell_eval_script
+	eval "$bobshell_eval_script"
+}
+
+
+
+# fun: shelduck_eval_with_args SCRIPT [ARGS...]
+shelduck_eval_with_args() {
+	shelduck_eval_with_args_script="$1"
+	shift
+	eval "$shelduck_eval_with_args_script"
+}
+
+
+bobshell_uid() {
+	id -u
+}
+
+bobshell_gid() {
+	id -g
+}
+
+
+bobshell_user_name() {
+	printf %s "$USER" # todo
+}
+
+
+
+bobshell_user_home() {
+	printf %s "$HOME" # todo
 }
