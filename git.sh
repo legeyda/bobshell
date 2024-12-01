@@ -33,7 +33,7 @@ bobshell_git_ssh_auth() {
 		if [ -n "$bobshell_git_auth_command" ]; then
 			GIT_SSH_COMMAND=$bobshell_git_auth_command
 		fi
-		BOBSHELL_SSH_PASSWORD="$bobshell_git_auth_old_password"
+		BOBSHELL_SSH_PASSWORD="ssh $bobshell_git_auth_old_password"
 	fi
 	if bobshell_isset GIT_SSH_COMMAND; then
 		export GIT_SSH_COMMAND
