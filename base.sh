@@ -18,6 +18,14 @@ bobshell_isset_1() {
 	eval "test \"\${1+defined}\" = defined"
 }
 
+bobshell_isset_2() {
+	eval "test \"\${2+defined}\" = defined"
+}
+
+bobshell_isset_3() {
+	eval "test \"\${3+defined}\" = defined"
+}
+
 bobshell_command_available() {
 	command -v "$1" > /dev/null
 }

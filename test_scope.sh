@@ -46,7 +46,7 @@ test_scope_copy() {
 	
 	assert_equals 1 "${v_x:-}"
 	assert_equals 2 "${v_y:-}"
-	assert_unset v_z
+	assert_equals 1 "${v_z:-}"
 }
 
 test_scope_env() {

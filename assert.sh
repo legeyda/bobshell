@@ -27,7 +27,7 @@ assert_not_equals() {
 }
 
 assert_unset() {
-  if test_isset_1 "$@"; then
+  if bobshell_isset "$@"; then
     assertion_error "variable $1 was not expected to be set"
   fi
 }
@@ -54,7 +54,6 @@ assert_error() {
 
 assert_file_exists() {
 	if [ ! -f "$1" ]; then
-		printf '%s: no such file\n' "$1"
-		return 1
+		assertion_error "file expected to exist: $1"
 	fi
 }

@@ -113,3 +113,17 @@ bobshell_user_name() {
 bobshell_user_home() {
 	printf %s "$HOME" # todo
 }
+
+bobshell_get_file_mtime() {
+
+	# LC_TIME=en_US.UTF-8 ls -ld ./pom.xml | sed -n 's/^.* \([A-Z][a-z]\{2\} \+[0-9]\+\).*$/\1/p'
+	#LC_TIME=en_US.UTF-8 ls -ld ./pom.xml | sed -n 's/^.* \(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec\) \+[0-9]\+ \+\).*$/\1/p'
+
+	LC_TIME=en_US.UTF-8 ls -ld ./pom.xml | sed -n 's/^.* \(\(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\) \+[1-9]\+ \+[0-9]\+\:[0-9]\+\).*$/\1/p'
+	# 
+
+	bobshell_get_file_mtime_dirname=$(dirname "$1")
+	bobshell_get_file_mtime_basename=$(basename "$1")
+	find "$bobshell_get_file_mtime_dirname" -maxdepth 1 -name "$bobshell_get_file_mtime_basename" -printf "%Ts"
+	unset bobshell_get_file_mtime_dirname bobshell_get_file_mtime_basename
+}

@@ -1,7 +1,7 @@
 
 
 shelduck import locator.sh
-
+shelduck import string.sh
 
 # fun: bobshell_encrypt PASSWORD RESOURCE
 # use: bobshell_encrypt val:qwerty file:plain.txt file:encrypted.txt
@@ -63,31 +63,19 @@ bobshell_decrypt() {
 
 # fun: bobshell_encrypt_file_in_place val:qwerty plain.txt
 bobshell_encrypt_file_in_place() {
-	assert_file_exists "$1"
+	bobshell_require_file_exists "$2"
 	bobshell_encrypt_file_in_place_temp_file=$(mktemp)
-	bobshell_encrypt var:BOBSHELL_SECRET_PASSWORD "file:$1" "file:$bobshell_encrypt_file_in_place_temp_file"
-	bobshell_copy "file:$bobshell_encrypt_file_in_place_temp_file" "file:$1"
+	bobshell_encrypt "$1" "file:$2" "file:$bobshell_encrypt_file_in_place_temp_file"
+	bobshell_copy "file:$bobshell_encrypt_file_in_place_temp_file" "file:$2"
 	rm -f "$bobshell_encrypt_file_in_place_temp_file"
 }
 
 
 # fun: bobshell_decrypt_file_in_place val:qwerty encrypted.txt
 bobshell_decrypt_file_in_place() {
-	assert_file_exists "$1"
-	starts_with "$(cat "$1")" U2FsdGVkX || bobshell_die 'file content is not encrypted'
+	bobshell_require_file_exists "$2"
+	bobshell_starts_with "$(cat "$2")" U2FsdGVkX || bobshell_die 'file content is not encrypted'
 	bobshell_decrypt_temp_file=$(mktemp)
-	bobshell_decrypt var:BOBSHELL_SECRET_PASSWORD "file:$1" "file:$bobshell_decrypt_temp_file"
-	bobshell_copy "file:$bobshell_decrypt_temp_file" "file:$1"
-}
-
-
-# txt: 
-bobshell_ensure_secret_password() {
-	bobshell_notrace 'deploy_ensure_secret_password_not_empty="${BOBSHELL_SECRET_PASSWORD:+yes}"'
-	if [ "${deploy_ensure_secret_password_not_empty:-no}" != yes ]; then
-		deploy_ensure_secret_password_tty="$(tty)"
-		assert_not_empty "$deploy_ensure_secret_password_tty" 'terminal not found, not interactive shell?'
-		printf %s "Password for secrets:" > "$(tty)"
-		bobshell_read_secret BOBSHELL_SECRET_PASSWORD
-	fi
+	bobshell_decrypt "$1" "file:$2" "file:$bobshell_decrypt_temp_file"
+	bobshell_copy "file:$bobshell_decrypt_temp_file" "file:$2"
 }
