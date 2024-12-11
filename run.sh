@@ -44,14 +44,14 @@ run_glance() {
 run_encrypt() {
 	bobshell_require_file_exists "${1:-}"
 	bobshell_ensure_password
-	bobshell_encrypt_file_in_place var:bobshell_secret_password "$@"
+	bobshell_encrypt var:bobshell_secret_password "file:$1" "file:$1"
 }
 
 # fun: run_decrypt FILE
 run_decrypt() {
 	bobshell_require_file_exists "${1:-}"
 	bobshell_ensure_password
-	bobshell_decrypt_file_in_place var:bobshell_secret_password "$@"
+	bobshell_decrypt var:bobshell_secret_password "file:$1" "file:$1"
 }
 
 bobshell_ensure_password() {
@@ -60,9 +60,12 @@ bobshell_ensure_password() {
 	fi
 
 
-	if bobshell_isset BOBSHELL_APP_NAME && bobshell_isset "${BOBSHELL_APP_NAME}_SECRET_PASSWORD"; then
-		bobshell_secret_password=$(bobshell_getvar "${BOBSHELL_APP_NAME}_SECRET_PASSWORD")
-		return
+	if bobshell_isset BOBSHELL_APP_NAME; then
+		bobshell_ensure_password_upper=$(bobshell_upper_case "${BOBSHELL_APP_NAME}")
+		if bobshell_isset "${bobshell_ensure_password_upper}_SECRET_PASSWORD"; then
+			bobshell_secret_password=$(bobshell_getvar "${bobshell_ensure_password_upper}_SECRET_PASSWORD")
+			return
+		fi
 	fi
 
 

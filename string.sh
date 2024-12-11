@@ -222,3 +222,11 @@ bobshell_strip() {
 	bobshell_strip_value=$(bobshell_strip_left "$1")
 	bobshell_strip_right "$bobshell_strip_value"
 }
+
+bobshell_upper_case() {
+	printf %s "$*" | awk 'BEGIN { getline; print toupper($0) }'
+}
+
+bobshell_lower_case() {
+	printf %s "$*" | awk 'BEGIN { getline; print tolower($0) }'
+}

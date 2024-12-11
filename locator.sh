@@ -121,7 +121,7 @@ bobshell_copy_file_to_eval()     {
 }
 bobshell_copy_file_to_stdin()    { bobshell_copy_to_stdin; }
 bobshell_copy_file_to_stdout()   { cat "$1"; }
-bobshell_copy_file_to_file()     { test "$1" != "$2" && { mkdir -p "$(dirname "$2")" && rm -rf "$2" && cp "$1" "$2";}; }
+bobshell_copy_file_to_file()     { test "$1" != "$2" && { mkdir -p "$(dirname "$2")" && rm -rf "$2" && cp -f "$1" "$2";}; }
 bobshell_copy_file_to_url()      { bobshell_copy_to_url; }
 
 
