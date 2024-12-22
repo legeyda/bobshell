@@ -127,3 +127,9 @@ bobshell_get_file_mtime() {
 	find "$bobshell_get_file_mtime_dirname" -maxdepth 1 -name "$bobshell_get_file_mtime_basename" -printf "%Ts"
 	unset bobshell_get_file_mtime_dirname bobshell_get_file_mtime_basename
 }
+
+# bobshell_line_in_file: 
+bobshell_line_in_file() {
+	true
+}
+

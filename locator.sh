@@ -136,23 +136,31 @@ bobshell_copy_url_to_url()       { bobshell_copy_to_url; }
 
 
 
-# fun: bobshell_as_file LOCATOR
-bobshell_as_file() {
-	if bobshell_starts_with "$1" "file:" bobshell_as_file_ref; then
-		copy_resource var:bobshell_as_file_ref "$2"
+# fun: bobshell_locator_as_file LOCATOR
+bobshell_locator_as_file() {
+	if bobshell_starts_with "$1" "file:" bobshell_locator_as_file_ref; then
+		copy_resource var:bobshell_locator_as_file_ref "$2"
 	else
 		# shellcheck disable=SC2034
-		bobshell_as_file_result="$(mktemp)"
-		copy_resource "$1" "file:$bobshell_as_file_result"
-		copy_resource var:bobshell_as_file_result "$2"
-		unset bobshell_as_file_result
+		bobshell_locator_as_file_result="$(mktemp)"
+		copy_resource "$1" "file:$bobshell_locator_as_file_result"
+		copy_resource var:bobshell_locator_as_file_result "$2"
+		unset bobshell_locator_as_file_result
 	fi
-	unset bobshell_as_file_ref
+	unset bobshell_locator_as_file_ref
 }
 
-# fun: bobshell_is_file LOCATOR
-bobshell_is_file() {
-	bobshell_starts_with "$1" file: "$2"
+# fun: bobshell_is_file LOCATOR [FILEPATHVAR]
+bobshell_locator_is_file() {
+	bobshell_starts_with "$1" file: "${2:-}"
+}
+
+bobshell_locator_is_stdin() {
+	bobshell_starts_with "$1" stdin: "${2:-}"
+}
+
+bobshell_locator_is_stdout() {
+	bobshell_starts_with "$1" stdout: "${2:-}"
 }
 
 

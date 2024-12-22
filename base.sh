@@ -1,5 +1,6 @@
 
 shelduck import string.sh
+shelduck import require.sh
 
 bobshell_die() {
   # https://github.com/biox/pa/blob/main/pa
@@ -8,7 +9,7 @@ bobshell_die() {
 }
 
 
-# use isset unreliablevar
+# use isset OPTVARNAME
 bobshell_isset() {
 	eval "test \"\${$1+defined}\" = defined"
 }
@@ -138,3 +139,19 @@ bobshell_not_empty() {
 
 # 	unset bobshell_foreach_items bobshell_foreach_command
 # }
+
+bobshell_printf_stderr() {
+	printf "$@" >&2
+}
+
+bobshell_subshell() {
+	( "$@" )
+}
+
+bobshell_last_arg() {
+	bobshell_require_isset_1 'bobshell_last_arg: at least one positional argument expected'
+	while bobshell_isset_2 "$@"; do
+		shift
+	done
+	printf %s "$1"
+}

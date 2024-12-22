@@ -2,6 +2,7 @@
 
 shelduck import ssh.sh
 shelduck import string.sh
+shelduck import base.sh
 
 bobshell_git() {
 	bobshell_git_ssh_auth git "$@"
@@ -41,3 +42,51 @@ bobshell_git_ssh_auth() {
 	bobshell_maybe_sshpass "$@"
 }
 
+bobshell_git_version() {
+	bobshell_git_version_release=false
+	while bobshell_isset_1 "$@"; do
+		case "$1" in
+			(-r|--release) bobshell_git_version_release=true ;;
+			(*) bobshell_die "bobshell_git_version: unexpected argument: $1"
+		esac
+		shift
+	done
+	
+	if [ true = "$bobshell_git_version_release" ]; then
+		if ! bobshell_git_is_clean; then
+			bobshell_printf_stderr 'bobshell_git_version: working folder has local modifications'
+			return 1
+		fi
+		unset bobshell_git_version
+		if ! bobshell_git_version=$(bobshell_git_version_if_relase 2> /dev/null) || [ -z "$bobshell_git_version" ]; then
+			bobshell_printf_stderr 'bobshell_git_version: no git (annotated) tag, which is required'
+			return 1
+		fi
+		if ! bobshell_remove_prefix "$bobshell_git_version" v bobshell_git_version; then
+			bobshell_printf_stderr 'bobshell_git_version: wrong tag format: %s' "$bobshell_git_version"
+			return 1
+		fi
+		printf %s "$bobshell_git_version"
+		unset bobshell_git_version
+	else
+		bobshell_git_version_if_not_relase
+	fi
+
+}
+
+bobshell_git_version_if_relase() {
+	git describe
+}
+
+bobshell_git_version_if_not_relase() {
+	git describe --abbrev=8 --always --dirty --broken
+}
+
+bobshell_git_is_clean() {
+	bobshell_git_is_clean_output=$(git status --porcelain)
+	test -z "$bobshell_git_is_clean_output"
+}
+
+bobshell_git_change_hash() {
+	git diff HEAD | git hash-object --stdin
+}

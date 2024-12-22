@@ -5,7 +5,7 @@ shelduck import base.sh
 bobshell_require_isset_1() {
 	if ! bobshell_isset_1 "$@"; then
 		bobshell_die '%s: ' "${*:-argument 1 required to be set}"
-	fi	
+	fi
 }
 
 bobshell_require_isset_2() {
