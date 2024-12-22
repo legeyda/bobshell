@@ -88,12 +88,12 @@ bobshell_awk() {
 	fi
 }
 
+bobshell_ini_awk_header='BEGIN { is_target_group=("" == target_group) ? 1 : 0; }'
+
+
 # fun: bobshell_init_keys DATA [GROUP]
 bobshell_ini_list_keys() {
-	bobshell_awk "$1" stdout: -v target_group="${2:-}" 'BEGIN {
-	is_target_group=("" == target_group) ? 1 : 0;
-}
-{
+	bobshell_awk "$1" stdout: -v target_group="${2:-}" "$bobshell_ini_awk_header"'{
 	maybe=gensub(/^[[:space:]]*\[[[:space:]]*([^[:space:]]*?)[[:space:]]*\][[:space:]]*$/, "\\1", 1)
 	if(maybe != $0) {
 		is_target_group=(maybe == target_group) ? 1 : 0;
@@ -109,10 +109,7 @@ bobshell_ini_list_keys() {
 
 # fun: bobshell_ini_get_value INPUT GROUP KEY
 bobshell_ini_get_value() {
-	bobshell_awk "$1" stdout: -v target_group="${2:-}" -v target_key="${3:-}" 'BEGIN {
-	is_target_group=("" == target_group) ? 1 : 0;
-}
-{
+	bobshell_awk "$1" stdout: -v target_group="${2:-}" -v target_key="${3:-}" "$bobshell_ini_awk_header"'{
 	maybe=gensub(/^[[:space:]]*\[[[:space:]]*([^[:space:]]*?)[[:space:]]*\][[:space:]]*$/, "\\1", 1)
 	if(maybe != $0) {
 		is_target_group=(maybe == target_group) ? 1 : 0;
@@ -134,10 +131,7 @@ END {
 
 # fun: bobshell_ini_put_value INPUT OUTPUT GROUP KEY VALUE
 bobshell_ini_put_value() {
-	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" -v target_value="${5:-}" 'BEGIN {
-	is_target_group=("" == target_group) ? 1 : 0;
-}
-{
+	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" -v target_value="${5:-}" "$bobshell_ini_awk_header"'{
 	maybe=gensub(/^[[:space:]]*\[[[:space:]]*([^[:space:]]*?)[[:space:]]*\][[:space:]]*$/, "\\1", 1)
 	if(maybe != $0) {
 		is_target_group=(maybe == target_group) ? 1 : 0;
