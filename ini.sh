@@ -88,23 +88,59 @@ bobshell_awk() {
 	fi
 }
 
-bobshell_ini_awk_header='BEGIN { is_target_group=("" == target_group) ? 1 : 0; }
+# shellcheck disable=SC2016
+bobshell_ini_awk_common='
+BEGIN {
+	current_group = "";
+	false = 0;
+}
+
+function get_group() {
+	return current_group;
+}
+
+function is_target_group() {
+	return get_group() == target_group;
+}
+
+function is_comment() {
+	return ($0 ~ /^[[:space:]]*[#;].*$/);
+}
+function get_key() {
+	if(is_comment()) {
+		return false;
+	}
+	maybe=gensub(/^[[:space:]]*(.*[^[:space:]])[[:space:]]*=.*$/, "\\1", 1)
+	return (maybe != $0) ? maybe : ""
+}
+
+function is_target_key() {
+	if(is_comment()) {
+		return false;
+	}
+	return get_key() == target_key;
+}
+
+
 {
-	maybe=gensub(/^[[:space:]]*\[[[:space:]]*([^[:space:]]*?)[[:space:]]*\][[:space:]]*$/, "\\1", 1)
-	if(maybe != $0) {
-		is_target_group=(maybe == target_group) ? 1 : 0;
+	if(!is_comment()) {
+		maybe=gensub(/^[[:space:]]*\[[[:space:]]*([^[:space:]]*?)[[:space:]]*\][[:space:]]*$/, "\\1", 1)
+		if(maybe != $0) {
+			current_group = maybe;
+			current_key = "";
+		} else {
+			maybe = gensub(/^[[:space:]]*([^[:space:]]*?)[[:space:]]*=.*$/, "\\1", 1)
+			current_key = (maybe != $0) ? maybe : "";
+		}
 	}
 }
 '
 
 # fun: bobshell_init_keys DATA [GROUP]
 bobshell_ini_list_keys() {
-	bobshell_awk "$1" stdout: -v target_group="${2:-}" "$bobshell_ini_awk_header"'{
-	if(is_target_group) {
-		maybe=gensub(/^[[:space:]]*([^[:space:]]*?)[[:space:]]*=.*$/, "\\1", 1)
-		if (maybe != $0) {
-			print maybe
-		}
+	bobshell_awk "$1" stdout: -v target_group="${2:-}" "$bobshell_ini_awk_common"'{
+	if(is_target_group() && get_key()) {
+		print maybe
 	}
 }
 '
@@ -112,14 +148,12 @@ bobshell_ini_list_keys() {
 
 # fun: bobshell_ini_get_value INPUT GROUP KEY
 bobshell_ini_get_value() {
-	bobshell_awk "$1" stdout: -v target_group="${2:-}" -v target_key="${3:-}" "$bobshell_ini_awk_header"'{
-	if(is_target_group) {
-		maybe=gensub(/^[[:space:]]*([^[:space:]]*?)[[:space:]]*=.*$/, "\\1", 1)
-		if (maybe != $0 && maybe == target_key) {
-			maybe=gensub(/^.*?=[[:space:]]*(.*[^[:space:]])[[:space:]]*$/, "\\1", 1)
-			if (maybe != $0) {
-				result = maybe
-			}
+	bobshell_awk "$1" stdout: -v target_group="${2:-}" -v target_key="${3:-}" "$bobshell_ini_awk_common"'
+{
+	if(is_target_group() && is_target_key()) {
+		maybe=gensub(/^.*?=[[:space:]]*(.*[^[:space:]])[[:space:]]*$/, "\\1", 1)
+		if (maybe != $0) {
+			result = maybe
 		}
 	}
 }
@@ -131,15 +165,32 @@ END {
 
 # fun: bobshell_ini_put_value INPUT OUTPUT GROUP KEY VALUE
 bobshell_ini_put_value() {
-	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" -v target_value="${5:-}" "$bobshell_ini_awk_header"'{
-	if(is_target_group) {
-		maybe=gensub(/^[[:space:]]*([^[:space:]]*?)[[:space:]]*=.*$/, "\\1", 1)
-		if (maybe != $0 && maybe == target_key) {
+
+	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" -v target_value="${5:-}" "$bobshell_ini_awk_common"'
+{
+	if(is_target_group()) {
+		group_was_found=1
+		if(is_target_key()) {
 			printf("%s=%s\n", target_key, target_value)
-			next
+			value_was_updated=1
+		} else {
+			print
+		}
+	} else if(group_was_found && !value_was_updated) {
+		printf("%s=%s\n", target_key, target_value)
+		print
+	} else {
+		print
+	}
+}
+END {
+	if(!value_was_updated) {
+		if(is_target_group()) {
+			printf("%s=%s\n", target_key, target_value)
+		} else {
+			printf("[%s]\n%s=%s\n", target_group, target_key, target_value)
 		}
 	}
-	print
 }
 '
 }
