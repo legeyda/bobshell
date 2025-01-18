@@ -20,6 +20,12 @@ bobshell_require_isset_3() {
 	fi	
 }
 
+bobshell_require_isset() {
+	if ! bobshell_isset "$1"; then
+		bobshell_die '%s: ' "${*:-variable $1 required to be set}"
+	fi
+}
+
 bobshell_require_file_exists() {
 	if [ ! -e "$1" ]; then
 		printf '%s: no such file\n' "$1"

@@ -31,7 +31,7 @@ bobshell_resolve_url() {
 	if bobshell_starts_with "$1" /; then
 		bobshell_resolve_url_path=$(realpath "$1")
 		printf 'file://%s' "$bobshell_resolve_url_path"
-	elif   bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
+	elif bobshell_remove_prefix "$1" file:// bobshell_resolve_url_path; then
 		bobshell_resolve_url_path=$(realpath "$bobshell_resolve_url_path")
 		printf 'file://%s' "$bobshell_resolve_url_path"
 	elif bobshell_starts_with "$1" http:// \
@@ -41,21 +41,29 @@ bobshell_resolve_url() {
 			; then
 		printf %s "$1"
 	else
-		bobshell_resolve_url_base="${2:-}"
-		if [ -z "$bobshell_resolve_url_base" ]; then
+		if bobshell_isset_2 "$@"; then
+			bobshell_resolve_url_base="$2"	
+			while bobshell_remove_suffix "$bobshell_resolve_url_base" / bobshell_resolve_url_base; do
+				true
+			done
+		else
 			bobshell_resolve_url_base=$(pwd)
 		fi
-		printf %s "$bobshell_resolve_url_base"
-		if ! bobshell_ends_with "$bobshell_resolve_url_base" /; then
-			printf '/'
-		fi
-		# todo handle ..
+
 		bobshell_resolve_url_value="$1"
 		while bobshell_remove_prefix "$bobshell_resolve_url_value" './' bobshell_resolve_url_value; do
 			true
 		done
-		printf %s "$bobshell_resolve_url_value"
-		unset bobshell_resolve_url_value
+
+
+		while bobshell_remove_prefix "$bobshell_resolve_url_value" '../' bobshell_resolve_url_value; do
+			if ! bobshell_split_last "$bobshell_resolve_url_base" / bobshell_resolve_url_base; then
+				bobshell_die "bobshell_resolve_url: base=$bobshell_resolve_url_base, url=$bobshell_resolve_url_value"
+			fi
+		done
+
+		printf '%s/%s' "$bobshell_resolve_url_base" "$bobshell_resolve_url_value"
+		unset bobshell_resolve_url_base bobshell_resolve_url_value
 	fi
 }
 
