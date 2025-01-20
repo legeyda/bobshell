@@ -83,9 +83,7 @@ bobshell_list_functions() {
 }
 
 bobshell_log() {
-	# printf format should be in "$@"
-	# shellcheck disable=SC2059
-	bobshell_log_message=$(printf "$@")
+	bobshell_log_message="$*"
 	printf '%s: %s\n' "$0" "$bobshell_log_message" >&2
 	unset bobshell_log_message
 }
@@ -140,8 +138,17 @@ bobshell_not_empty() {
 # 	unset bobshell_foreach_items bobshell_foreach_command
 # }
 
+bobshell_error() {
+	bobshell_errcho "$@"
+	return 1
+}
+
+bobshell_errcho() {
+	printf '%s\n' "$*" >&2
+}
+
 bobshell_printf_stderr() {
-	printf "$@" >&2
+	printf '%s\n' "$*" >&2
 }
 
 bobshell_subshell() {
