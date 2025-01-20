@@ -150,11 +150,6 @@ bobshell_locator_as_file() {
 	unset bobshell_locator_as_file_ref
 }
 
-# fun: bobshell_is_file LOCATOR [FILEPATHVAR]
-bobshell_locator_is_file() {
-	bobshell_starts_with "$1" file: "${2:-}"
-}
-
 bobshell_locator_is_stdin() {
 	bobshell_starts_with "$1" stdin: "${2:-}"
 }
@@ -163,6 +158,18 @@ bobshell_locator_is_stdout() {
 	bobshell_starts_with "$1" stdout: "${2:-}"
 }
 
+
+# fun: bobshell_is_file LOCATOR [FILEPATHVAR]
+bobshell_locator_is_file() {
+	bobshell_starts_with "$1" file: "${2:-}"
+}
+
+bobshell_locator_is_remote() {
+	bobshell_starts_with "$1" http:// \
+	  || bobshell_starts_with "$1" https:// \
+	  || bobshell_starts_with "$1" ftp:// \
+	  || bobshell_starts_with "$1" ftps://
+}
 
 bobshell_move() {
 	bobshell_parse_locator "$1" bobshell_move_source_type      bobshell_move_source_ref
