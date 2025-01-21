@@ -8,7 +8,7 @@ shelduck import url.sh
 
 bobshell_parse_locator() {
 	if ! bobshell_split_first "$1" : bobshell_parse_locator_type bobshell_parse_locator_ref; then
-		bobshell_die "unrecognized locator: $1"
+		return 1
 	fi
 
 	case "$bobshell_parse_locator_type" in
@@ -19,13 +19,13 @@ bobshell_parse_locator() {
 			bobshell_parse_locator_ref="$1"
 			;;
 		(*)
-			bobshell_die "unsupported locator type: $bobshell_parse_locator_type (in locator: $1)"
+			return 1
 	esac
 	
-	if [ -n "$2" ]; then
+	if [ -n "${2:-}" ]; then
 		bobshell_copy_val_to_var "$bobshell_parse_locator_type" "$2"
 	fi
-	if [ -n "$3" ]; then
+	if [ -n "${3:-}" ]; then
 		bobshell_copy_val_to_var "$bobshell_parse_locator_ref" "$3"
 	fi
 }
@@ -151,24 +151,24 @@ bobshell_locator_as_file() {
 }
 
 bobshell_locator_is_stdin() {
-	bobshell_starts_with "$1" stdin: "${2:-}"
+	bobshell_remove_prefix "$1" stdin: "${2:-}"
 }
 
 bobshell_locator_is_stdout() {
-	bobshell_starts_with "$1" stdout: "${2:-}"
+	bobshell_remove_prefix "$1" stdout: "${2:-}"
 }
 
 
 # fun: bobshell_is_file LOCATOR [FILEPATHVAR]
 bobshell_locator_is_file() {
-	bobshell_starts_with "$1" file: "${2:-}"
+	bobshell_remove_prefix "$1" file: "${2:-}"
 }
 
 bobshell_locator_is_remote() {
-	bobshell_starts_with "$1" http:// \
-	  || bobshell_starts_with "$1" https:// \
-	  || bobshell_starts_with "$1" ftp:// \
-	  || bobshell_starts_with "$1" ftps://
+	bobshell_remove_prefix "$1" http:// "${2:-}" \
+	  || bobshell_remove_prefix "$1" https:// "${2:-}" \
+	  || bobshell_remove_prefix "$1" ftp:// "${2:-}"\
+	  || bobshell_remove_prefix "$1" ftps:// "${2:-}"
 }
 
 bobshell_move() {

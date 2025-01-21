@@ -43,7 +43,7 @@ bobshell_file_date_awk='{
 
 
 # fun: bobshell_file_date FILE
-# txt: print file modification date in format +%Y-%m-%d_%H-%M
+# txt: print file modification date in format +%Y-%m-%d_%H-%M-%S
 bobshell_file_date() {
 	bobshell_file_date_ls=$(LC_ALL=C ls -dl "$1")
 	printf %s "$bobshell_file_date_ls" | awk -v debug=1 -v current_month="$(date +%m)" -v current_year="$(date +%Y)" "$bobshell_file_date_awk"
