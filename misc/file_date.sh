@@ -38,7 +38,7 @@ bobshell_file_date_awk='{
 	} else {
 		exit 1
 	}
-	printf("%04d-%02d-%02d_%02d-%02d", year, month, day, hour, minute)
+	printf("%04d-%02d-%02d_%02d-%02d-00", year, month, day, hour, minute)
 }'
 
 
