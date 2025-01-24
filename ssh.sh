@@ -42,6 +42,12 @@ bobshell_ssh_auth() {
 		set -- "$bobshell_sshauth_executable" -o "UserKnownHostsFile='$BOBSHELL_SSH_KNOWN_HOSTS_FILE'" "$@"
 		unset bobshell_sshauth_executable
 	fi
+	if [ -n "${BOBSHELL_SSH_USER:-}" ]; then
+		bobshell_sshauth_executable="$1"
+		shift
+		set -- "$bobshell_sshauth_executable" -o "User='$BOBSHELL_SSH_USER'" "$@"
+		unset bobshell_sshauth_executable
+	fi
 
 	if [ -n "${BOBSHELL_SSH_IDENTITY:-}" ]; then
 		if [ "${BOBSHELL_SSH_USE_AGENT:-true}" == 'true' ]; then

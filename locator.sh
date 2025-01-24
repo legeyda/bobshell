@@ -161,7 +161,13 @@ bobshell_locator_is_stdout() {
 
 # fun: bobshell_is_file LOCATOR [FILEPATHVAR]
 bobshell_locator_is_file() {
-	bobshell_remove_prefix "$1" file: "${2:-}"
+	if bobshell_starts_with "$1" /; then
+		if [ -n "${2:-}" ]; then
+			bobshell_putvar "$2" "$1"
+		fi
+	else
+		bobshell_remove_prefix "$1" file: "${2:-}"
+	fi
 }
 
 bobshell_locator_is_remote() {

@@ -39,11 +39,18 @@ bobshell_putvar() {
 
 
 
-# fun bobshell_getvar VARNAME
+# fun bobshell_getvar VARNAME [DEFAULTVALUE]
 # use: echo "$(getvar MSG)"
 # txt: считывание значения переменной по динамическому имени
 bobshell_getvar() {
-  eval "printf %s \"\$$1\""
+	if bobshell_isset "$1"; then
+  		eval "printf %s \"\$$1\""
+	elif bobshell_isset_2 "$@"; then
+		printf %s "$2"
+	else
+		bobshell_errcho "bobshell_getvar: $1: parameter not set"
+		return 1
+	fi
 }
 
 

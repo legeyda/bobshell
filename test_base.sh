@@ -1,6 +1,6 @@
 
 
-shelduck import string.sh
+shelduck import base.sh
 shelduck import assert.sh
 
 test_isset_1() {

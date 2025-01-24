@@ -7,10 +7,17 @@ shelduck import base.sh
 
 # use: bobshell_starts_with hello he && echo "$rest" # prints llo
 bobshell_starts_with() {
-	bobshell_isset_3 "$@" && bobshell_die "bobshell_starts_with takes 2 arguments, 3 given, did you mean bobshell_remove_prefix?" || true
-	case "$1" in
-		("$2"*) return 0
-	esac
+	bobshell_starts_with_str="$1"
+	shift
+	while bobshell_isset_1 "$@"; do
+		case "$bobshell_starts_with_str" in
+			("$1"*) 
+				unset bobshell_starts_with_str			
+				return 0
+		esac
+		shift
+	done
+	unset bobshell_starts_with_str
 	return 1
 }
 
