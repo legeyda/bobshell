@@ -13,10 +13,11 @@ elif bobshell_isset RANDOM; then
 else
 	# txt: analogouys to glibc LCG (https://en.wikipedia.org/wiki/Linear_congruential_generator)()
 	bobshell_random() {
-		if ! bobshell_isset bobshell_random_seed; then
-			bobshell_random_seed=$(date +%s)
+		if ! bobshell_isset_1 "$@"; then
+			set -- "$(date +%s)"
 		fi
-		bobshell_random_seed=$(( (bobshell_random_seed*1103515245 + 12345) % 2147483648 ))
-		printf %s "$bobshell_random_seed"
+		: "${bobshell_random:=0}"
+		bobshell_random=$(( ( bobshell_random * 1103515245 + 12345 + $1) % 2147483648 ))
+		printf %s "$bobshell_random"
 	}
 fi
