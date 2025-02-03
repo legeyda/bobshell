@@ -4,10 +4,13 @@ shelduck import misc/random.sh
 
 # fun: bobshell_map_put MAPNAME KEY VALUE
 bobshell_map_put() {
+	if bobshell_map_put_old=$(bobshell_map_get "$1" "$2") && [ "$bobshell_map_put_old" = "$3" ]; then
+		return
+	fi
 	
 	if bobshell_contains "$2" "'"; then
 		bobshell_map_put_random=$(bobshell_random)
-		bobshell_map_put_script="bobshell_map_get_candidate=\$(cat<<EOF$bobshell_map_put_random
+		bobshell_map_put_script="bobshell_map_get_candidate=\$(cat<<'EOF$bobshell_map_put_random'
 $2
 EOF$bobshell_map_put_random
 fi
@@ -19,7 +22,7 @@ fi
 	bobshell_map_put_random=$(bobshell_random)
 	bobshell_map_put_script="$bobshell_map_put_script
 if [ \"\$2\" = \"\$bobshell_map_get_candidate\" ]; then
-	cat<<EOF$bobshell_map_put_random
+	cat<<'EOF$bobshell_map_put_random'
 $3
 EOF$bobshell_map_put_random
 	return
@@ -49,4 +52,8 @@ bobshell_map_get() {
 		return
 	fi
 	return 1
+}
+
+bobshell_map_dump() {
+	true
 }

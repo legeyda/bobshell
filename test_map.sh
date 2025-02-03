@@ -15,3 +15,15 @@ test_map() {
 
 
 }
+
+test_weird_key_value() {
+	key=$(cat<<'EOF'
+hello\n;'"""$s	
+	
+EOF
+)
+
+	bobshell_map_put mymap 2 two
+
+
+}
