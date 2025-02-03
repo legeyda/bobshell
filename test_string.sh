@@ -129,6 +129,13 @@ test_quote() {
 	assert_equals "'hello '\"'\"'there'\"'\"''" "$(bobshell_quote "hello 'there'")"
 }
 
+test_join() {
+	assert_equals '' "$(bobshell_join ', ')"
+	assert_equals one "$(bobshell_join ', ' one)"
+	assert_equals 'one, two' "$(bobshell_join ', ' one two)"
+	assert_equals 'one, two, three' "$(bobshell_join ', ' one two three)"
+}
+
 
 test_strip_left() {
 	result=$(bobshell_strip_left '   blabla  ')

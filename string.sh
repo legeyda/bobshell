@@ -197,6 +197,7 @@ bobshell_join() {
 		printf %s "$bobshell_join_item"
 		break
 	done
+	shift
 	for bobshell_join_item in "$@"; do
 		printf %s "$bobshell_join_separator"
 		printf %s "$bobshell_join_item"
