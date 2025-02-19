@@ -44,29 +44,30 @@ function civil_to_days(year, month, day) {
 
 
 function offset_to_minutes(offset) {
-	offset_minutes=int(offset)
-	result = int(offset_minutes/100)*60 + (offset_minutes%100)
+	offset_minutes=int(offset);
+	result = int(offset_minutes/100)*60 + (offset_minutes%100);
 	
-	return result
+	return result;
 }
 
 {
 
 	# month
-	switch($6) {
-		case "Jan": month= 1; break
-		case "Feb": month= 2; break
-		case "Mar": month= 3; break
-		case "Apr": month= 4; break
-		case "May": month= 5; break
-		case "Jun": month= 6; break
-		case "Jul": month= 7; break
-		case "Aug": month= 8; break
-		case "Sep": month= 9; break
-		case "Oct": month=10; break
-		case "Nov": month=11; break
-		case "Dec": month=12; break
-		default: exit 1
+	if     ("Jan" == $6) { month= 1; }
+	else if("Feb" == $6) { month= 2; }
+	else if("Mar" == $6) { month= 3; }
+	else if("Apr" == $6) { month= 4; }
+	else if("May" == $6) { month= 5; }
+	else if("Jun" == $6) { month= 6; }
+	else if("Jul" == $6) { month= 7; }
+	else if("Aug" == $6) { month= 8; }
+	else if("Sep" == $6) { month= 9; }
+	else if("Oct" == $6) { month=10; }
+	else if("Nov" == $6) { month=11; }
+	else if("Dec" == $6) { month=12; }
+	else {
+		print("error parsing ls output") > "/dev/stderr"
+		exit 1
 	}
 
 	# day
@@ -89,12 +90,14 @@ function offset_to_minutes(offset) {
 		}
 		time_is_known=1
 	} else {
+		print("error parsing ls output") > "/dev/stderr"
 		exit 1
 	}
 
 	# parse format and output
 	format_length = split(format, format_chars, "")
 	if(0 == format_length) {
+		print("error parsing ls output") > "/dev/stderr"
 		exit
 	}
 
