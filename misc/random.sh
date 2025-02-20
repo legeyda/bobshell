@@ -1,7 +1,7 @@
 
 shelduck import ../base.sh
 
-if [ -r /dev/random ]; then
+if [ -r /dev/urandom ]; then
 	bobshell_random() {
 		# shellcheck disable=SC2046 # to get rid of trailing spaces
 		printf %s $(od -An -N4 -tu4 /dev/urandom)
@@ -11,6 +11,8 @@ elif bobshell_isset RANDOM; then
 		printf 1%s%s%s $RANDOM $RANDOM $RANDOM
 	}
 else
+	# todo openssl rand 4 | od -An -N4 -tu4
+
 	# txt: analogouys to glibc LCG (https://en.wikipedia.org/wiki/Linear_congruential_generator)()
 	bobshell_random() {
 		if ! bobshell_isset_1 "$@"; then

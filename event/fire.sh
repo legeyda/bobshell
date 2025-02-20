@@ -1,5 +1,6 @@
 
 shelduck import ../base.sh
+shelduck import ../string.sh
 shelduck import ../misc/defun.sh
 
 bobshell_event_fire() {
