@@ -1,0 +1,4 @@
+
+bobshell_command() {
+	"$@"
+}
