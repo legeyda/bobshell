@@ -48,6 +48,18 @@ bobshell_ssh_auth() {
 		set -- "$bobshell_sshauth_executable" -o "User='$BOBSHELL_SSH_USER'" "$@"
 		unset bobshell_sshauth_executable
 	fi
+	if bobshell_isset BOBSHELL_SSH_CONNECT_TIMEOUT; then
+		_bobshell_ssh_auth__executable="$1"
+		shift
+		set -- "$_bobshell_ssh_auth__executable" -o "ConnectTimeout=$BOBSHELL_SSH_CONNECT_TIMEOUT" "$@"
+		unset _bobshell_ssh_auth__executable
+	fi
+	if bobshell_isset BOBSHELL_SSH_CONNECTION_ATTEMPTS; then
+		_bobshell_ssh_auth__executable="$1"
+		shift
+		set -- "$_bobshell_ssh_auth__executable" -o "ConnectionAttempts=$BOBSHELL_SSH_CONNECTION_ATTEMPTS" "$@"
+		unset _bobshell_ssh_auth__executable
+	fi
 
 	if [ -n "${BOBSHELL_SSH_IDENTITY:-}" ]; then
 		if [ "${BOBSHELL_SSH_USE_AGENT:-true}" == 'true' ]; then
