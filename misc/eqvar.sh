@@ -13,7 +13,7 @@ bobshell_eqvar() {
 			return 1
 		else
 			return 0
-		fi 
+		fi
 	fi
 
 	if eval "test \"\$$1\" = \"\$$2\""; then
