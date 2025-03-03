@@ -1,13 +1,7 @@
 
-
-
-bobshell_defun() {
-	bobshell_defun_name="$1"
+bobshell_code_defun() {
+	printf '%s() {\n' "$1"
 	shift
-	eval "
-$bobshell_defun_name() {
-	$*
-}
-"
-	unset bobshell_defun_name
+	printf '%s\n' "$*"
+	printf '}'
 }
