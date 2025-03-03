@@ -69,7 +69,7 @@ bobshell_copy_val_to_url()       { bobshell_copy_to_url; }
 
 
 bobshell_copy_var_to_val()       { bobshell_copy_to_val; }
-bobshell_copy_var_to_var()       { test "$1" != "$2" && eval "$2=\${$1}"; }
+bobshell_copy_var_to_var()       { test "$1" != "$2" && eval "$2=\"\$$1\""; }
 bobshell_copy_var_to_eval()      { eval "bobshell_copy_var_to_eval \"\$$1\""; }
 bobshell_copy_var_to_stdin()     { bobshell_copy_to_stdin; }
 bobshell_copy_var_to_stdout()    { eval "printf %s \"\$$1\""; }
@@ -156,6 +156,11 @@ bobshell_locator_is_stdin() {
 
 bobshell_locator_is_stdout() {
 	bobshell_remove_prefix "$1" stdout: "${2:-}"
+}
+
+# fun: bobshell_resource_is_appendable LOCATOR
+bobshell_locator_is_appendable() {
+	bobshell_starts_with "$1" var: stdout: file: /
 }
 
 
