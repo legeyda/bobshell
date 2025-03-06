@@ -194,11 +194,28 @@ function_with_error() {
 }
 
 test_assign_error() {
-	unset
+	unset x
 	assert_ok eval 'x=$(printf %s hello; return 0)'
 	assert_equals hello "$x"
 
-	x=
+	unset x
 	assert_error eval 'x=$(printf %s hello; return 1)'
-	assert_unset x
+	assert_isset x # !!!
+}
+
+test_zero_arg() {
+	assert_equals sh "$(sh -c 'echo $0')"
+	assert_equals z "$(sh -c 'echo $0' z)"
+	assert_equals 'z 1 2 3' "$(sh -c 'echo $0 $@' z 1 2 3)"
+
+	mkdir -p target/test_zero_arg
+	cd target/test_zero_arg
+	# shellcheck disable=SC2016
+	echo '#!/usr/bin/env sh
+echo "$0" "$@"
+' > script
+	chmod +x script
+	assert_equals ./script "$(./script)"
+	assert_equals "$(realpath ./script)" "$($(realpath ./script))"
+	assert_equals './script z 1 2 3' "$(./script z 1 2 3)"
 }
