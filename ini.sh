@@ -2,6 +2,8 @@
 
 shelduck import string.sh
 shelduck import resource/copy.sh
+shelduck import locator/is_stdin.sh
+shelduck import locator/is_stdout.sh
 
 # fun: bobshell_ini_groups stdin:
 bobshell_ini_list_groups() {

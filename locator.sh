@@ -15,40 +15,14 @@ bobshell_parse_locator() {
 
 
 
-# fun: bobshell_locator_as_file LOCATOR
-bobshell_locator_as_file() {
-	if bobshell_starts_with "$1" "file:" bobshell_locator_as_file_ref; then
-		copy_resource var:bobshell_locator_as_file_ref "$2"
-	else
-		# shellcheck disable=SC2034
-		bobshell_locator_as_file_result="$(mktemp)"
-		copy_resource "$1" "file:$bobshell_locator_as_file_result"
-		copy_resource var:bobshell_locator_as_file_result "$2"
-		unset bobshell_locator_as_file_result
-	fi
-	unset bobshell_locator_as_file_ref
-}
 
-bobshell_locator_is_stdin() {
-	bobshell_remove_prefix "$1" stdin: "${2:-}"
-}
 
-bobshell_locator_is_stdout() {
-	bobshell_remove_prefix "$1" stdout: "${2:-}"
-}
 
 # fun: bobshell_resource_is_appendable LOCATOR
 bobshell_locator_is_appendable() {
 	bobshell_starts_with "$1" var: stdout: file: /
 }
 
-
-bobshell_locator_is_remote() {
-	bobshell_remove_prefix "$1" http:// "${2:-}" \
-	  || bobshell_remove_prefix "$1" https:// "${2:-}" \
-	  || bobshell_remove_prefix "$1" ftp:// "${2:-}"\
-	  || bobshell_remove_prefix "$1" ftps:// "${2:-}"
-}
 
 bobshell_move() {
 	bobshell_locator_parse "$1" bobshell_move_source_type      bobshell_move_source_ref
