@@ -1,57 +1,6 @@
 #!/usr/bin/env shelduck_run
 set -eu
 
-shelduck import base.sh
-shelduck import string.sh
+shelduck import bobtest.sh
 
-main() {
-	stdout_file=$(mktemp)
-	stderr_file=$(mktemp)
-	file_separator=
-	for x in "$@"; do
-		printf %s "$file_separator"
-		test_file "$x"
-		file_separator="$bobshell_newline"
-	done
-}
-
-# fun: test_file SCRIPT[:FUNCTION]
-test_file() {
-	test_file="$1"
-	unset test_function
-	bobshell_split_first "$test_file" : test_file test_function || true
-
-	test_file_real_path=$(realpath "$test_file")
-	printf 'file %s:\n' "$test_file"
-	if [ -n "${test_function:-}" ]; then
-		test_function "$test_file_real_path" "$test_function"
-	else
-		all_test_functions=$(sed -n --regexp-extended 's/^( *function)? *(test_\w+) *\( *\) *\{ *$/\2/pg' "$test_file_real_path")
-		for test_function in $all_test_functions; do
-			test_function "$test_file_real_path" "$test_function"
-		done
-	fi
-}
-
-# fun: test_function SCRIPT FUNCTION
-test_function() {
-	bobshell_basic_regex_match "$2" '^[A-Za-z_][A-Za-z_0-9]*$' || bobshell_die "wrong function name: $2"
-
-	printf '  function %s... ' "$2"
-	if ! sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -x; $2'" > "$stdout_file" 2> "$stderr_file"; then
-		printf 'failure\n\n'
-		printf '\n\nSTDOUT WAS:\n%s\n'
-		cat "$stdout_file"
-		
-		printf '\n\nSTDERR WAS:\n%s\n'
-		cat "$stderr_file"
-		
-		exit
-	fi
-	printf ' ok\n'
-}
-
-
-
-
-main "$@"
+bobtest "$@"
