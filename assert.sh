@@ -27,9 +27,16 @@ assert_not_equals() {
 }
 
 assert_unset() {
-  if bobshell_isset "$@"; then
+  if bobshell_isset "$1"; then
     assertion_error "variable $1 was not expected to be set"
   fi
+}
+
+assert_isset() {
+	if bobshell_isset "$1"; then
+		return
+	fi
+    assertion_error "variable $1 expected to be set"
 }
 
 assert_empty() {
