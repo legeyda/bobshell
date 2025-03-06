@@ -24,7 +24,7 @@ bobtest_file() {
 	_bobtest_file_real_path=$(realpath "$_bobtest_file")
 	printf 'file %s:\n' "$_bobtest_file"
 	if [ -n "${_bobtest_file__function:-}" ]; then
-		_bobtest_file__function "$_bobtest_file_real_path" "$_bobtest_file__function"
+		bobtest_file_function "$_bobtest_file_real_path" "$_bobtest_file__function"
 	else
 		all__bobtest_file__functions=$(sed -n --regexp-extended 's/^( *function)? *(test_\w+) *\( *\) *\{ *$/\2/pg' "$_bobtest_file_real_path")
 		for _bobtest_file__function in $all__bobtest_file__functions; do
