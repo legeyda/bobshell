@@ -75,8 +75,7 @@ bobshell_ssh_auth() {
 			bobshell_notrace printf '%s\n' "$BOBSHELL_SSH_IDENTITY" > "$BOBSHELL_SSH_IDENTITY_FILE"
 		fi
 	fi
-
-	# shellcheck disable=SC2016
+	
 	if [ -n "${BOBSHELL_SSH_IDENTITY_FILE:-}" ]; then
 		bobshell_sshauth_executable="$1"
 		shift
