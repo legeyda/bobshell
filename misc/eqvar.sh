@@ -1,7 +1,7 @@
 
 shelduck import ../base.sh
 
-# fun: bobshell_equals [VALUE1 [VALUE2]]
+# fun: bobshell_equals [VAR1 [VAR2]]
 # txt: return ok if both arguments are defined and the same
 bobshell_eqvar() {
 	if bobshell_isset "$1"; then
