@@ -1,6 +1,6 @@
 
 shelduck import ../string.sh
-shelduck import ../locator.sh
+shelduck import ../resource/copy.sh
 
 
 bobshell_locator_parse() {
@@ -23,9 +23,9 @@ bobshell_locator_parse() {
 	esac
 	
 	if [ -n "${2:-}" ]; then
-		bobshell_copy_val_to_var "$bobshell_locator_parse_type" "$2"
+		bobshell_resource_copy_val_to_var "$bobshell_locator_parse_type" "$2"
 	fi
 	if [ -n "${3:-}" ]; then
-		bobshell_copy_val_to_var "$bobshell_locator_parse_ref" "$3"
+		bobshell_resource_copy_val_to_var "$bobshell_locator_parse_ref" "$3"
 	fi
 }

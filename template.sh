@@ -1,14 +1,14 @@
 
 shelduck import base.sh
 shelduck import string.sh
-shelduck import locator.sh
+shelduck import resource/copy.sh
 
 
 # fun: bobshell_interpolate TEMPLATE DESTINATION
 # use: VALUE=hello; echo 'msg is $VALUE' | bobshell_interpolate stdin: stdout: # gives: msg is hello
 bobshell_interpolate() {
 	bobshell_interpolate_data=
-	bobshell_copy "$1" var:bobshell_interpolate_data
+	bobshell_resource_copy "$1" var:bobshell_interpolate_data
 
 	# shellcheck disable=SC2034
 	bobshell_interpolate_result=$(eval "cat <<EOF
@@ -17,7 +17,7 @@ EOF
 ")
 	unset bobshell_interpolate_data
 
-	bobshell_copy var:bobshell_interpolate_result "$2"
+	bobshell_resource_copy var:bobshell_interpolate_result "$2"
 	unset bobshell_interpolate_result
 }
 
@@ -40,7 +40,7 @@ bobshell_mustache() {
 
 	bobshell_isset_1 "$@" || bobshell_die "source required"
 	bobshell_mustache_input=
-	bobshell_copy "$1" var:bobshell_mustache_input
+	bobshell_resource_copy "$1" var:bobshell_mustache_input
 	shift
 	
 	bobshell_isset_1 "$@" || bobshell_die "destination required"
@@ -58,7 +58,7 @@ bobshell_mustache() {
 	done
 	bobshell_mustache_result="$bobshell_mustache_result$bobshell_mustache_input"
 
-	bobshell_copy var:bobshell_mustache_result "$1"
+	bobshell_resource_copy var:bobshell_mustache_result "$1"
 	unset bobshell_mustache_scope bobshell_mustache_input bobshell_mustache_result
 }
 

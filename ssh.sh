@@ -4,7 +4,7 @@
 shelduck import notrace.sh
 shelduck import string.sh
 shelduck import util.sh
-shelduck import locator.sh
+shelduck import resource/copy.sh
 
 
 # use: bobshell_ssh user@host echo hello
@@ -119,14 +119,14 @@ bobshell_ssh_keygen() {
 
 # fun: bobshell_get_private_key FILEPATH LOCATOR
 bobshell_copy_private_key() {
-	bobshell_copy "file:$1" "$2"
+	bobshell_resource_copy "file:$1" "$2"
 }
 
 
 
 # fun: bobshell_get_public_key FILEPATH LOCATOR
 bobshell_copy_public_key() {
-	bobshell_copy "file:$1.pub" "$2"
+	bobshell_resource_copy "file:$1.pub" "$2"
 }
 
 

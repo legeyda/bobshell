@@ -1,7 +1,7 @@
 
 
 shelduck import base.sh
-shelduck import locator.sh
+shelduck import resource/copy.sh
 
 
 bobshell_scope_names() {
@@ -44,7 +44,7 @@ bobshell_scope_env() {
 		bobshell_scope_env_value=$(bobshell_quote "$bobshell_scope_env_value")
 		bobshell_scope_env_result="$bobshell_scope_env_result$bobshell_scope_env_value$bobshell_newline"
 	done
-	bobshell_copy var:bobshell_scope_env_result "$2"
+	bobshell_resource_copy var:bobshell_scope_env_result "$2"
 	unset bobshell_scope_env_result bobshell_scope_env_name bobshell_scope_env_value
 }
 

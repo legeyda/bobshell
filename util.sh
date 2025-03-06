@@ -3,6 +3,7 @@
 shelduck import base.sh
 shelduck import string.sh
 shelduck import git.sh
+shelduck import resource/copy.sh
 
 
 bobshell_current_seconds() {
@@ -81,7 +82,7 @@ bobshell_is_not_root() {
 
 bobshell_eval() {
 	bobshell_eval_script=
-	bobshell_copy "$1" var:bobshell_eval_script
+	bobshell_resource_copy "$1" var:bobshell_eval_script
 	eval "$bobshell_eval_script"
 }
 

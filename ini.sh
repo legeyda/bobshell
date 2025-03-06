@@ -1,11 +1,11 @@
 
 
 shelduck import string.sh
-shelduck import locator.sh
+shelduck import resource/copy.sh
 
 # fun: bobshell_ini_groups stdin:
 bobshell_ini_list_groups() {
-	bobshell_copy "$1" stdout: | sed -n 's/^[[:space:]]*\[[[:space:]]*\([^\[ ]\+\)[[:space:]]*\][[:space:]]*$/\1/pg'
+	bobshell_resource_copy "$1" stdout: | sed -n 's/^[[:space:]]*\[[[:space:]]*\([^\[ ]\+\)[[:space:]]*\][[:space:]]*$/\1/pg'
 }
 
 
@@ -25,7 +25,7 @@ bobshell_redirect() {
 	elif bobshell_locator_is_stdout "$bobshell_redirect_output"; then
 		bobshell_redirect_input "$bobshell_redirect_input" "$@"
 	else
-		bobshell_copy "$bobshell_redirect_input" var:bobshell_redirect_input
+		bobshell_resource_copy "$bobshell_redirect_input" var:bobshell_redirect_input
 		bobshell_redirect_output "$bobshell_redirect_output" printf %s "$bobshell_redirect_input"
 		unset bobshell_redirect_input
 	fi
@@ -44,7 +44,7 @@ bobshell_redirect_input() {
 		"$@" < "$bobshell_redirect_input_file"
 		unset bobshell_redirect_input_file
 	else
-		bobshell_copy "$bobshell_redirect_input" var:bobshell_redirect_input
+		bobshell_resource_copy "$bobshell_redirect_input" var:bobshell_redirect_input
 		printf %s "$bobshell_redirect_input" | "$@"
 	fi
 	unset bobshell_redirect_input
@@ -62,7 +62,7 @@ bobshell_redirect_output() {
 		unset bobshell_redirect_output_file
 	else
 		bobshell_redirect_output_data=$("$@")
-		bobshell_copy var:bobshell_redirect_output_data "$bobshell_redirect_output"
+		bobshell_resource_copy var:bobshell_redirect_output_data "$bobshell_redirect_output"
 		unset bobshell_redirect_output_data
 	fi
 	unset bobshell_redirect_output

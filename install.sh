@@ -1,7 +1,7 @@
 
 shelduck import string.sh
 shelduck import util.sh
-shelduck import locator.sh
+shelduck import resource/copy.sh
 
 
 # env: BOBSHELL_INSTALL_NAME
@@ -77,7 +77,7 @@ bobshell_install_init() {
 bobshell_install_service() {
 	bobshell_install_service_dir="$BOBSHELL_INSTALL_DESTDIR$BOBSHELL_INSTALL_SYSTEMDDIR"
 	mkdir -p "$bobshell_install_service_dir"
-	bobshell_copy "$1" "file:$bobshell_install_service_dir/$2"
+	bobshell_resource_copy "$1" "file:$bobshell_install_service_dir/$2"
 
 	
 	if [ 0 = "$(id -u)" ]; then
@@ -99,7 +99,7 @@ bobshell_install_service() {
 # fun: bobshell_install_put SRC DIR DESTNAME MODE
 bobshell_install_put() {
 	mkdir -p "$BOBSHELL_INSTALL_DESTDIR$2"
-	bobshell_copy "$1" "file:$BOBSHELL_INSTALL_DESTDIR$2/$3"
+	bobshell_resource_copy "$1" "file:$BOBSHELL_INSTALL_DESTDIR$2/$3"
 	chmod "$4" "$BOBSHELL_INSTALL_DESTDIR$2/$3"
 }
 
@@ -189,7 +189,7 @@ bobshell_install_get() {
 	bobshell_install_get_dest="$3"
 	set -- "$1" "$2"
 	if bobshell_install_get_found=$("$@"); then
-		bobshell_copy "file:$bobshell_install_get_found" "$bobshell_install_get_dest"
+		bobshell_resource_copy "file:$bobshell_install_get_found" "$bobshell_install_get_dest"
 		return
 	else
 		return 1
