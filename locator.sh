@@ -5,30 +5,11 @@ shelduck import base.sh
 shelduck import string.sh
 shelduck import url.sh
 shelduck import ./locator/is_file.sh
+shelduck import ./locator/parse.sh
 
-
+# deprecated see ./locator/parse.sh
 bobshell_parse_locator() {
-	if ! bobshell_split_first "$1" : bobshell_parse_locator_type bobshell_parse_locator_ref; then
-		return 1
-	fi
-
-	case "$bobshell_parse_locator_type" in
-		(val | var | eval | stdin | stdout | file | url)
-			true ;;
-		(http | https | ftp | ftps) 
-			bobshell_parse_locator_type=url
-			bobshell_parse_locator_ref="$1"
-			;;
-		(*)
-			return 1
-	esac
-	
-	if [ -n "${2:-}" ]; then
-		bobshell_copy_val_to_var "$bobshell_parse_locator_type" "$2"
-	fi
-	if [ -n "${3:-}" ]; then
-		bobshell_copy_val_to_var "$bobshell_parse_locator_ref" "$3"
-	fi
+	bobshell_locator_parse "$1" "$2" "${3:-bobshell_parse_locator_type}" "${3:-bobshell_parse_locator_ref}"
 }
 
 
