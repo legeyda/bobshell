@@ -1,24 +1,16 @@
 
 
 shelduck import ./is_file.sh
+shelduck import ./parse.sh
 
 # fun: bobshell_locator_resolve LOCATOR [BASELOCATOR]
 bobshell_locator_resolve() {
-	# todo by default BASEURL is $(realpath "$(pwd)")
-	if bobshell_starts_with "$1" /; then
-		_bobshell_locator_resolve__path=$(realpath "$1")
-		printf 'file://%s' "$_bobshell_locator_resolve__path"
-		unset _bobshell_locator_resolve__path
-	elif bobshell_remove_prefix "$1" file:// _bobshell_locator_resolve__path; then
-		_bobshell_locator_resolve__path=$(realpath "$_bobshell_locator_resolve__path")
-		printf 'file://%s' "$_bobshell_locator_resolve__path"
-		unset _bobshell_locator_resolve__path
-	elif bobshell_starts_with "$1" http:// \
-	  || bobshell_starts_with "$1" https:// \
-	  || bobshell_starts_with "$1" ftp:// \
-	  || bobshell_starts_with "$1" ftps:// \
-			; then
-		printf %s "$1"
+	if  bobshell_locator_parse "$1" _bobshell_locator_resolve__type _bobshell_locator_resolve__ref; then
+		if [ file = "$_bobshell_locator_resolve__type" ]; then
+			_bobshell_locator_resolve__ref=$(realpath "$_bobshell_locator_resolve__ref")
+		fi
+		printf 'file://%s' "$_bobshell_locator_resolve__ref"
+		unset _bobshell_locator_resolve__type _bobshell_locator_resolve__ref
 	else
 		if bobshell_isset_2 "$@"; then
 			_bobshell_locator_resolve__base="$2"	
