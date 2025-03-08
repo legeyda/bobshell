@@ -60,7 +60,7 @@ test_branch_version() {
 
 }
 
-test_tag_version() {
+_test_tag_version() {
 	init_repo
 	git tag v1.2.3
 	

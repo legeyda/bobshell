@@ -8,15 +8,20 @@ bobtest() {
 	stdout_file=$(mktemp)
 	stderr_file=$(mktemp)
 	file_separator=
-	for x in "$@"; do
-		printf %s "$file_separator"
-		bobtest_file "$x"
-		file_separator="$bobshell_newline"
-	done
+	if bobshell_isset_1 "$@"; then
+		for x in "$@"; do
+			bobtest_file "$x"
+		done
+	else
+		_bobtest__code=$(find . -path '*/.*' -prune -o -name 'test_*.sh' -printf "bobtest_file '%P'\n")
+		eval "$_bobtest__code"
+		unset _bobtest__code 
+	fi
 }
 
 # fun: bobtest_test_file SCRIPT[:FUNCTION]
 bobtest_file() {
+	printf %s "$file_separator"
 	_bobtest_file="$1"
 	unset _bobtest_file__function
 	bobshell_split_first "$_bobtest_file" : _bobtest_file _bobtest_file__function || true
@@ -31,6 +36,7 @@ bobtest_file() {
 			bobtest_file_function "$_bobtest_file_real_path" "$_bobtest_file__function"
 		done
 	fi
+	file_separator="$bobshell_newline"
 }
 
 # fun: bobtest_file_function SCRIPT FUNCTION
