@@ -38,7 +38,8 @@ bobtest_file_function() {
 	bobshell_basic_regex_match "$2" '^[A-Za-z_][A-Za-z_0-9]*$' || bobshell_die "wrong function name: $2"
 
 	printf '  function %s... ' "$2"
-	if ! sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -x; $2'" > "$stdout_file" 2> "$stderr_file"; then
+	if ! BOBTEST_FILE="$1" BOBTEST_FUNCTION="$2" \
+			sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -x; $2'" > "$stdout_file" 2> "$stderr_file"; then
 		printf 'failure\n\n'
 		printf '\n\nSTDOUT WAS:\n%s\n'
 		cat "$stdout_file"
