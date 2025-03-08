@@ -6,6 +6,7 @@ shelduck import string.sh
 shelduck import url.sh
 shelduck import ./locator/is_file.sh
 shelduck import ./locator/parse.sh
+shelduck import ./locator/is_appendable.sh
 
 # deprecated see ./locator/parse.sh
 bobshell_parse_locator() {
@@ -18,10 +19,7 @@ bobshell_parse_locator() {
 
 
 
-# fun: bobshell_resource_is_appendable LOCATOR
-bobshell_locator_is_appendable() {
-	bobshell_starts_with "$1" var: stdout: file: /
-}
+
 
 
 bobshell_move() {
