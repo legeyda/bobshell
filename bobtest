@@ -1,5 +1,5 @@
 #!/usr/bin/env shelduck_run
-
+set -eu
 shelduck import ./bobtest.sh
 
 bobtest "$@"
