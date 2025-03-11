@@ -1,6 +1,6 @@
 
-import ./resource/copy.sh
-import ./locator/is_file.sh
+shelduck import ./resource/copy.sh
+shelduck import ./locator/is_file.sh
 
 bobshell_eval() {
 	bobshell_locator parse "$1" _bobshell_eval__type _bobshell_eval__ref
