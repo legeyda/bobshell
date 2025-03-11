@@ -177,7 +177,7 @@ bobshell_quote() {
 	bobshell_quote_separator=''
 	for bobshell_quote_arg in "$@"; do
 		printf %s "$bobshell_quote_separator"
-		if bobshell_basic_regex_match "$bobshell_quote_arg" '[A-Za-z0-9_/\-\=]\+'; then
+		if bobshell_basic_regex_match "$bobshell_quote_arg" '[-A-Za-z0-9_/=\.]\+'; then
 			printf %s "$bobshell_quote_arg"
 		else
 			bobshell_quote_arg=$(bobshell_replace "$bobshell_quote_arg" "'" "'"'"'"'"'"'"'")
