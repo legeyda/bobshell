@@ -4,7 +4,7 @@ shelduck import base.sh
 shelduck import string.sh
 shelduck import git.sh
 shelduck import resource/copy.sh
-
+shelduck import ./eval.sh
 
 bobshell_current_seconds() {
 	date +%s
@@ -79,14 +79,6 @@ bobshell_is_root() {
 bobshell_is_not_root() {
 	test 0 != "$(id -u)"
 }
-
-bobshell_eval() {
-	bobshell_eval_script=
-	bobshell_resource_copy "$1" var:bobshell_eval_script
-	eval "$bobshell_eval_script"
-}
-
-
 
 # fun: shelduck_eval_with_args SCRIPT [ARGS...]
 shelduck_eval_with_args() {
