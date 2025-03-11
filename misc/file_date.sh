@@ -2,6 +2,7 @@
 # https://stackoverflow.com/a/32158604
 # https://howardhinnant.github.io/date_algorithms.html
 
+# todo cat /dev/random | od -N 100 | diff -ua /tmp/x - | head -1
 
 # fun: bobshell_file_date [--format DATEFORMAT] FILE
 # txt: print file modification date
