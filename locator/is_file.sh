@@ -8,7 +8,9 @@ bobshell_locator_is_file() {
 		if [ -n "${2:-}" ]; then
 			bobshell_putvar "$2" "$1"
 		fi
+	elif bobshell_remove_prefix "$1" file:// "${2:-}"; then
+		true
 	else
-		bobshell_remove_prefix "$1" file: "${2:-}"
+		bobshell_remove_prefix "$1" file: "${2:-}";
 	fi
 }
