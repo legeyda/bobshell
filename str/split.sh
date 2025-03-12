@@ -2,7 +2,7 @@
 
 shelduck import ../base.sh
 shelduck import ../string.sh
-shelduck import ../result/ok.sh
+shelduck import ../result/true.sh
 shelduck import ../result/check.sh
 
 
@@ -13,17 +13,17 @@ bobshell_str_split() {
 	_bobshell_str_split__separator="$2"
 	shift 2
 	while bobshell_split_first "$_bobshell_str_split__rest" "$_bobshell_str_split__separator" _bobshell_str_split__part _bobshell_str_split__rest; do
-		bobshell_result_ok
+		bobshell_result_true
 		"$@" "$_bobshell_str_split__part"
 		if ! bobshell_result_check; then
 			unset _bobshell_str_split__rest _bobshell_str_split__separator
-			bobshell_result_ok
+			bobshell_result_true
 			return
 		fi
 	done
 	"$@" "$_bobshell_str_split__rest"
 	unset _bobshell_str_split__rest _bobshell_str_split__separator
-	bobshell_result_ok
+	bobshell_result_true
 }
 
 bobshell_reverse() {

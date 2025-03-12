@@ -5,7 +5,7 @@
 shelduck import ../git/tag.sh
 shelduck import ../git/branch.sh
 
-shelduck import ../result/ok.sh
+shelduck import ../result/true.sh
 shelduck import ../result/check.sh
 shelduck import ../result/assert.sh
 shelduck import ../result/value.sh
@@ -23,7 +23,7 @@ bobshell_git_version() {
 	bobshell_remove_prefix "$_bobshel_semver_git__branch" feature/ _bobshel_semver_git__branch || true
 	_bobshel_semver_git__branch=$(bobshell_replace "$_bobshel_semver_git__branch" / .)
 
-	bobshell_result_ok "${_bobshel_semver_git__branch}-SNAPSHOT"
+	bobshell_result_true "${_bobshel_semver_git__branch}-SNAPSHOT"
 
 	unset _bobshel_semver_git__branch
 }

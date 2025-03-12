@@ -1,6 +1,6 @@
 
-
+shelduck import ../base.sh
 
 bobshell_result_get() {
-	printf %s "${bobshell_result_value:-}"
+	printf %s "$bobshell_result"
 }
