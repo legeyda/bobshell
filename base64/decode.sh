@@ -4,7 +4,7 @@
 shelduck import ../base.sh
 shelduck import ../redirect/io.sh
 
-if bobshell_command_available base64s; then
+if bobshell_command_available base64; then
 	bobshell_base64_decode() {
 		bobshell_redirect_io "$1" "$2" base64 -d
 	}
