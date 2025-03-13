@@ -11,6 +11,7 @@ bobshell_inter_editor() {
 		for _bobshell_inter_editor in nano vi emacs; do
 			if bobshell_command_available "$_bobshell_inter_editor"; then
 				"$_bobshell_inter_editor" "$@"
+				return
 			fi
 		done
 		bobshell_die 'no editor configured'
