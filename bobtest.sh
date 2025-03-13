@@ -9,14 +9,27 @@ bobtest() {
 	stderr_file=$(mktemp)
 	file_separator=
 	if bobshell_isset_1 "$@"; then
-		for x in "$@"; do
-			bobtest_file "$x"
+		while bobshell_isset_1 "$@"; do
+			bobtest_file_or_dir "$1"
+			shift
 		done
 	else
-		_bobtest__code=$(find . -path '*/.*' -prune -o -name 'test_*.sh' -printf "bobtest_file '%P'\n")
-		eval "$_bobtest__code"
-		unset _bobtest__code 
+		bobtest_dir '.'
 	fi
+}
+
+bobtest_file_or_dir() {
+	if [ -d "$1" ]; then
+		bobtest_dir "$@"
+	else
+		bobtest_file "$@"
+	fi
+}
+
+bobtest_dir() {
+	_bobtest_dir__find=$(find "$1" -path '*/.*' -prune -o -name 'test_*.sh' -printf "bobtest_file '$1/%P'\n")
+	eval "$_bobtest_dir__find"
+	unset _bobtest_dir__find 
 }
 
 # fun: bobtest_test_file SCRIPT[:FUNCTION]
