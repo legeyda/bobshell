@@ -1,6 +1,6 @@
 
-shelduck import ../resource/copy.sh
 shelduck import ./assert_isset.sh
+shelduck import ./size.sh
 
 # fun: bobshell_array_call ARRAYNAME [COMMAND [ARGS...]]
 bobshell_array_call() {
