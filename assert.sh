@@ -62,7 +62,7 @@ assert_error() {
 assert_die() {
 	_assert_die=$(printf %s "$("$@"; printf %s "b62c4c96289d46d5b0f23692ffc8295e657030357ab74d799a5abb79c54a2ca558485d5449fd467e838526b4023e7026")")
 	case "$_assert_die" in
-		(*b62c4c96289d46d5b0f23692ffc8295e657030357ab74d799a5abb79c54a2ca558485d5449fd467e838526b4023e7026*) bobshell_die "expected to die" ;;
+		(*b62c4c96289d46d5b0f23692ffc8295e657030357ab74d799a5abb79c54a2ca558485d5449fd467e838526b4023e7026*) bobshell_die "expected to die: $*" ;;
 	esac
 }
 
