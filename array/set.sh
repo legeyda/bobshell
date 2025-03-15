@@ -1,9 +1,11 @@
 
 
 shelduck import ../base.sh
+shelduck import ./unset.sh
 
 # fun: bobshell_array_set ARRAYNAME [ITEMS...]
 bobshell_array_set() {
+	bobshell_array_unset "$1" # todo optimize
 	_bobshell_array_set__name="$1"
 	_bobshell_array_set__i=0
 	while bobshell_isset_2 "$@"; do
