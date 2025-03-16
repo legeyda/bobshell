@@ -1,6 +1,7 @@
 
 shelduck import ../append/val_to_var.sh
 shelduck import ../string.sh
+shelduck import ../result/set.sh
 
 bobshell_event_listen() {
 	_bobshell_event_listen__name="$1"
@@ -9,11 +10,18 @@ bobshell_event_listen() {
 		return
 	fi
 	_bobshell_event_listen__code=$(bobshell_getvar "$_bobshell_event_listen__name" '')
-	if [ -n "$_bobshell_event_listen__code" ]; then
-		_bobshell_event_listen__code="$_bobshell_event_listen__code$bobshell_newline$bobshell_newline$*"
-	else
-		_bobshell_event_listen__code="$*"
+	
+	if [ -z "$_bobshell_event_listen__code" ]; then
+		_bobshell_event_listen__code='bobshell_result_set false'
 	fi
+	_bobshell_event_listen__code="$_bobshell_event_listen__code
+
+$*
+if bobshell_result_check; then
+	return
+fi
+"
+
 	bobshell_putvar "$_bobshell_event_listen__name" "$_bobshell_event_listen__code"
 	unset _bobshell_event_listen__code
 	unset -f "$_bobshell_event_listen__name"
