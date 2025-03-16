@@ -3,7 +3,7 @@ shelduck import ../base.sh
 shelduck import ./assert_isset.sh
 shelduck import ./size.sh
 
-# fun: bobshell_array_push STACKNAME VALUE
+# fun: bobshell_array_push ARRAYNAME VALUE
 bobshell_array_add() {
 	bobshell_array_assert_isset "$1"
 	

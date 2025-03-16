@@ -105,6 +105,10 @@ test_contains() {
 }
 
 test_basic_regex_match() {
+	
+	assert_ok bobshell_basic_regex_match 123 '[[:digit:]]\+'
+	assert_error bobshell_basic_regex_match blabla '[[:digit:]]\+'
+
 	assert_error bobshell_basic_regex_match hello 'x.*'
 	assert_ok bobshell_basic_regex_match hello 'h.*'
 	assert_error bobshell_basic_regex_match hello 'los$'

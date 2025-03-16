@@ -11,7 +11,7 @@ bobshell_result_read() {
 		for _bobshell_result_get__i in $(seq "$bobshell_result_size"); do
 			if [ "$1" != - ]; then
 				bobshell_resource_copy_var_to_var "bobshell_result_$_bobshell_result_get__i" "$1"
-			fi			
+			fi
 			shift
 			if ! bobshell_isset_1 "$@"; then
 				break
