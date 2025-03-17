@@ -1,6 +1,7 @@
 
 shelduck import ../resource/copy.sh
 shelduck import ./assert_isset.sh
+shelduck import ./size.sh
 
 # fun: bobshell_array_remove ARRAYNAME ONEBASEDINDEX
 bobshell_array_remove() {

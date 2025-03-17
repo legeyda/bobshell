@@ -1,6 +1,6 @@
 
 shelduck import ../array/remove.sh
-shelduck import ../array/get.sh
+shelduck import ../array/read.sh
 
 
 # fun: bobshell_stack_push STACKNAME [VARNAME]
@@ -10,7 +10,7 @@ bobshell_stack_pop() {
 		return 1
 	fi
 
-	bobshell_array_get "$1" "$_bobshell_stack_pop__size" "$2"
+	bobshell_array_read "$1" "$_bobshell_stack_pop__size" "$2"
 	bobshell_array_remove "$1" "$_bobshell_stack_pop__size"
 	unset _bobshell_stack_pop__size
 

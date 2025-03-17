@@ -1,7 +1,7 @@
 
 shelduck import ../assert.sh
 shelduck import ./set.sh
-shelduck import ./unset.sh
+shelduck import ./size.sh
 
 test_undefined() {
 	assert_die bobshell_array_size myarr

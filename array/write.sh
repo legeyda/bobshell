@@ -1,7 +1,8 @@
 
 
 shelduck import ../base.sh
-shelduck import ./unset.sh
+shelduck import ./assert_isset.sh
+shelduck import ./size.sh
 
 #bobshell_array_update
 
