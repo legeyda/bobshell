@@ -10,10 +10,6 @@ bobshell_event_listen() {
 		return
 	fi
 	_bobshell_event_listen__code=$(bobshell_getvar "$_bobshell_event_listen__name" '')
-	
-	if [ -z "$_bobshell_event_listen__code" ]; then
-		_bobshell_event_listen__code='bobshell_result_set false'
-	fi
 	_bobshell_event_listen__code="$_bobshell_event_listen__code
 
 $*
