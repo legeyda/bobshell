@@ -1,5 +1,3 @@
-#!/usr/bin/env shelduck_run
-set -eu
 
 shelduck import base.sh
 shelduck import string.sh

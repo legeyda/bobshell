@@ -24,11 +24,6 @@ bobshell_event_fire() {
 	fi
 	unset _bobshell_event_fire__code
 
-
-	if "$_bobshell_event_fire__name" "$@"; then
-		unset _bobshell_event_fire__name
-	else
-		unset _bobshell_event_fire__name
-		return 1
-	fi
+	"$_bobshell_event_fire__name" "$@"
+	unset _bobshell_event_fire__name
 }
