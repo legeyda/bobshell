@@ -23,7 +23,7 @@ bobshell_str_split() {
 	done
 	"$@" "$_bobshell_str_split__rest"
 	unset _bobshell_str_split__rest _bobshell_str_split__separator
-	bobshell_result_true
+	bobshell_result_set true
 }
 
 bobshell_reverse() {
