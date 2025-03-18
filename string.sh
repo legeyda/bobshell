@@ -114,6 +114,7 @@ bobshell_replace() {
 
 # fun: bobshell_substr STR RANGE OUTPUTVAR
 bobshell_substr() {
+	bobshell_die "not implemented"
 	
 	set -- "$1"
 	bobshell_substr_result=$(printf %s "$1" | cut -c "$2-$3")
