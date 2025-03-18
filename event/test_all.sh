@@ -29,3 +29,7 @@ test_template() {
 	bobshell_event_template myevent 'printf [; {}; printf ]'
 	assert_equals '[123]' "$(bobshell_event_fire myevent)"
 }
+
+test_fire_unknown() {
+	bobshell_event_fire blabla
+}

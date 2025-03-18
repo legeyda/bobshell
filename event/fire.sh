@@ -11,7 +11,7 @@ bobshell_event_fire() {
 
 	_bobshell_event_fire__name="$1"
 	shift
-	_bobshell_event_fire__code=$(bobshell_getvar "$_bobshell_event_fire__name")
+	_bobshell_event_fire__code=$(bobshell_getvar "$_bobshell_event_fire__name" '')
 	if bobshell_isset "${_bobshell_event_fire__name}_template"; then
 		_bobshell_event_fire__template=$(bobshell_getvar "${_bobshell_event_fire__name}_template")
 		_bobshell_event_fire__code=$(bobshell_replace "$_bobshell_event_fire__template" '{}' "$_bobshell_event_fire__code")
