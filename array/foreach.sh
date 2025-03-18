@@ -2,11 +2,15 @@
 shelduck import ../base.sh
 shelduck import ./size.sh
 shelduck import ./assert_isset.sh
+shelduck import ../result/assert.sh
 
 # fun: bobshell_array_call ARRAYNAME COMMAND [ARGS...]
 bobshell_array_foreach() {
 	bobshell_array_assert_isset "$1"
-	_bobshell_array_foreach__size=$(bobshell_array_size "$1")
+
+	bobshell_array_size "$1"
+	bobshell_result_assert _bobshell_array_foreach__size
+
 	if [ 0 = "$_bobshell_array_foreach__size" ]; then
 		unset _bobshell_array_foreach__size
 		return

@@ -2,6 +2,7 @@
 shelduck import ../resource/copy.sh
 shelduck import ./assert_isset.sh
 shelduck import ./size.sh
+shelduck import ../result/assert.sh
 
 # fun: bobshell_array_remove ARRAYNAME ONEBASEDINDEX
 bobshell_array_remove() {
@@ -9,7 +10,8 @@ bobshell_array_remove() {
 		bobshell_die "bobshell_array_remove: negative index"
 	fi
 	bobshell_array_assert_isset "$1"
-	_bobshell_array_remove__size=$(bobshell_array_size "$1")
+	bobshell_array_size "$1"
+	bobshell_result_assert _bobshell_array_remove__size
 	if ! [ 0 -lt "$_bobshell_array_remove__size" ]; then
 		bobshell_die "bobshell_array_remove: empty array"
 	fi

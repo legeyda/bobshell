@@ -3,7 +3,7 @@
 shelduck import ./size.sh
 shelduck import ./assert_isset.sh
 shelduck import ../resource/copy.sh
-
+shelduck import ../result/assert.sh
 # fun: bobshell_array_read ARRAYNAME ONEBASEDINDEX VAR
 # fun: bobshell_array_read ARRAYNAME [ONEBASEDINDEX] VARS...
 bobshell_array_read() {
@@ -11,7 +11,8 @@ bobshell_array_read() {
 		bobshell_die "bobshell_array_read: wrong index $2 < 1"
 	fi
 	bobshell_array_assert_isset "$1"
-	_bobshell_array_read__size=$(bobshell_array_size "$1")
+	bobshell_array_size "$1"
+	bobshell_result_assert _bobshell_array_read__size
 	if ! [ "$2" -le "$_bobshell_array_read__size" ]; then
 		bobshell_die "bobshell_array_read: wrong index $2 >= $_bobshell_array_read__size"
 	fi

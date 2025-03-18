@@ -1,6 +1,7 @@
 
 shelduck import ./read.sh
 
+
 bobshell_result_assert() {
 	if [ '0' = "${bobshell_result_size:-0}" ]; then
 		bobshell_die "bobshell_result_assert: no result"
