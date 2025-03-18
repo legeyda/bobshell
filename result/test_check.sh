@@ -28,12 +28,12 @@ test_true_read() {
 	assert_equals 3 "$c"
 }
 
-test_falst() {
+test_false1() {
 	bobshell_result_set false
 	assert_error bobshell_result_check
 }
 
-test_false() {
+test_false2() {
 	bobshell_result_set false 1 2 3
 	assert_error bobshell_result_check a b c
 	assert_unset a
