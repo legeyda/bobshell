@@ -17,9 +17,6 @@ bobshell_event_listen() {
 	_bobshell_event_listen__code="$_bobshell_event_listen__code
 
 $*
-if bobshell_result_check; then
-	return
-fi
 "
 
 	bobshell_putvar "$_bobshell_event_listen__name" "$_bobshell_event_listen__code"
