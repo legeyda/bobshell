@@ -14,8 +14,12 @@ bobshell_stack_pop() {
 		bobshell_result_set false
 	fi
 
-	bobshell_array_read "$1" "$_bobshell_stack_pop__size" "$2"
+	bobshell_array_size "$1"
+	bobshell_result_assert _bobshell_stack_pop__size
+	bobshell_array_read  "$1" "$_bobshell_stack_pop__size"
+	bobshell_result_assert _bobshell_stack_pop__result
 	bobshell_array_remove "$1" "$_bobshell_stack_pop__size"
-	unset _bobshell_stack_pop__size
-
+	
+	bobshell_result_set true "$_bobshell_stack_pop__result"
+	unset _bobshell_stack_pop__size _bobshell_stack_pop__result
 }

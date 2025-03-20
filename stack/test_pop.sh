@@ -6,6 +6,7 @@ shelduck import ./set.sh
 shelduck import ./pop.sh
 shelduck import ./push.sh
 shelduck import ../array/foreach.sh
+shelduck import ../result/assert.sh
 
 test_undefined() {
 	assert_die bobshell_stack_pop
@@ -27,7 +28,8 @@ test_one() {
 	bobshell_stack_push mystack one
 
 	unset x
-	bobshell_stack_pop mystack x
+	bobshell_stack_pop mystack
+	bobshell_result_assert x
 	assert_equals one "$x"
 
 	assert_die bobshell_stack_pop
@@ -41,15 +43,18 @@ test_many() {
 	bobshell_stack_push mystack three
 
 	unset x
-	bobshell_stack_pop mystack x
+	bobshell_stack_pop mystack
+	bobshell_result_assert x
 	assert_equals three "$x"
 
 	unset x
-	bobshell_stack_pop mystack x
+	bobshell_stack_pop mystack
+	bobshell_result_assert x
 	assert_equals two "$x"
 
 	unset x
-	bobshell_stack_pop mystack x
+	bobshell_stack_pop mystack
+	bobshell_result_assert x
 	assert_equals one "$x"
 	
 	assert_die bobshell_stack_pop
