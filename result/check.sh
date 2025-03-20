@@ -10,5 +10,6 @@ bobshell_result_check() {
 		(false) return 1 ;;
 		(*) bobshell_die "bobshell_result_check: error parsing result as boolean: $bobshell_result_1"
 	esac
-	bobshell_result_read - "$@"
+	bobshell_result_read _bobshell_result_check__unused "$@"
+	unset _bobshell_result_check__unused
 }

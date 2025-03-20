@@ -11,5 +11,6 @@ bobshell_result_assert() {
 		(false) bobshell_die "bobshell_result_assert: bobshell_result_1 expected to be true" ;;
 		(*)     bobshell_die "bobshell_result_assert: error parsing result as boolean: $bobshell_result_1"
 	esac
-	bobshell_result_read - "$@"
+	bobshell_result_read _bobshell_result_assert__unused "$@"
+	unset _bobshell_result_assert__unused
 }

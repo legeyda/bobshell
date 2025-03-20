@@ -56,7 +56,7 @@ bobshell_result_set() {
 		bobshell_result_5="$5"
 		bobshell_result_6="$6"
 		bobshell_result_7="$7"
-		bobshell_result_7="$8"
+		bobshell_result_8="$8"
 	elif [ 9 = "$#" ]; then
 		bobshell_result_size=9
 		bobshell_result_1="$1"
