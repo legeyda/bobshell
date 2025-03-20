@@ -2,36 +2,11 @@
 # https://stackoverflow.com/a/32158604
 # https://howardhinnant.github.io/date_algorithms.html
 
-# todo cat /dev/random | od -N 100 | diff -ua /tmp/x - | head -1
+shelduck import ../misc/awk.sh
+shelduck import ../result/set.sh
 
-# fun: bobshell_file_date [--format DATEFORMAT] FILE
-# txt: print file modification date
-#      if time is earlier then half year ago, there is no time information
-#      if time is after half year ago, minute-precision is available
-bobshell_file_date() {
-	bobshell_file_date_format="%s"
-	while bobshell_isset_1 "$@"; do
-		case "$1" in
-			(-f|--format) 
-				bobshell_file_date_format="$2"
-				shift 2
-				;;
-			(-*)
-				bobshell_die "bobshell_file_date: unsupported option: $1"
-				;; 
-			(*) break
-		esac
-	done
+bobshell_file_date_lib='
 
-
-	bobshell_file_date_ls=$(LC_ALL=C ls -dl "$1")
-	printf %s "$bobshell_file_date_ls" | awk \
-			-v debug=1 \
-			-v current_month="$(date +%m)" \
-			-v current_year="$(date +%Y)" \
-			-v offset="$(date +%z)" \
-			-v format="$bobshell_file_date_format" \
-			'
 
 function civil_to_days(year, month, day) {
 	year -= (month <= 2) ? 1 : 0;
@@ -50,6 +25,78 @@ function offset_to_minutes(offset) {
 	
 	return result;
 }
+
+function format_date(format, year, month, day, hour, minute, second, nano, offset_minutes) {
+
+	# parse format and output
+	format_length = split(format, format_chars, "")
+	if(0 == format_length) {
+		print("error parsing ls output") > "/dev/stderr"
+		exit
+	}
+
+
+	i=1;
+	while(i<format_length) {
+		current_char=format_chars[i];
+		if("%" == current_char) {
+			i++;
+			if(i>format_length) {
+				print("malformed format") > "/dev/stderr"
+				exit 1
+			}
+			current_char=format_chars[i];
+			if("%" == current_char) {
+				printf("%")
+			} else if("s" == current_char) {
+				seconds_since_epoch=60*(60*(24*civil_to_days(year, month, day) + hour) + minute - offset_minutes) + second;
+				printf("%d", seconds_since_epoch)
+			} else if("Y" == current_char) {
+				printf("%04d", year)
+			} else if("m" == current_char) {
+				printf("%02d", month)
+			} else if("d" == current_char) {
+				printf("%02d", day)
+			} else if("H" == current_char) {
+				printf("%02d", hour)
+			} else if("M" == current_char) {
+				printf("%02d", minute)
+			} else if("S" == current_char) {
+				printf("%02d", seconds)
+			} else {
+				printf("unsupported format %s", current_char) > "/dev/stderr"
+				exit 1
+			}
+			i++
+		} else {
+			printf(current_char);
+			i++
+		}
+	}
+}
+
+'
+
+
+
+
+# fun: bobshell_file_date FORMAT FILE
+# txt: print file modification date
+#      if time is earlier then half year ago, there is no time information
+#      if time is after half year ago, minute-precision is available
+bobshell_file_date_ls() {
+	if ! bobshell_isset _bobshell_file_date__offset; then
+		_bobshell_file_date__offset="$(date +%z)"
+	fi
+
+	_bobshell_file_date_ls=$(LC_ALL=C ls -dl "$2")
+	bobshell_awk var:_bobshell_file_date_ls var:_bobshell_file_date_ls__result \
+			-v debug=1 \
+			-v current_month="$(date +%m)" \
+			-v current_year="$(date +%Y)" \
+			-v offset="$_bobshell_file_date__offset:" \
+			-v format="$1" \
+			"$bobshell_file_date_lib"'
 
 {
 
@@ -79,7 +126,7 @@ function offset_to_minutes(offset) {
 		year = int($8)
 		hour = 0
 		minute = 0
-		time_is_known=0
+		offset_minutes = 0
 	} else if ($8 ~ /^[[:digit:]]{2}:[[:digit:]]{2}$/) {
 		hour = substr($8, 1, 2);
 		minute = substr($8, 4, 2);
@@ -89,62 +136,66 @@ function offset_to_minutes(offset) {
 		} else {
 			year = int(current_year) - 1;
 		}
-		time_is_known=1
+		offset_minutes = offset_to_minutes(offset)
 	} else {
 		print("error parsing ls output") > "/dev/stderr"
 		exit 1
 	}
 
-	# parse format and output
-	format_length = split(format, format_chars, "")
-	if(0 == format_length) {
-		print("error parsing ls output") > "/dev/stderr"
-		exit
-	}
-
-
-	i=1;
-	while(i<format_length) {
-		current_char=format_chars[i];
-		if("%" == current_char) {
-			i++;
-			if(i>format_length) {
-				print("malformed format") > "/dev/stderr"
-				exit 1
-			}
-			current_char=format_chars[i];
-			if("%" == current_char) {
-				printf("%")
-			} else if("s" == current_char) {
-				if(time_is_known) {
-					offset_minutes = offset_to_minutes(offset)
-				} else {
-					offset_minutes = 0
-				}
-				seconds_since_epoch=60*(60*(24*civil_to_days(year, month, day) + hour) + minute - offset_minutes);
-				printf("%d", seconds_since_epoch)
-			} else if("Y" == current_char) {
-				printf("%04d", year)
-			} else if("m" == current_char) {
-				printf("%02d", month)
-			} else if("d" == current_char) {
-				printf("%02d", day)
-			} else if("H" == current_char) {
-				printf("%02d", hour)
-			} else if("M" == current_char) {
-				printf("%02d", minute)
-			} else if("S" == current_char) {
-				printf("%02d", seconds)
-			} else {
-				printf("unsupported format %s", current_char) > "/dev/stderr"
-				exit 1
-			}
-			i++
-		} else {
-			printf(current_char);
-			i++
-		}
-	}
+	print(format_date(format, year, month, day, hour, minute, 0, 0, offset_minutes))
 
 }'
+	unset _bobshell_file_date_ls
+
+	bobshell_result_set "$_bobshell_file_date_ls__result"
+	unset _bobshell_file_date_ls__result
+}
+
+bobshell_file_date_diff() {
+	if ! bobshell_isset _bobshell_file_date__offset; then
+		_bobshell_file_date__offset="$(date +%z)"
+	fi
+
+	_bobshell_file_date_diff__src=$(printf '%s' 35de218667274492878d89dad9ce0d9cb8a3d80d169e4f36b5ad93e4dfc900123e695dd496ab44359f620d59435a35fa0f5e4af8e22f4a4eb1e3888a6ea41af | LC_ALL=C diff -ua "$2" - | head -1)
+	bobshell_awk var:_bobshell_file_date_diff__src var:_bobshell_file_date_diff__result \
+			-F '	' \
+			-v format="$1" "$bobshell_file_date_lib"'{
+	year   = int(substr($2, 1, 4))
+	month  = int(substr($2, 6, 2))
+	day    = int(substr($2, 9, 2))
+	hour   = int(substr($2, 12, 2))
+	minute = int(substr($2, 15, 2))
+	second = int(substr($2, 18, 2))
+	nano   = int(substr($2, 21, 9))
+	offset = int(substr($2, 31, 5))
+
+	print(format_date(format, year, month, day, hour, minute, second, nano, offset_to_minutes(offset)))
+}'
+	unset _bobshell_file_date_diff__src
+
+	bobshell_result_set "$_bobshell_file_date_diff__result"
+	unset _bobshell_file_date_diff__result
+}
+
+bobshell_file_date() {
+	_bobshell_file_date_format="%s"
+	while bobshell_isset_1 "$@"; do
+		case "$1" in
+			(-f|--format)
+				_bobshell_file_date_format="$2"
+				shift 2
+				;;
+			(-*)
+				bobshell_die "bobshell_file_date: unsupported option: $1"
+				;; 
+			(*) break
+		esac
+	done
+
+	if ! bobshell_command_available diff || [ -d "$1" ]; then
+		bobshell_file_date_ls "$_bobshell_file_date_format" "$1"
+	else
+		bobshell_file_date_diff "$_bobshell_file_date_format" "$1"
+	fi
+	unset _bobshell_file_date_format
 }

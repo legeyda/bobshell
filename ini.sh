@@ -6,32 +6,13 @@ shelduck import locator/is_stdin.sh
 shelduck import locator/is_stdout.sh
 shelduck import ./redirect/io.sh
 shelduck import ./redirect/input.sh
+shelduck import ./misc/awk.sh
 
 # fun: bobshell_ini_groups stdin:
 bobshell_ini_list_groups() {
 	bobshell_resource_copy "$1" stdout: | sed -n 's/^[[:space:]]*\[[[:space:]]*\([^\[ ]\+\)[[:space:]]*\][[:space:]]*$/\1/pg'
 }
 
-
-
-# fun: bobshell_awk INPUT OUTPUT AWKARGS...
-bobshell_awk() {
-	bobshell_require_isset_3 "$@"
-	
-	bobshell_awk__input="$1"
-	shift
-
-	bobshell_awk__output="$1"
-	shift
-	
-	if bobshell_locator_is_file "$bobshell_awk__input" bobshell_awk__input_file; then
-		bobshell_redirect_output "$bobshell_awk__output" awk "$@" "$bobshell_awk__input_file"
-		unset bobshell_awk__input_file
-	else
-		bobshell_redirect_io "$bobshell_awk__input" "$bobshell_awk__output" awk "$@"
-		unset bobshell_awk__input bobshell_awk__output
-	fi
-}
 
 # shellcheck disable=SC2016
 bobshell_ini_awk_common='
