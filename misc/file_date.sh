@@ -147,7 +147,7 @@ bobshell_file_date_ls() {
 }'
 	unset _bobshell_file_date_ls
 
-	bobshell_result_set "$_bobshell_file_date_ls__result"
+	bobshell_result_set true "$_bobshell_file_date_ls__result"
 	unset _bobshell_file_date_ls__result
 }
 
@@ -173,7 +173,7 @@ bobshell_file_date_diff() {
 }'
 	unset _bobshell_file_date_diff__src
 
-	bobshell_result_set "$_bobshell_file_date_diff__result"
+	bobshell_result_set true "$_bobshell_file_date_diff__result"
 	unset _bobshell_file_date_diff__result
 }
 
@@ -191,6 +191,11 @@ bobshell_file_date() {
 			(*) break
 		esac
 	done
+
+	if ! [ -r "$1" ]; then
+		bobshell_result_set false
+		return
+	fi
 
 	if ! bobshell_command_available diff || [ -d "$1" ]; then
 		bobshell_file_date_ls "$_bobshell_file_date_format" "$1"
