@@ -9,7 +9,7 @@ shelduck import ../redirect/input.sh
 
 # fun: bobshell_awk INPUT OUTPUT AWKARGS...
 bobshell_awk() {
-	bobshell_require_isset_3 "$@"
+	bobshell_isset_3 "$@" || bobshell_die 'bobshell_awk: 3 arguments required'
 	
 	bobshell_awk__input="$1"
 	shift
