@@ -219,3 +219,14 @@ echo "$0" "$@"
 	assert_equals "$(realpath ./script)" "$($(realpath ./script))"
 	assert_equals './script z 1 2 3' "$(./script z 1 2 3)"
 }
+
+test_side_effect() {
+	unset y
+	x=$(f)
+	assert_equals '' "$x"
+	assert_unset y
+}
+
+f() {
+	y=hello
+}
