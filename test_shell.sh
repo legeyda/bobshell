@@ -220,13 +220,34 @@ echo "$0" "$@"
 	assert_equals './script z 1 2 3' "$(./script z 1 2 3)"
 }
 
-test_side_effect() {
-	unset y
-	x=$(f)
-	assert_equals '' "$x"
-	assert_unset y
+test_catch_output_side_effect() {
+	unset f
+	x=$(f hello)
+	assert_equals hello "$x"
+	assert_unset f
 }
 
 f() {
-	y=hello
+	if bobshell_isset_1 "$@"; then
+		printf %s "$*"
+	else
+		cat
+	fi
+	f=hello
 }
+
+test_pipe_side_effect() {
+	unset f
+	echo hello | f
+	assert_unset f
+}
+
+test_output_file_side_effect() {
+	t=$(mktemp -d)
+	unset f
+	f hello > "$t/out"
+	assert_equals hello "$(cat "$t/out")"
+	assert_isset f
+
+}
+

@@ -10,6 +10,7 @@ test_output() {
 }
 
 f() {
+	sleep 1
 	y=hello
 	printf %s 123
 }

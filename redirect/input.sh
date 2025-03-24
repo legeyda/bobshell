@@ -19,7 +19,9 @@ bobshell_redirect_input() {
 	else
 		bobshell_resource_copy "$1" var:_bobshell_redirect_input
 		shift
-		printf "%s" "$_bobshell_redirect_input" | "$@"
+		"$@" <<EOF
+$_bobshell_redirect_input
+EOF
 		unset _bobshell_redirect_input
 	fi
 }
