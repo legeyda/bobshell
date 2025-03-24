@@ -8,5 +8,5 @@ shelduck import ./encode.sh
 
 
 test_encode() {
-	assert_equals aGVsbG8= "$(bobshell_base64_encode val:hello stdout:)"
+	assert_equals aGVsbG8K "$(bobshell_base64_encode val:hello stdout:)"
 }

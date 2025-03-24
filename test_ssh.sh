@@ -90,7 +90,8 @@ test_identity_file() {
 	ssh_password_enabled=false
 	run_sshd
 	file=$(mktemp)
-	printf %s "$ssh_identity" > "$file"
+	echo "$ssh_identity" > "$file"
+	chmod 600 "$file"
 	BOBSHELL_SSH_IDENTITY_FILE="$file" bobshell_ssh "$ssh_user@$ssh_host" 'echo hello'
 }
 

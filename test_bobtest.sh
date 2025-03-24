@@ -21,6 +21,5 @@ test_e() {
 
 	reset
 	sh -c "'$bobtest_script' test_test.sh:test_test"
-	bobshell_die AFTER SH
 }
 
