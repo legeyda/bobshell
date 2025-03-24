@@ -25,7 +25,7 @@ bobshell_redirect_output() {
 		shift
 		_bobshell_redirect_output__temp=$(mktemp -d)
 		mkfifo "$_bobshell_redirect_output__temp/1" "$_bobshell_redirect_output__temp/2"
-		dd "if=$_bobshell_redirect_output__temp/1" "of=$_bobshell_redirect_output__temp/2" &
+		dd "if=$_bobshell_redirect_output__temp/1" "of=$_bobshell_redirect_output__temp/2" status=none &
 		"$@" > "$_bobshell_redirect_output__temp/1"
 		bobshell_resource_copy "file://$_bobshell_redirect_output__temp/2" "$_bobshell_redirect_output"
 		rm -rf "$_bobshell_redirect_output__temp"
