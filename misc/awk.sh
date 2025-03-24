@@ -3,6 +3,7 @@ shelduck import ../base.sh
 shelduck import ../resource/copy.sh
 shelduck import ../locator/is_stdin.sh
 shelduck import ../locator/is_stdout.sh
+shelduck import ../locator/is_file.sh
 shelduck import ../base.sh
 shelduck import ../redirect/io.sh
 shelduck import ../redirect/input.sh

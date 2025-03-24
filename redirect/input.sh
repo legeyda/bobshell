@@ -5,6 +5,7 @@ shelduck import ../resource/copy.sh
 shelduck import ../locator/is_stdin.sh
 shelduck import ../locator/is_stdout.sh
 shelduck import ../locator/is_val.sh
+shelduck import ../locator/is_file.sh
 
 
 # fun: bobshell_redirect_input INPUT COMMAND [ARGS...]

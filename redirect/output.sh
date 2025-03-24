@@ -7,6 +7,7 @@ shelduck import ../resource/copy.sh
 shelduck import ../locator/is_stdin.sh
 shelduck import ../locator/is_stdout.sh
 shelduck import ../locator/is_var.sh
+shelduck import ../locator/is_file.sh
 
 
 
