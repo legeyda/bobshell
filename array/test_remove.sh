@@ -51,9 +51,9 @@ test_many() {
 	assert_die bobshell_array_remove myarr 4 four
 
 	bobshell_array_remove myarr 1
-	assert_equals 'two three ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'two 1 three 2 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 	bobshell_array_remove myarr 2
-	assert_equals 'two ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'two 1 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 }

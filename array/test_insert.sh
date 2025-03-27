@@ -40,7 +40,7 @@ test_one() {
 
 
 	bobshell_array_insert myarr 1 zero
-	assert_equals 'zero one ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'zero 1 one 2 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 }
 
@@ -53,12 +53,12 @@ test_many() {
 	assert_die bobshell_array_insert myarr 4 four
 
 	bobshell_array_insert myarr 1 hello
-	assert_equals 'hello one two three ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'hello 1 one 2 two 3 three 4 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 	bobshell_array_insert myarr 3 hi
-	assert_equals 'hello one hi two three ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'hello 1 one 2 hi 3 two 4 three 5 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 	bobshell_array_insert myarr 5 xyz
-	assert_equals 'hello one hi two xyz three ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'hello 1 one 2 hi 3 two 4 xyz 5 three 6 ' "$(bobshell_array_foreach myarr printf '%s ')"
 	
 }

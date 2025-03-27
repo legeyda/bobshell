@@ -15,7 +15,7 @@ test_undefined() {
 test_empty() {
 	bobshell_array_set myarr
 	bobshell_array_add myarr element
-	assert_equals 'element ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'element 1 ' "$(bobshell_array_foreach myarr printf '%s ')"
 }
 
 test_one() {
@@ -23,7 +23,7 @@ test_one() {
 	assert_die bobshell_array_add myarr
 
 	bobshell_array_add myarr two
-	assert_equals 'one two ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'one 1 two 2 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 }
 
@@ -33,7 +33,7 @@ test_many() {
 	assert_die bobshell_array_add myarr
 
 	bobshell_array_add myarr four
-	assert_equals 'one two three four ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'one 1 two 2 three 3 four 4 ' "$(bobshell_array_foreach myarr printf '%s ')"
 
 	
 }

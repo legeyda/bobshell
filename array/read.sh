@@ -7,6 +7,7 @@ shelduck import ../result/assert.sh
 shelduck import ../result/set.sh
 
 # fun: bobshell_array_read ARRAYNAME ONEBASEDINDEX
+# todo rename to bobshell_array_get
 bobshell_array_read() {
 	if ! [ 0 -lt "$2" ]; then
 		bobshell_die "bobshell_array_read: wrong index $2 < 1"

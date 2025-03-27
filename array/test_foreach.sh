@@ -18,5 +18,15 @@ test_foreach_empty() {
 
 test_foreach_not_empty() {
 	bobshell_array_set myarr one two three
-	assert_equals 'one two three ' "$(bobshell_array_foreach myarr printf '%s ')"
+	assert_equals 'one 1 two 2 three 3 ' "$(bobshell_array_foreach myarr printf '%s ')"
+}
+
+test_break() {
+	bobshell_array_set myarr one two three
+	assert_equals 'one 1 ' "$(bobshell_array_foreach myarr f)"
+}
+
+f() {
+	printf '%s ' "$@"
+	bobshell_result_set break
 }
