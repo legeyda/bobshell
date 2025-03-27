@@ -2,7 +2,7 @@
 # STRING MANUPULATION
 
 shelduck import base.sh
-shelduck import ./str/regex/match.sh
+shelduck import ./regex/match.sh
 
 
 # use: bobshell_starts_with hello he && echo "$rest" # prints llo

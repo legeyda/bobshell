@@ -1,5 +1,5 @@
 
-shelduck import ../../assert.sh
+shelduck import ../assert.sh
 shelduck import ./match.sh
 
 test_regex_match() {
