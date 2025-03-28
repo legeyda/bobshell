@@ -46,7 +46,8 @@ run_clean() {
 run_build() {
 	_run_build__list=$(find . -path '*/.*' -o -path '*/test_*.sh' -o -path "$BOBSHELL_BUILD_ROOT/*" -prune \
 			-o -name '*.sh' -printf "run_build_each_file './%P'\n")
-	eval "$_run_build__list" > "$BOBSHELL_BUILD_ROOT/bobshell.sh"
+	mkdir -p "$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
+	eval "$_run_build__list" > "$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
 	unset _run_build__list
 }
 

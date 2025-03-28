@@ -1,0 +1,18 @@
+on:
+  [push]
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: build
+        run: sh ./run ci_build
+      - name: Release
+        uses: softprops/action-gh-release@v2 # https://github.com/softprops/action-gh-release
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ./target/release/*
