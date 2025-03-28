@@ -52,7 +52,7 @@ run_test() {
 }
 
 run_clean() {
-	rm -rf "$BOBSHELL_BUILD_ROOT"
+	rm -rf "$BOBSHELL_BUILD_ROOT/release"
 }
 
 run_build() {
