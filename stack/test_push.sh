@@ -15,7 +15,7 @@ test_undefined() {
 test_empty() {
 	bobshell_stack_set mystack
 	bobshell_stack_push mystack element
-	assert_equals 'element ' "$(bobshell_array_foreach mystack printf '%s ')"
+	assert_equals 'element 1 ' "$(bobshell_array_foreach mystack printf '%s ')"
 }
 
 test_one() {
