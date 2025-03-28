@@ -9,7 +9,7 @@ shelduck import string.sh
 
 # fun: run_sshd PASSWORD
 run_sshd() {
-	stop_sshd || true
+	stop_sshd
 
 	ssh_user=bobshell-test-user
 	ssh_host=localhost
@@ -45,7 +45,7 @@ run_sshd() {
 
 
 stop_sshd() {
-	docker stop bobshell-test-sshd
+	docker stop bobshell-test-sshd || true
 }
 
 ssh_keyscan() {
