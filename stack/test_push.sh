@@ -23,7 +23,7 @@ test_one() {
 	assert_die bobshell_stack_push mystack
 
 	bobshell_stack_push mystack two
-	assert_equals 'one two ' "$(bobshell_array_foreach mystack printf '%s ')"
+	assert_equals 'one 1 two 2 ' "$(bobshell_array_foreach mystack printf '%s ')"
 
 }
 
@@ -33,7 +33,7 @@ test_many() {
 	assert_die bobshell_stack_push mystack
 
 	bobshell_stack_push mystack four
-	assert_equals 'one two three four ' "$(bobshell_array_foreach mystack printf '%s ')"
+	assert_equals 'one 1 two 2 three 3 four 4 ' "$(bobshell_array_foreach mystack printf '%s ')"
 
 	
 }
