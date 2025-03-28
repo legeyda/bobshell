@@ -19,7 +19,10 @@ test_e() {
 	}
 ' > test_test.sh
 
-	reset
+	# https://github.com/legeyda/bobshell/actions/runs/14133698340/job/39600202215#step:3:33
+	# reset: terminal attributes: No such device or address
+	reset || true
+
 	sh -c "'$bobtest_script' test_test.sh:test_test"
 }
 
