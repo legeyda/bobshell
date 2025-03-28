@@ -1,0 +1,58 @@
+#!/usr/bin/env sh
+set -eu
+
+init_shelduck() {
+	: "${BOBSHELL_BUILD_ROOT:=./target}"
+	mkdir -p "$BOBSHELL_BUILD_ROOT"
+	if [ ! -f "$BOBSHELL_BUILD_ROOT/shelduck.sh" ]; then
+		curl --fail --silent --show-error --location https://github.com/legeyda/shelduck/releases/latest/download/shelduck.sh \
+				> "$BOBSHELL_BUILD_ROOT/shelduck.sh"
+	fi
+	. "$BOBSHELL_BUILD_ROOT/shelduck.sh"
+}
+
+init_shelduck
+
+shelduck import ./run.sh
+shelduck import ./string.sh
+
+on_start() {
+	: "${BOBSHELL_BUILD_ROOT:=./target}"
+	mkdir -p "$BOBSHELL_BUILD_ROOT"
+	if bobshell_starts_with "$BOBSHELL_BUILD_ROOT" / ; then
+		return
+	fi
+	if bobshell_starts_with "$BOBSHELL_BUILD_ROOT" . ; then
+		return
+	fi
+	BOBSHELL_BUILD_ROOT="./$BOBSHELL_BUILD_ROOT"
+}
+
+run_ci_build() {
+	run_clean
+	run_test
+	run_build
+}
+
+run_test() {
+	shelduck import file://./bobtest.sh
+	bobtest "$@"
+}
+
+run_clean() {
+	rm -rf "$BOBSHELL_BUILD_ROOT"
+}
+
+run_build() {
+	_run_build__list=$(find . -path '*/.*' -o -path '*/test_*.sh' -o -path "$BOBSHELL_BUILD_ROOT/*" -prune \
+			-o -name '*.sh' -printf "run_build_each_file './%P'\n")
+	eval "$_run_build__list" > "$BOBSHELL_BUILD_ROOT/bobshell.sh"
+	unset _run_build__list
+}
+
+run_build_each_file() {
+	printf '\n\n\n\n\n\n# source for %s\n' "$1"
+	cat "$@"	
+}
+
+main "$@"
