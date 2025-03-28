@@ -46,7 +46,7 @@ test_diff() {
 	file=$(mktemp)
 
 	TC_ALL=C touch -m -d 'Sat Jan  1 00:00:00 UTC 2000' "$file" 
-	bobshell_file_date_diff '%Y-%m-%d_%H-%M-%S' "$file"
+	TZ=Europe/Moscow bobshell_file_date_diff '%Y-%m-%d_%H-%M-%S' "$file"
 	bobshell_result_assert actual
 	assert_equals 2000-01-01_03-00-00 "$actual"
 
