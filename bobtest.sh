@@ -56,7 +56,7 @@ bobtest_file_function() {
 
 	printf '  function %s... ' "$2"
 	if ! BOBTEST_FILE="$1" BOBTEST_FUNCTION="$2" \
-			sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -eux; $2'" > "$stdout_file" 2> "$stderr_file"; then
+			bobtest_run "$@" > "$stdout_file" 2> "$stderr_file"; then
 		printf 'failure\n\n'
 		printf '\n\nSTDOUT WAS:\n%s\n'
 		cat "$stdout_file"
@@ -69,3 +69,13 @@ bobtest_file_function() {
 	printf ' ok\n'
 }
 
+# fun: bobtest_run FILE FUNCTIION
+# env: 
+bobtest_run() {
+	: "${BOBTEST_RUN:=bobtest_shelduck_run}"
+	"$BOBTEST_RUN" "$@"
+}
+
+bobtest_shelduck_run() {
+	sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -eux; $2'"
+}

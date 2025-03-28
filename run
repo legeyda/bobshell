@@ -34,8 +34,18 @@ run_ci_build() {
 	run_build
 }
 
+run_test_run() {
+	sh -c ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'
+shelduck import 'file://$1'
+set -eux
+'$2'"
+}
+
+# shellcheck disable=SC2120
 run_test() {
 	shelduck import file://./bobtest.sh
+	# shellcheck disable=SC2034
+	BOBTEST_RUN=run_test_run
 	bobtest "$@"
 }
 
