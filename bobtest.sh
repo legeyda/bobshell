@@ -64,7 +64,7 @@ bobtest_file_function() {
 		printf '\n\nSTDERR WAS:\n%s\n'
 		cat "$stderr_file"
 		
-		exit
+		return 1
 	fi
 	printf ' ok\n'
 }

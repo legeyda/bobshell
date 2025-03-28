@@ -19,6 +19,7 @@ shelduck import ./string.sh
 on_start() {
 	: "${BOBSHELL_BUILD_ROOT:=./target}"
 	mkdir -p "$BOBSHELL_BUILD_ROOT"
+	export BOBSHELL_BUILD_ROOT
 	if bobshell_starts_with "$BOBSHELL_BUILD_ROOT" / ; then
 		return
 	fi
@@ -46,6 +47,7 @@ run_test() {
 	shelduck import file://./bobtest.sh
 	# shellcheck disable=SC2034
 	BOBTEST_RUN=run_test_run
+	
 	bobtest "$@"
 }
 
