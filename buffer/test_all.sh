@@ -16,3 +16,15 @@ test_buffer() {
 	bobshell_buffer_config stdout:
 	assert_equals 123 $(bobshell_buffer_printf %s 123)
 }
+
+test_newline() {
+	bobshell_buffer_config var:xyz
+	bobshell_buffer_printf '%s\n' hello
+	bobshell_buffer_printf '%s\n\nzzz' hi
+
+	assert_equals 'hello
+hi
+
+zzz'         "$xyz"
+	
+}

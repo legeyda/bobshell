@@ -86,9 +86,8 @@ bobshell_resource_copy_stdout_to_file()   { bobshell_resource_copy_stdout; }
 bobshell_resource_copy_stdout_to_url()    { bobshell_resource_copy_to_url; }
 
 
-
 bobshell_resource_copy_file_to_val()      { bobshell_resource_copy_to_val; }
-bobshell_resource_copy_file_to_var()      { eval "$2=\$(cat '$1')"; }
+bobshell_resource_copy_file_to_var()      { eval "$2=\$(cat '$1'; printf z); $2=\${$2%z}"; }
 bobshell_resource_copy_file_to_eval()     {
 	bobshell_resource_copy_file_to_var "$1" bobshell_resource_copy_file_to_eval_data
 	bobshell_resource_copy_var_to_eval bobshell_resource_copy_file_to_eval_data ''

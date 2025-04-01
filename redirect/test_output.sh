@@ -14,3 +14,12 @@ f() {
 	y=hello
 	printf %s 123
 }
+
+test_newline() {
+	unset x
+	bobshell_redirect_output var:x printf '%s\n\n\nzzz' hello
+	assert_equals 'hello
+
+
+zzz' "$x"
+}
