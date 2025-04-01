@@ -15,5 +15,4 @@ test_buffer() {
 
 	bobshell_buffer_config stdout:
 	assert_equals 123 $(bobshell_buffer_printf %s 123)
-	
-}	
+}

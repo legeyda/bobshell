@@ -1,6 +1,7 @@
 
 shelduck import ../string.sh
 shelduck import ../code/defun.sh
+shelduck import ../redirect/output.sh
 
 bobshell_buffer_config() {
 	if ! bobshell_isset_1 "$@" || bobshell_starts_with "$1" stdout:; then
@@ -10,7 +11,7 @@ bobshell_buffer_config() {
 	elif bobshell_remove_prefix "$1" var: _bobshell_buffer_var; then
 		# shellcheck disable=SC2016
 		eval 'bobshell_buffer_printf() {
-	_bobshell_buffer_printf=$(printf "$@")
+	bobshell_redirect_output var:_bobshell_buffer_printf printf "$@"
 	'"$_bobshell_buffer_var"'="${'"$_bobshell_buffer_var"':-}$_bobshell_buffer_printf" \
 	unset _bobshell_buffer_printf
 }'

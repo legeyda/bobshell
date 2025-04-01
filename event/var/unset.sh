@@ -7,6 +7,7 @@ bobshell_event_var_unset() {
 	if ! bobshell_isset "$1"; then
 		return
 	fi
+	unset "$1"
 	bobshell_event_fire "_bobshell_event_var_${1}_event"
 }
 
