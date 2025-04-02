@@ -1,5 +1,5 @@
 
-import ../base.sh
+shelduck import ../base.sh
 
 bobshell_subcommand() {
 	_hoid_util_subcommand__function="${1}_${2}"

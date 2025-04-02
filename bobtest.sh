@@ -78,7 +78,7 @@ bobtest_output_flag=6b2e8ddb5198464ea952c131e17bfede9966f038c958468e8ec5108d2ed7
 # env: 
 bobtest_run() {
 	: "${BOBTEST_RUN:=bobtest_shelduck_run}"
-	( printf %s "$("$BOBTEST_RUN" "$@"; printf %s "$bobtest_output_flag")") > "$bobshell_stdout_file" 2> "$bobshell_stderr_file"
+	(set -eu; printf %s "$(set -eux; "$BOBTEST_RUN" "$@"; printf %s "$bobtest_output_flag")" ) > "$bobshell_stdout_file" 2> "$bobshell_stderr_file"
 	
 	if grep -q "$bobtest_output_flag" "$bobshell_stdout_file"; then
 		bobshell_result_set true	
@@ -89,8 +89,8 @@ bobtest_run() {
 	unset _bobtest_run_output
 }
 
-bobtest_shelduck_run() (
+bobtest_shelduck_run() {
 	BOBTEST_FILE="$1"
 	BOBTEST_FUNCTION="$2"
-	sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -eux; $2'; " 
-)
+	sh -euc "shelduck_run 'val:shelduck import \"file://$1\"; set -x; $2'"
+}

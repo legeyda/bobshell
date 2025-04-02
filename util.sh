@@ -81,7 +81,8 @@ bobshell_is_not_root() {
 }
 
 # fun: shelduck_eval_with_args SCRIPT [ARGS...]
-shelduck_eval_with_args() {
+# todo 
+shelduck_eval_with_args() { 
 	shelduck_eval_with_args_script="$1"
 	shift
 	eval "$shelduck_eval_with_args_script"

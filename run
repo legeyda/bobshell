@@ -36,9 +36,9 @@ run_ci_build() {
 }
 
 run_test_run() {
-	sh -c ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'
+	sh -euc ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'
 shelduck import 'file://$1'
-set -eux
+set -x
 '$2'"
 }
 
