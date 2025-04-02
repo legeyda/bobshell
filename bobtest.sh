@@ -3,8 +3,8 @@ shelduck import base.sh
 shelduck import string.sh
 
 bobtest() {
-	stdout_file=$(mktemp)
-	stderr_file=$(mktemp)
+	bobshell_stdout_file=$(mktemp)
+	bobshell_stderr_file=$(mktemp)
 	file_separator=
 	if bobshell_isset_1 "$@"; then
 		while bobshell_isset_1 "$@"; do
@@ -55,27 +55,42 @@ bobtest_file_function() {
 	bobshell_basic_regex_match "$2" '^[A-Za-z_][A-Za-z_0-9]*$' || bobshell_die "wrong function name: $2"
 
 	printf '  function %s... ' "$2"
-	if ! BOBTEST_FILE="$1" BOBTEST_FUNCTION="$2" \
-			bobtest_run "$@" > "$stdout_file" 2> "$stderr_file"; then
+
+	bobtest_run "$@"
+	if ! bobshell_result_check; then
 		printf 'failure\n\n'
 		printf '\n\nSTDOUT WAS:\n%s\n'
-		cat "$stdout_file"
+		cat "$bobshell_stdout_file"
 		
 		printf '\n\nSTDERR WAS:\n%s\n'
-		cat "$stderr_file"
+		cat "$bobshell_stderr_file"
 		
 		return 1
 	fi
 	printf ' ok\n'
 }
 
+
+bobtest_output_flag=6b2e8ddb5198464ea952c131e17bfede9966f038c958468e8ec5108d2ed7765ed707be73346a471a8b6e9526b65060c989c28249af4e475d9c80f3e501251079
+
+
 # fun: bobtest_run FILE FUNCTIION
 # env: 
 bobtest_run() {
 	: "${BOBTEST_RUN:=bobtest_shelduck_run}"
-	"$BOBTEST_RUN" "$@"
+	( printf %s "$("$BOBTEST_RUN" "$@"; printf %s "$bobtest_output_flag")") > "$bobshell_stdout_file" 2> "$bobshell_stderr_file"
+	
+	if grep -q "$bobtest_output_flag" "$bobshell_stdout_file"; then
+		bobshell_result_set true	
+	else
+		bobshell_result_set false
+	fi
+	
+	unset _bobtest_run_output
 }
 
-bobtest_shelduck_run() {
-	sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -eux; $2'"
-}
+bobtest_shelduck_run() (
+	BOBTEST_FILE="$1"
+	BOBTEST_FUNCTION="$2"
+	sh -c "shelduck_run 'val:shelduck import \"file://$1\"; set -eux; $2'; " 
+)
