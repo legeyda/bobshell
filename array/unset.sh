@@ -4,6 +4,7 @@ shelduck import ./size.sh
 
 # fun: bobshell_array_unset ARRAYNAME
 bobshell_array_unset() {
+	_bobshell_array_unset__i=1
 	if bobshell_isset "$1_size"; then
 		_bobshell_array_unset__size=$(bobshell_getvar "$1_size")
 		for _bobshell_array_unset__i in $(seq "$_bobshell_array_unset__size"); do
@@ -11,8 +12,6 @@ bobshell_array_unset() {
 		done
 		unset "$1_size"
 		unset _bobshell_array_unset__size
-	else
-		_bobshell_array_unset__i=1
 	fi
 
 	while bobshell_isset "${1}_$_bobshell_array_unset__i"; do

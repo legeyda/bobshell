@@ -13,3 +13,9 @@ test_unset() {
 	assert_unset myarr_2
 	assert_unset myarr_3
 }
+
+test_0() {
+	bobshell_array_set myarr
+	bobshell_array_unset myarr
+	assert_unset myarr_size
+}
