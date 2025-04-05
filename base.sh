@@ -171,8 +171,14 @@ bobshell_last_arg() {
 	printf %s "$1"
 }
 
-
-trap 'bobshell_event_fire bobshell_exit_event' EXIT
-trap '[ 0 -eq $? ] && bobshell_event_fire bobshell_success_exit_event' EXIT
-trap '[ 0 -eq $? ] || bobshell_event_fire bobshell_error_exit_event' EXIT
+trap bobshell_exit_trap EXIT
+bobshell_exit_trap() {
+	# shellcheck disable=SC2181
+	if [ 0 -eq $? ]; then
+		bobshell_event_fire bobshell_success_exit_event
+	else
+		bobshell_event_fire bobshell_error_exit_event
+	fi
+	bobshell_event_fire bobshell_exit_event
+}
 
