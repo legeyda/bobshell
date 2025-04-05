@@ -1,6 +1,7 @@
 
 shelduck import string.sh
 shelduck import require.sh
+shelduck import ./event/fire.sh
 
 bobshell_die() {
   # https://github.com/biox/pa/blob/main/pa
@@ -169,3 +170,9 @@ bobshell_last_arg() {
 	done
 	printf %s "$1"
 }
+
+
+trap 'bobshell_event_fire bobshell_exit_event' EXIT
+trap '[ 0 -eq $? ] && bobshell_event_fire bobshell_success_exit_event' EXIT
+trap '[ 0 -eq $? ] || bobshell_event_fire bobshell_error_exit_event' EXIT
+
