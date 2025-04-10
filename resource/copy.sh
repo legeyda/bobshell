@@ -34,7 +34,10 @@ bobshell_resource_copy_to_url()           { bobshell_die 'cannot write to stdin 
 
 
 bobshell_resource_copy_val_to_val()       { test "$1" != "$2" && bobshell_resource_copy_to_val; }
-bobshell_resource_copy_val_to_var()       { eval "$2='$1'"; }
+bobshell_resource_copy_val_to_var()       { 
+	_bobshell_tmp=$(bobshell_quote "$1")	
+	eval "$2=$_bobshell_tmp";
+}
 bobshell_resource_copy_val_to_eval()      { eval "$1"; }
 bobshell_resource_copy_val_to_stdin()     { bobshell_resource_copy_to_stdin; }
 bobshell_resource_copy_val_to_stdout()    { printf %s "$1"; }
