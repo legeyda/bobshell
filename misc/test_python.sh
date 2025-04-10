@@ -1,7 +1,7 @@
 
 
 shelduck import ../assert.sh
-#shelduck import ./python.sh
+shelduck import ./python.sh
 shelduck import ../redirect/output.sh
 
 
@@ -28,5 +28,11 @@ shelduck import $(pwd)/misc/python.sh
 bobshell_python -c 'print(\"hello\")'
 
 "
+	assert_equals "hello$bobshell_newline" "$x"
+}
+
+local_debug_python() {
+	unset x
+	bobshell_redirect_output var:x bobshell_python -c 'print("hello")'
 	assert_equals "hello$bobshell_newline" "$x"
 }
