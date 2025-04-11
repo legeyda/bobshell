@@ -2,6 +2,8 @@
 shelduck import ../append/val_to_var.sh
 shelduck import ../string.sh
 shelduck import ../result/set.sh
+shelduck import ./compile.sh
+shelduck import ../misc/defun.sh
 
 bobshell_event_listen() {
 	_bobshell_event_listen__name="$1"
@@ -9,14 +11,10 @@ bobshell_event_listen() {
 	if [ -z "${*:-}" ]; then
 		return
 	fi
-	_bobshell_event_listen__code=$(bobshell_getvar "$_bobshell_event_listen__name" '')
-	_bobshell_event_listen__code="$_bobshell_event_listen__code
+	bobshell_append_val_to_var "$bobshell_newline$bobshell_newline$*$bobshell_newline" "$_bobshell_event_listen__name"
 
-$*
-"
-
-	bobshell_putvar "$_bobshell_event_listen__name" "$_bobshell_event_listen__code"
-	unset _bobshell_event_listen__code
-	unset -f "$_bobshell_event_listen__name"
-	unset _bobshell_event_listen__name 
+	# shellcheck disable=SC2016
+	bobshell_defun "$_bobshell_event_listen__name" "bobshell_event_compile $_bobshell_event_listen__name
+$_bobshell_event_listen__name \"\$@\""
+	unset _bobshell_event_listen__name
 }
