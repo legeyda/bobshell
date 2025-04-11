@@ -3,6 +3,7 @@ shelduck import string.sh
 shelduck import require.sh
 shelduck import ./event/fire.sh
 
+
 bobshell_die() {
   # https://github.com/biox/pa/blob/main/pa
   printf '%s: %s.\n' "$(basename "$0")" "${*:-error}" >&2
