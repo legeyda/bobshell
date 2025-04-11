@@ -18,3 +18,10 @@ str3'
 	die debug
 }
 
+test_preserve_env() {
+	x=1
+	unset y
+	bobshell_preserve_env eval 'x=2; y=2'
+	assert_equals 1 "$x"
+	assert_equals 2 "$y"
+}
