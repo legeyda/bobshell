@@ -4,6 +4,7 @@ shelduck import string.sh
 shelduck import crypto.sh
 shelduck import require.sh
 shelduck import util.sh
+shelduck import app.sh
 
 main() {
 	if [ -z "${1:-}" ]; then
@@ -60,12 +61,10 @@ bobshell_ensure_password() {
 	fi
 
 
-	if bobshell_isset BOBSHELL_APP_NAME; then
-		bobshell_ensure_password_upper=$(bobshell_upper_case "${BOBSHELL_APP_NAME}")
-		if bobshell_isset "${bobshell_ensure_password_upper}_SECRET_PASSWORD"; then
-			bobshell_secret_password=$(bobshell_getvar "${bobshell_ensure_password_upper}_SECRET_PASSWORD")
-			return
-		fi
+	bobshell_ensure_password_upper=$(bobshell_upper_case "${bobshell_app_name}")
+	if bobshell_isset "${bobshell_ensure_password_upper}_SECRET_PASSWORD"; then
+		bobshell_secret_password=$(bobshell_getvar "${bobshell_ensure_password_upper}_SECRET_PASSWORD")
+		return
 	fi
 
 

@@ -1,2 +1,2 @@
 
-: "${bobshell_app_name:=bobshell}"
+: "${bobshell_app_name:=${BOBSHELL_APP_NAME:-bobshell}}"

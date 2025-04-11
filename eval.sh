@@ -3,7 +3,7 @@ shelduck import ./resource/copy.sh
 shelduck import ./locator/is_file.sh
 
 bobshell_eval() {
-	bobshell_locator parse "$1" _bobshell_eval__type _bobshell_eval__ref
+	bobshell_locator_parse "$1" _bobshell_eval__type _bobshell_eval__ref
 	if [ 'file' = "$_bobshell_eval__type" ]; then
 		_bobshell_eval__ref=$(realpath "$_bobshell_eval__ref")
 		. "$_bobshell_eval__ref"

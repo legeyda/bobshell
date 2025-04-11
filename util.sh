@@ -35,8 +35,8 @@ bobshell_eval_output() {
 
 # txt: read -sr 
 bobshell_read_secret() {
-  # https://github.com/biox/pa/blob/main/pa
-  [ -t 0 ] && stty -echo
+	# https://github.com/biox/pa/blob/main/pa
+	[ -t 0 ] && stty -echo
 	read -r "$1"
 	[ -t 0 ] &&  stty echo
 }
