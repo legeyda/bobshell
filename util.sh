@@ -6,6 +6,7 @@ shelduck import git.sh
 shelduck import resource/copy.sh
 shelduck import ./eval.sh
 shelduck import ./var/get.sh
+
 bobshell_current_seconds() {
 	date +%s
 }
