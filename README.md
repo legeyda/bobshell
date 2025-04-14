@@ -10,9 +10,12 @@ Do not do this:
 	}
 	foo=$(bar)
 
-Do this:
+Do this instead:
 
 	foo() {
 		bobshell_result_set xyz
 	}
 	bobshell_result_read foo
+
+There are two problems. First, method invocation inside `$()` cannot have side effects.
+Second, `$()` stripes new lines at the end of str.
