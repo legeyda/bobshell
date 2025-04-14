@@ -132,6 +132,7 @@ test_quote() {
 	assert_equals "1 '2 3'" "$(bobshell_quote 1 '2 3')"
 	assert_equals "'hello '\"'\"'there'\"'\"''" "$(bobshell_quote "hello 'there'")"
 	assert_equals '1/2.3-4=5_6' "$(bobshell_quote 1/2.3-4=5_6)"
+	assert_equals "'$bobshell_newline'" "$(bobshell_quote "$bobshell_newline")"
 }
 
 test_join() {

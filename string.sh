@@ -3,6 +3,8 @@
 
 shelduck import base.sh
 shelduck import ./regex/match.sh
+shelduck import ./str/replace.sh
+shelduck import ./str/quote.sh
 
 
 # use: bobshell_starts_with hello he && echo "$rest" # prints llo
@@ -100,12 +102,8 @@ bobshell_split_last() {
 # use: replace_substring hello e E
 # DEPRECATED: str_replace
 bobshell_replace() {
-  	# https://freebsdfrau.gitbook.io/serious-shell-programming/string-functions/replace_substringall
-	bobshell_replace_str="$1"
-	while bobshell_split_first "$bobshell_replace_str" "$2" bobshell_replace_left bobshell_replace_str; do
-		printf %s%s "$bobshell_replace_left" "$3"
-	done
-	printf %s "$bobshell_replace_str"
+	bobshell_str_replace "$@"
+	printf %s "$bobshell_result_1"
 }
 
 
@@ -176,18 +174,8 @@ bobshell_newline='
 
 # DEPRECATED: use bobshell_str_quote
 bobshell_quote() {
-	bobshell_quote_separator=''
-	for bobshell_quote_arg in "$@"; do
-		printf %s "$bobshell_quote_separator"
-		if bobshell_basic_regex_match "$bobshell_quote_arg" '[-A-Za-z0-9_/=\.]\+'; then
-			printf %s "$bobshell_quote_arg"
-		else
-			bobshell_quote_arg=$(bobshell_replace "$bobshell_quote_arg" "'" "'"'"'"'"'"'"'")
-			printf "'%s'" "$bobshell_quote_arg"
-		fi
-		bobshell_quote_separator=' '
-	done
-	unset bobshell_quote_arg
+	bobshell_str_quote "$@"
+	printf %s "$bobshell_result_1"
 }
 
 
