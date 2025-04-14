@@ -5,7 +5,7 @@ shelduck import string.sh
 shelduck import git.sh
 shelduck import resource/copy.sh
 shelduck import ./eval.sh
-
+shelduck import ./var/get.sh
 bobshell_current_seconds() {
 	date +%s
 }
@@ -66,13 +66,15 @@ bobshell_run_url_git() {
 bobshell_preserve_env() {
 	_bobshell_preserve_env=
 	for _x in $(set | sed -n "s/^\([A-Za-z_][A-Za-z0-9_]*\)=.*$/\1/pg"); do
-		if ! bobshell_isset "$_x"; then
+		bobshell_var_get "$_x"
+		if ! bobshell_result_check _v; then
 			continue
 		fi
-		_v=$(bobshell_getvar "$_x")
-		_v=$(bobshell_quote "$_v")
+		bobshell_str_quote "$_v"
+		_v="$bobshell_result_1"
 		_bobshell_preserve_env="$_bobshell_preserve_env
 bobshell_preserve_env_item_load $_x $_v"
+		unset _v
 	done
 	unset _x
 	"$@"
