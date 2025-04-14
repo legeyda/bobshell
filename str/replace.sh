@@ -2,14 +2,14 @@
 shelduck import ../string.sh
 shelduck import ../result/set.sh
 
-bobshell_replace() {
+bobshell_str_replace() {
   	# https://freebsdfrau.gitbook.io/serious-shell-programming/string-functions/replace_substringall
-	bobshell_replace_str="$1"
-	bobshell_replace__result=
-	while bobshell_split_first "$bobshell_replace_str" "$2" bobshell_replace_left bobshell_replace_str; do
-		bobshell_replace__result="$bobshell_replace__result$bobshell_replace_left$3"
+	_bobshell_replace__rest="$1"
+	_bobshell_replace__result=
+	while bobshell_split_first "$_bobshell_replace__rest" "$2" _bobshell_replace_left _bobshell_replace__rest; do
+		_bobshell_replace__result="$_bobshell_replace__result$_bobshell_replace_left$3"
 	done
-	bobshell_replace__result="$bobshell_replace__result$bobshell_replace_str"
-	bobshell_result_set "$bobshell_replace__result"
-	unset bobshell_replace_str bobshell_replace__result bobshell_replace_left 
+	_bobshell_replace__result="$_bobshell_replace__result$_bobshell_replace__rest"
+	bobshell_result_set "$_bobshell_replace__result"
+	unset _bobshell_replace__rest _bobshell_replace__result _bobshell_replace_left 
 }
