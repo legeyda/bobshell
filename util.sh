@@ -64,14 +64,32 @@ bobshell_run_url_git() {
 # txt: выполнить команду, восстановить после неё значения переменных окружения
 # use: X=1; Y=2; preserve_environment 'eval' 'X=2, Z=3'; echo "$X, $Y, $Z" # gives 1, 2, 3
 bobshell_preserve_env() {
-  bobshell_preserve_env_orig=
-  # cygwin runs sh in bash, so exclude readonly variables and arrays
-  # shellcheck disable=SC2016
-  bobshell_preserve_env_orig="$(set | grep -v "[A-Za-z0-9_]\+=(" | grep -v ^BASH | grep -v ^EUID | grep -v ^PPID | grep -v ^SHELLOPTS | grep -v ^UID)"
-  "$@"
-  eval "$bobshell_preserve_env_orig"
-  unset bobshell_preserve_env_orig
+	_bobshell_preserve_env=
+	for _x in $(set | sed -n "s/^\([A-Za-z_][A-Za-z0-9_]*\)=.*$/\1/pg"); do
+		if ! bobshell_isset "$_x"; then
+			continue
+		fi
+		_v=$(bobshell_getvar "$_x")
+		_v=$(bobshell_quote "$_v")
+		_bobshell_preserve_env="$_bobshell_preserve_env
+bobshell_preserve_env_item_load $_x $_v"
+	done
+	unset _x
+	"$@"
+	eval "$_bobshell_preserve_env"
+	unset _bobshell_preserve_env
 }
+
+bobshell_preserve_env_item_load() {
+	if bobshell_isset "$1"; then
+		_x=$(bobshell_getvar "$1")
+		if [ "$_x" = "$2" ]; then
+			return
+		fi
+		bobshell_putvar "$1" "$2"
+	fi
+}
+
 
 bobshell_is_root() {
 	test 0 = "$(id -u)"
