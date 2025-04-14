@@ -35,6 +35,7 @@ bobshell_command_available() {
 
 # fun: bobshell_putvar VARNAME NEWVARVALUE
 # txt: установка значения переменной по динамическому имени
+# DEPRECATED: use bobshell_ar_set
 bobshell_putvar() {
   eval "$1=\"\$2\""
 }
@@ -44,6 +45,7 @@ bobshell_putvar() {
 # fun bobshell_getvar VARNAME [DEFAULTVALUE]
 # use: echo "$(getvar MSG)"
 # txt: считывание значения переменной по динамическому имени
+# DEPRECATED: use bobshell_var_get
 bobshell_getvar() {
 	if bobshell_isset "$1"; then
   		eval "printf %s \"\$$1\""
