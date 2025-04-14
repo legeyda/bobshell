@@ -15,7 +15,7 @@ bobshell_str_quote() {
 		elif bobshell_regex_match "$1" '[-A-Za-z0-9_/=\.]\+'; then
 			_bobshell_str_quote__result="$_bobshell_str_quote__result$_bobshell_str_quote__separator$1"
 		else
-			bobshell_replace "$1" "'" "'"'"'"'"'"'"'"
+			bobshell_str_replace "$1" "'" "'"'"'"'"'"'"'"
 			_bobshell_str_quote__result="$_bobshell_str_quote__result$_bobshell_str_quote__separator'$bobshell_result_1'"
 		fi
 		_bobshell_str_quote__separator=' '
