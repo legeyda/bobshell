@@ -173,7 +173,7 @@ bobshell_assing_new_line() {
 bobshell_newline='
 '
 
-
+# DEPRECATED: use bobshell_str_quote
 bobshell_quote() {
 	bobshell_quote_separator=''
 	for bobshell_quote_arg in "$@"; do
