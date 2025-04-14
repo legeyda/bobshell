@@ -19,3 +19,9 @@ test_regex_match() {
 	assert_ok bobshell_regex_match '  shelduck   import   blabla\n' '^\s*shelduck\s\+import\s\+.*$'
 	#assert_ok bobshell_regex_match "$bobshell_newline" '^\n.*$'
 }
+
+test_regex_var() {
+	assert_ok    bobshell_regex_match x '[A-Za-z_][A-Za-z_0-9]*'
+	assert_error bobshell_regex_match 1 '[A-Za-z_][A-Za-z_0-9]*'
+	
+}
