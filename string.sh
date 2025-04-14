@@ -98,6 +98,7 @@ bobshell_split_last() {
 
 # txt: заменить в $1 все вхождения строки $2 на строку $3
 # use: replace_substring hello e E
+# DEPRECATED: str_replace
 bobshell_replace() {
   	# https://freebsdfrau.gitbook.io/serious-shell-programming/string-functions/replace_substringall
 	bobshell_replace_str="$1"
