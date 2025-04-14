@@ -4,6 +4,19 @@ shelduck import assert.sh
 shelduck import string.sh
 
 
+test_output_redirection() {
+	x=1
+	y=$(printf %s hello; x=2)
+	assert_equals 1 "$x" # no side effect!
+	assert_equals hello "$y"
+
+	x=$(printf '%s\n' hello)
+	assert_equals hello "$x" # no trailing newline!
+
+}
+
+
+
 test_shell() {
 	# assert_empty         "$(Y=$(echo hello; die); echo "$Y")" # as expected: nothing printed
 	# assert_not_empty "$(echo "$(echo hello; die)")" # strange: value printed after exit

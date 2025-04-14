@@ -19,3 +19,4 @@ Do this instead:
 
 There are two problems. First, method invocation inside `$()` cannot have side effects.
 Second, `$()` stripes new lines at the end of str.
+(see `test_shell.sh:test_output_redirection`)
