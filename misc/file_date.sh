@@ -138,11 +138,11 @@ bobshell_file_date_ls() {
 		}
 		offset_minutes = offset_to_minutes(offset)
 	} else {
-		print("error parsing ls output") > "/dev/stderr"
+		printf("error parsing ls output") > "/dev/stderr"
 		exit 1
 	}
 
-	print(format_date(format, year, month, day, hour, minute, 0, 0, offset_minutes))
+	printf("%s", format_date(format, year, month, day, hour, minute, 0, 0, offset_minutes))
 
 }'
 	unset _bobshell_file_date_ls
@@ -169,7 +169,7 @@ bobshell_file_date_diff() {
 	nano   = int(substr($2, 21, 9))
 	offset = int(substr($2, 31, 5))
 
-	print(format_date(format, year, month, day, hour, minute, second, nano, offset_to_minutes(offset)))
+	printf("%s", format_date(format, year, month, day, hour, minute, second, nano, offset_to_minutes(offset)))
 }'
 	unset _bobshell_file_date_diff__src
 

@@ -4,6 +4,7 @@ shelduck import ../locator/parse.sh
 shelduck import ../resource/copy.sh
 shelduck import ../base.sh
 shelduck import ../string.sh
+shelduck import ../str/quote.sh
 
 
 
@@ -34,9 +35,9 @@ bobshell_resource_copy_to_url()           { bobshell_die 'cannot write to stdin 
 
 
 bobshell_resource_copy_val_to_val()       { test "$1" != "$2" && bobshell_resource_copy_to_val; }
-bobshell_resource_copy_val_to_var()       { 
-	_bobshell_tmp=$(bobshell_quote "$1")	
-	eval "$2=$_bobshell_tmp";
+bobshell_resource_copy_val_to_var()       {
+	bobshell_str_quote "$1"	
+	eval "$2=$bobshell_result_1"
 }
 bobshell_resource_copy_val_to_eval()      { eval "$1"; }
 bobshell_resource_copy_val_to_stdin()     { bobshell_resource_copy_to_stdin; }
