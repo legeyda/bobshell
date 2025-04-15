@@ -90,7 +90,14 @@ bobtest_run() {
 }
 
 bobtest_shelduck_run() {
-	BOBTEST_FILE="$1"
-	BOBTEST_FUNCTION="$2"
-	sh -euc "shelduck_run 'val:shelduck import \"file://$1\"; set -x; $2'"
+	export BOBTEST_FILE="$1"
+	export BOBTEST_FUNCTION="$2"
+
+	_bobtest_shelduck_run=$(shelduck resolve "file://$1")
+
+	${BOBTEST_SHELL_COMMAND:-sh -euc} "$_bobtest_shelduck_run
+	
+set -x
+$2"
+	unset _bobtest_shelduck_run
 }

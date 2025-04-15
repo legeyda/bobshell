@@ -36,10 +36,14 @@ run_ci_build() {
 }
 
 run_test_run() {
-	sh -euc ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'
-shelduck import 'file://$1'
+	export BOBTEST_FILE="$1"
+	export BOBTEST_FUNCTION="$2"
+	sh -euc ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'"'
+_bobtest_shelduck_run=$(shelduck resolve "file://$BOBTEST_FILE")
+echo "$_bobtest_shelduck_run" > target/debug.txt
+${BOBTEST_SHELL_COMMAND:-sh -euc} "$_bobtest_shelduck_run
 set -x
-'$2'"
+$BOBTEST_FUNCTION"'
 }
 
 # shellcheck disable=SC2120
