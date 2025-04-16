@@ -19,15 +19,18 @@ $_docker_run__script"
 
 
 test_python() {
+	_test_python__import="shelduck import file://$(pwd)/misc/python.sh"
+
 	unset x
 	bobshell_redirect_output var:x docker_run "val:
 set -eux
 apt-get --yes update > /dev/null
 apt-get --yes install curl > /dev/null
-shelduck import $(pwd)/misc/python.sh
+$_test_python__import
 bobshell_python -c 'print(\"hello\")'
-
 "
+#
+
 	assert_equals "hello$bobshell_newline" "$x"
 }
 

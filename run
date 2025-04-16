@@ -40,7 +40,6 @@ run_test_run() {
 	export BOBTEST_FUNCTION="$2"
 	sh -euc ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'"'
 _bobtest_shelduck_run=$(shelduck resolve "file://$BOBTEST_FILE")
-echo "$_bobtest_shelduck_run" > target/debug.txt
 ${BOBTEST_SHELL_COMMAND:-sh -euc} "$_bobtest_shelduck_run
 set -x
 $BOBTEST_FUNCTION"'
