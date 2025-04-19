@@ -47,6 +47,7 @@ $BOBTEST_FUNCTION"'
 
 # shellcheck disable=SC2120
 run_test() {
+	export BOBSHELL_EXIT_TRAP_TRACE_ENABLED=false
 	shelduck import file://./bobtest.sh
 	# shellcheck disable=SC2034
 	BOBTEST_RUN=run_test_run
