@@ -16,16 +16,26 @@ bobshell_event_var_set() {
 			fi
 			unset _hoid_var_set__value
 		fi
-		bobshell_putvar "$1" "$2"
-	else
+
+		_bobshell_event_var_set__var=$1
+		_bobshell_event_var_set__value=$2
+		shift 2
+
+		bobshell_event_fire "_bobshell_event_var_${_bobshell_event_var_set__var}_before_event" "$@"
+		bobshell_putvar "$_bobshell_event_var_set__var" "$_bobshell_event_var_set__value"
+		bobshell_event_fire "_bobshell_event_var_${_bobshell_event_var_set__var}_after_event" "$@"		
+		else
 		if ! bobshell_isset "$1"; then
 			return
 		fi
-		unset "$1"
+
+		_bobshell_event_var_set__var=$1
+		shift
+
+		bobshell_event_fire "_bobshell_event_var_${_bobshell_event_var_set__var}_before_event" "$@"
+		unset "$_bobshell_event_var_set__var"
+		bobshell_event_fire "_bobshell_event_var_${_bobshell_event_var_set__var}_after_event" "$@"		
 	fi
-	_bobshell_event_var_set__event=$1
-	shift	
-	bobshell_event_fire "_bobshell_event_var_${_bobshell_event_var_set__event}_event" "$@"
-	unset _bobshell_event_var_set__event
+	unset _bobshell_event_var_set__var _bobshell_event_var_set__value
 }
 
