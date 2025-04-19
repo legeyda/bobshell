@@ -2,6 +2,7 @@
 shelduck import string.sh
 shelduck import require.sh
 shelduck import ./event/fire.sh
+shelduck import notrace.sh
 
 
 bobshell_die() {
@@ -174,8 +175,13 @@ bobshell_last_arg() {
 	printf %s "$1"
 }
 
-trap bobshell_exit_trap EXIT
+trap '{ set +x; } 2> /dev/null; bobshell_exit_trap' EXIT
 bobshell_exit_trap() {
+
+	if [ true = "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-true}" ]; then
+		set -x;
+	fi 
+	
 	# shellcheck disable=SC2181
 	if [ 0 -eq $? ]; then
 		bobshell_event_fire bobshell_success_exit_event
