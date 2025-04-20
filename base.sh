@@ -175,12 +175,9 @@ bobshell_last_arg() {
 	printf %s "$1"
 }
 
-trap '{ set +x; } 2> /dev/null; bobshell_exit_trap' EXIT
+trap 'bobshell_exit_trap' EXIT
 bobshell_exit_trap() {
-
-	if [ true = "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-true}" ]; then
-		set -x;
-	fi 
+	bobshell_notrace bobshell_exit_trap_trace_config
 	
 	# shellcheck disable=SC2181
 	if [ 0 -eq $? ]; then
@@ -189,5 +186,11 @@ bobshell_exit_trap() {
 		bobshell_event_fire bobshell_error_exit_event
 	fi
 	bobshell_event_fire bobshell_exit_event
+}
+
+bobshell_exit_trap_trace_config() {
+	if bobshell_contains "$-" x || [ true = "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-true}" ]; then
+		set -x
+	fi
 }
 
