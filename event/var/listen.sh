@@ -8,9 +8,13 @@ bobshell_event_var_listen() {
 	_bobshell_event_var_listen__moment=after
 	while bobshell_isset_1 "$@"; do
 		case "$1" in
-			(-m|--moment) 
-				_bobshell_event_var_listen__moment="$2"
-				shift 2
+			(-a|--after) 
+				_bobshell_event_var_listen__moment=after
+				shift 1
+				;;
+			(-b|--before) 
+				_bobshell_event_var_listen__moment=before
+				shift 1
 				;;
 			(-*)
 				bobshell_die "bobshell_event_var_listen: unsupported option $1"
@@ -26,7 +30,7 @@ bobshell_event_var_listen() {
 	elif [ after = "$_bobshell_event_var_listen__moment" ]; then
 		bobshell_event_listen "_bobshell_event_var_${_bobshell_event_var_listen__var}_after_event" "$@"
  	else
-		bobshell_die 'unsupported moment value'
+		bobshell_die "unsupported moment value $_bobshell_event_var_listen__moment"
 	fi
 	
 	unset _bobshell_event_var_listen__moment _bobshell_event_var_listen__var
