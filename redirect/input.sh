@@ -27,6 +27,7 @@ bobshell_redirect_input() {
 		unset _bobshell_redirect_input__file
 	else
 		_bobshell_redirect_input__temp=$(mktemp -d)
+		chmod u+rwx "$_bobshell_redirect_input__temp"
 		mkfifo "$_bobshell_redirect_input__temp/1" "$_bobshell_redirect_input__temp/2"
 		dd "if=$_bobshell_redirect_input__temp/1" "of=$_bobshell_redirect_input__temp/2" status=none &
 		bobshell_redirect_input_dd_pid=$!

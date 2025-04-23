@@ -55,8 +55,10 @@ bobshell_mktemp() {
 	# create 
 	if [ true = $_bobshell_mktemp__dir ]; then
 		mkdir "$_bobshell_mktemp__result"
+		chmod u+rwx "$_bobshell_mktemp__result"
 	else
 		touch "$_bobshell_mktemp__result"
+		chmod u+rw "$_bobshell_mktemp__result"
 	fi
 	unset _bobshell_mktemp__dir
 	

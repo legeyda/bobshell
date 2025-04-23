@@ -59,6 +59,7 @@ bobshell_run_url() {
 
 bobshell_run_url_git() {
 	bobshell_run_url_git_dir=$(mktemp -d)
+	chmod u+rwx "$bobshell_run_url_git_dir"
 	bobshell_git clone "$1" "$bobshell_run_url_git_dir"
 	"$bobshell_run_url_git_dir/run" "$@"
 }

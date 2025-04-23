@@ -34,6 +34,7 @@ bobshell_redirect_output() {
 		_bobshell_redirect_output="$1"
 		shift
 		_bobshell_redirect_output__temp=$(mktemp -d)
+		chmod u+rwx "$_bobshell_redirect_output__temp"
 		mkfifo "$_bobshell_redirect_output__temp/1" "$_bobshell_redirect_output__temp/2"
 		dd "if=$_bobshell_redirect_output__temp/1" "of=$_bobshell_redirect_output__temp/2" status=none &
 		bobshell_redirect_output_dd_pid=$!
