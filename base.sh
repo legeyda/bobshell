@@ -177,10 +177,11 @@ bobshell_last_arg() {
 
 trap 'bobshell_exit_trap' EXIT
 bobshell_exit_trap() {
+	_bobshell_exit_trap__code=$?
 	bobshell_notrace bobshell_exit_trap_trace_config
 	
 	# shellcheck disable=SC2181
-	if [ 0 -eq $? ]; then
+	if [ 0 -eq "$_bobshell_exit_trap__code" ]; then
 		bobshell_event_fire bobshell_success_exit_event
 	else
 		bobshell_event_fire bobshell_error_exit_event
