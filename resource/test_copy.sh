@@ -48,3 +48,8 @@ test_resource_copy() {
 	bobshell_resource_copy val:xxx var:FROM_VAL
 	assert_equals xxx "$FROM_VAL"
 }
+
+test_copy_url() {
+	bobshell_resource_copy https://github.com/legeyda/shelduck/releases/latest/download/install.sh var:x
+	assert_ok bobshell_starts_with "$x" '#!/bin/sh'
+}

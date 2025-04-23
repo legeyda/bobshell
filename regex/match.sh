@@ -3,7 +3,7 @@
 
 bobshell_regex_match() {
 	_bobshell_regex_match=$(expr "$1" : "$2")
-	if [ "$_bobshell_regex_match" = "${#1}" ]; then
+	if [ "$_bobshell_regex_match" = "${#1}" ]; then # todo ??? [ "$_bobshell_regex_match" = "$1" ] || 
 		unset _bobshell_regex_match
 		return
 	else

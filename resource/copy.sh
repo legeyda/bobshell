@@ -5,6 +5,7 @@ shelduck import ../resource/copy.sh
 shelduck import ../base.sh
 shelduck import ../string.sh
 shelduck import ../str/quote.sh
+shelduck import ../url.sh
 
 
 
@@ -105,9 +106,13 @@ bobshell_resource_copy_file_to_url()      { bobshell_resource_copy_to_url; }
 
 
 bobshell_resource_copy_url_to_val()       { bobshell_resource_copy_to_val; }
-bobshell_resource_copy_url_to_var()       { bobshell_fetch_url "$1" | bobshell_resource_copy_stdin_to_var '' "$2"; }
-bobshell_resource_copy_url_to_eval()      { bobshell_fetch_url "$1" | bobshell_resource_copy_stdin_to_var '' "$2"; }
+bobshell_resource_copy_url_to_var()       { eval "$2"'=$(bobshell_fetch_url '"'""$1""'"')'; }
+bobshell_resource_copy_url_to_eval()      {
+	bobshell_resource_copy_url_to_var "$1" _bobshell_resource_copy_url_to_eval
+	eval "$_bobshell_resource_copy_url_to_eval"
+	unset _bobshell_resource_copy_url_to_eval 
+}
 bobshell_resource_copy_url_to_stdin()     { bobshell_resource_copy_to_stdin; }
 bobshell_resource_copy_url_to_stdout()    { bobshell_fetch_url "$1"; }
-bobshell_resource_copy_url_to_file()      { bobshell_fetch_url "$1" | bobshell_resource_copy_stdin_to_file '' "$2"; }
+bobshell_resource_copy_url_to_file()      { bobshell_fetch_url "$1" > "$2"; }
 bobshell_resource_copy_url_to_url()       { bobshell_resource_copy_to_url; }
