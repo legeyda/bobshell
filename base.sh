@@ -190,7 +190,7 @@ bobshell_exit_trap() {
 }
 
 bobshell_exit_trap_trace_config() {
-	if [ true != "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-true}" ]; then
+	if [ true != "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-false}" ]; then
 		set +x
 	fi
 }
