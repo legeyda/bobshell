@@ -175,11 +175,13 @@ bobshell_last_arg() {
 	printf %s "$1"
 }
 
-trap 'bobshell_exit_trap' EXIT
+trap '{ set +x; } 2> /dev/null; bobshell_exit_trap' EXIT
 bobshell_exit_trap() {
 	_bobshell_exit_trap__code=$?
-	bobshell_notrace bobshell_exit_trap_trace_config
-	
+	if [ true = "${BOBSHELL_EXIT_TRAP_TRACE:-false}" ]; then
+		set -x
+	fi
+
 	# shellcheck disable=SC2181
 	if [ 0 -eq "$_bobshell_exit_trap__code" ]; then
 		bobshell_event_fire bobshell_success_exit_event
@@ -188,10 +190,3 @@ bobshell_exit_trap() {
 	fi
 	bobshell_event_fire bobshell_exit_event
 }
-
-bobshell_exit_trap_trace_config() {
-	if [ true != "${BOBSHELL_EXIT_TRAP_TRACE_ENABLED:-false}" ]; then
-		set +x
-	fi
-}
-
