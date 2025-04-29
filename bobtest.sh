@@ -78,7 +78,15 @@ bobtest_output_flag=6b2e8ddb5198464ea952c131e17bfede9966f038c958468e8ec5108d2ed7
 # env: 
 bobtest_run() {
 	: "${BOBTEST_RUN:=bobtest_shelduck_run}"
-	(set -eu; printf %s "$(set -eux; "$BOBTEST_RUN" "$@"; printf %s "$bobtest_output_flag")" ) > "$bobshell_stdout_file" 2> "$bobshell_stderr_file"
+
+	_bobtest_run__script='( set -eu; printf %s "$(set -eux; "$BOBTEST_RUN" "$@"; printf %s "$bobtest_output_flag")" )'
+	if [ true = "${BOBTEST_REDIRECT:-true}" ]; then
+		_bobtest_run__script="$_bobtest_run__script"' > "$bobshell_stdout_file" 2> "$bobshell_stderr_file"'
+	fi
+	eval "$_bobtest_run__script"
+	unset _bobtest_run__script
+
+	 
 	
 	if grep -q "$bobtest_output_flag" "$bobshell_stdout_file"; then
 		bobshell_result_set true	
