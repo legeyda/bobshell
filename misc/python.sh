@@ -31,6 +31,7 @@ bobshell_python_venv_ensure() {
 	fi
 	mkdir -p "$bobshell_python_venv"
 	"$bobshell_python_home/bin/python" -m venv "$bobshell_python_venv"
+	"$bobshell_python_venv/bin/python" -m pip install --upgrade pip # avoid warning
 }
 
 bobshell_python_home_ensure() {
