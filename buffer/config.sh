@@ -11,7 +11,7 @@ bobshell_buffer_config() {
 	elif bobshell_remove_prefix "$1" var: _bobshell_buffer_var; then
 		# shellcheck disable=SC2016
 		eval 'bobshell_buffer_printf() {
-	bobshell_redirect_output var:_bobshell_buffer_printf printf "$@"
+	_bobshell_buffer_printf=$(printf "$@"; printf z); _bobshell_buffer_printf=${_bobshell_buffer_printf%z}
 	'"$_bobshell_buffer_var"'="${'"$_bobshell_buffer_var"':-}$_bobshell_buffer_printf" \
 	unset _bobshell_buffer_printf
 }'

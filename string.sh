@@ -83,7 +83,7 @@ bobshell_split_first() {
 	fi
 }
 
-# fun: bobshell_split_first STR SUBSTR [PREFIX [SUFFIX]]
+# fun: bobshell_split_last STR SUBSTR [PREFIX [SUFFIX]]
 bobshell_split_last() {
 	set -- "$1" "$2" "${3:-}" "${4:-}" "${1%"$2"*}"
 	if [ "$1" = "$5" ]; then

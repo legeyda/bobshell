@@ -264,3 +264,10 @@ test_output_file_side_effect() {
 
 }
 
+test_namespace() {
+	# https://unix.stackexchange.com/a/254401
+	some_fn(){ x=3; echo "$x"; }
+	x=
+	x=local command eval some_fn
+	assert_equals empty "${x:-empty}"
+}
