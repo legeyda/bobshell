@@ -26,7 +26,7 @@ bobshell_redirect_input() {
 		"$@" < "$_bobshell_redirect_input__file"
 		unset _bobshell_redirect_input__file
 	else
-		_bobshell_redirect_input__temp=$(mktemp -d)
+		_bobshell_redirect_input__temp=$(mktemp -d) # todo common temp dir for all would be more performant
 		chmod u+rwx "$_bobshell_redirect_input__temp"
 		mkfifo "$_bobshell_redirect_input__temp/1" "$_bobshell_redirect_input__temp/2"
 		dd "if=$_bobshell_redirect_input__temp/1" "of=$_bobshell_redirect_input__temp/2" status=none &

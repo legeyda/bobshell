@@ -271,3 +271,27 @@ test_namespace() {
 	x=local command eval some_fn
 	assert_equals empty "${x:-empty}"
 }
+
+
+
+
+test_error() {
+	f() {
+		false
+		x=hello
+	}
+	unset x
+	assert_die f
+	assert_unset x
+
+
+	unset x
+	if f; then
+		true
+	else
+		true
+	fi
+	assert_isset x
+
+
+}
