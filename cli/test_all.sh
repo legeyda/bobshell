@@ -23,6 +23,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli -p value1 -q value2 -f -g 1 2 3
+		assert_equals 6 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
 		assert_equals true  "$flag1"
@@ -35,6 +36,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli -p value1 -q value2 -- -f -g --param1 --flag1 --no-flag1 -F --flag2
+		assert_equals 5 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
 		bobshell_result_check x y z
@@ -45,6 +47,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli --param1 value1 --param2 value2 1 2 3
+		assert_equals 4 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
 		bobshell_result_check x y z
@@ -56,6 +59,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli -p=value1 -q=value2 -f -g 1 2 3
+		assert_equals 4 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
 		assert_equals true  "$flag1"
@@ -68,6 +72,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli --param1=value1 --param2=value2 1 2 3
+		assert_equals 2 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
 		bobshell_result_check x y z
@@ -78,6 +83,7 @@ test_all() {
 
 	(
 		bobshell_cli_parse test_cli -fgp value1 1 2 3
+		assert_equals 2 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals true  "$flag1"
 		assert_equals false "$flag2"

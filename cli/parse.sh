@@ -9,6 +9,7 @@ shelduck import ../event/fire.sh
 # use: bobshell_cli_parse hoid_task_user_cli "$@"
 #      bobshell_array_call bobshell_result set --
 bobshell_cli_parse() {
+	bobshell_cli_shift=0
 	_bobshell_cli_parse__scope="$1"
 	shift
 
@@ -16,6 +17,7 @@ bobshell_cli_parse() {
 
 	while bobshell_isset_1 "$@"; do
 		if [ "$1" = -- ]; then
+			bobshell_cli_shift=$(( bobshell_cli_shift + 1 ))
 			shift
 			break
 		fi
@@ -23,6 +25,7 @@ bobshell_cli_parse() {
 		bobshell_result_set false
 		bobshell_event_fire "${_bobshell_cli_parse__scope}_arg" "$@"
 		if bobshell_result_check _bobshell_cli_parse__shift; then
+			bobshell_cli_shift=$(( bobshell_cli_shift + _bobshell_cli_parse__shift ))
 			shift "$_bobshell_cli_parse__shift"
 			unset _bobshell_cli_parse__shift
 			continue
@@ -35,6 +38,7 @@ bobshell_cli_parse() {
 
 		if bobshell_starts_with "$1" -; then
 			_bobshell_cli_parse__arg="$1"
+			bobshell_cli_shift=$(( bobshell_cli_shift + 1 ))
 			shift
 			_bobshell_cli_parse__rest="${_bobshell_cli_parse__arg#?}"
 			while [ -n "$_bobshell_cli_parse__rest" ]; do
@@ -50,6 +54,7 @@ bobshell_cli_parse() {
 				else
 					bobshell_event_fire "${_bobshell_cli_parse__scope}_arg" "-$_bobshell_cli_parse__head" "$@"
 					if bobshell_result_check _bobshell_cli_parse__shift; then
+						bobshell_cli_shift=$(( bobshell_cli_shift + _bobshell_cli_parse__shift - 1 ))
 						shift $(( _bobshell_cli_parse__shift - 1 ))
 						unset _bobshell_cli_parse__shift
 					else
