@@ -19,7 +19,13 @@ bobshell_awk() {
 	shift
 	
 	if bobshell_locator_is_file "$bobshell_awk__input" bobshell_awk__input_file; then
-		bobshell_redirect_output "$bobshell_awk__output" awk "$@" "$bobshell_awk__input_file"
+		if [ "$bobshell_awk__input" = "$bobshell_awk__output" ]; then
+			bobshell_redirect_output var:_bobshell_awk__buffer awk "$@" "$bobshell_awk__input_file"
+			bobshell_resource_copy_var_to_file _bobshell_awk__buffer "$bobshell_awk__input_file"
+			unset _bobshell_awk__buffer
+		else
+			bobshell_redirect_output "$bobshell_awk__output" awk "$@" "$bobshell_awk__input_file"
+		fi
 		unset bobshell_awk__input_file
 	else
 		bobshell_redirect_io "$bobshell_awk__input" "$bobshell_awk__output" awk "$@"

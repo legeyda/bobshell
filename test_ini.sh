@@ -68,3 +68,15 @@ test_add_group() {
 	result=$(bobshell_ini_put_value var:sample_file stdout: newgroup newkey newvalue)
 	assert_equals "$sample_file${bobshell_newline}[newgroup]${bobshell_newline}newkey=newvalue" "$result"
 }
+
+test_in_place() {
+	mkdir -p target/test_ini_in_place
+	cd target/test_ini_in_place
+	rm -rf ./*
+	echo "$sample_file" > file.ini
+
+
+	bobshell_ini_put_value file:file.ini file:file.ini hello four fo4ur
+	actual=$(cat file.ini)
+	expected=$(bobshell_replace "$sample_file" '  four =  4 ' 'four=fo4ur')
+}
