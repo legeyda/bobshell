@@ -80,3 +80,14 @@ test_in_place() {
 	actual=$(cat file.ini)
 	expected=$(bobshell_replace "$sample_file" '  four =  4 ' 'four=fo4ur')
 }
+
+test_delete() {
+	bobshell_ini_delete_key var:sample_file var:result0 '' two
+	bobshell_ini_delete_key var:result0 var:result1 hello five
+	expected=$(bobshell_replace "$sample_file" '
+ two=2 2 2' '')
+	expected=$(bobshell_replace "$expected" '
+five = 5   ' '')
+
+	assert_equals "$expected$bobshell_newline" "$result1"
+}

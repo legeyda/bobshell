@@ -134,4 +134,15 @@ END {
 '
 }
 
-
+# fun: bobshell_ini_put_value INPUT OUTPUT GROUP KEY
+bobshell_ini_delete_key() {
+	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" -v target_value="${5:-}" "$bobshell_ini_awk_common"'
+{
+	if(is_target_group() && is_target_key()) {
+		// skip nothing
+	} else {
+		print
+	}
+}
+'
+}
