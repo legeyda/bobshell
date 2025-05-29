@@ -8,8 +8,11 @@ bobshell_locator_resolve() {
 	if  bobshell_locator_parse "$1" _bobshell_locator_resolve__type _bobshell_locator_resolve__ref; then
 		if [ file = "$_bobshell_locator_resolve__type" ]; then
 			_bobshell_locator_resolve__ref=$(realpath "$_bobshell_locator_resolve__ref")
+			printf 'file://%s' "$_bobshell_locator_resolve__ref"
+		else
+			printf %s "$1"
 		fi
-		printf 'file://%s' "$_bobshell_locator_resolve__ref"
+		
 		unset _bobshell_locator_resolve__type _bobshell_locator_resolve__ref
 	else
 		if bobshell_isset_2 "$@"; then
