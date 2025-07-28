@@ -20,6 +20,13 @@ assert_equals() {
 	fi
 }
 
+assert_contains() {
+	case "$1" in
+		(*$2*) true ;;
+		(*)    assertion_error "actual value <$1> expected to contain substring <$2>${3:+ $3}"
+	esac
+}
+
 assert_not_equals() {
 	if [ "$1" = "$2" ]; then
 		assertion_error "actual value <$2> expected not to be equal to <$1>${3:+: $3}"
@@ -69,5 +76,12 @@ assert_die() {
 assert_file_exists() {
 	if [ ! -f "$1" ]; then
 		assertion_error "file expected to exist: $1"
+	fi
+}
+
+assert_file_contents() {
+	_assert_file_contains=$(cat "$2")
+	if [ "$1" != "$_assert_file_contains" ]; then
+		assertion_error "actual file ($2) contents <$_assert_file_contains> expected to be equal to <$1>${3:+ $3}"
 	fi
 }
