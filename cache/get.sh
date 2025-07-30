@@ -11,8 +11,10 @@ shelduck import ../cli/default.sh
 shelduck import ../cli/param.sh
 shelduck import ../cli/parse.sh
 
-bobshell_cli_default bobshell_cache_get_cli _bobshell_cache_get__ttl none
+
+bobshell_event_listen bobshell_cache_get_cli_start 'unset _bobshell_cache_get__ttl' 
 bobshell_cli_param   bobshell_cache_get_cli _bobshell_cache_get__ttl t ttl
+#todo bobshell_cli_setup bobshell_cache_get_cli --param --var=_bobshell_cache_get__ttl --devault-value=none t ttl
 
 # fun: bobshell_shift_exec SHIFTNUM IGNORED ... COMMAND [ARGS...]
 bobshell_shift_exec() {
