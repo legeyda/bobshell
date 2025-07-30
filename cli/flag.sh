@@ -29,5 +29,8 @@ bobshell_cli_flag() {
 		shift
 	done
 
+	# shellcheck disable=SC1073
+	bobshell_event_listen "${_bobshell_cli_flag__scope}_clear" "unset $_bobshell_cli_flag__var"
+
 	unset _bobshell_cli_flag__scope _bobshell_cli_flag__var _bobshell_cli_flag__quoted_value
 }

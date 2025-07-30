@@ -31,5 +31,8 @@ bobshell_cli_param() {
 	fi'
 		shift
 	done
+
+	bobshell_event_listen "${_bobshell_cli_param__scope}_clear" "unset $_bobshell_cli_param__var"
+
 	unset _bobshell_cli_param__scope _bobshell_cli_param__var
 }
