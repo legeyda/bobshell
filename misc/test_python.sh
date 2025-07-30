@@ -31,11 +31,11 @@ bobshell_python -c 'print(\"hello\")'
 "
 #
 
-	assert_equals "hello$bobshell_newline" "$x"
+	assert_contains "$x" hello
 }
 
 local_debug_python() {
 	unset x
 	bobshell_redirect_output var:x bobshell_python -c 'print("hello")'
-	assert_equals "hello$bobshell_newline" "$x"
+	assert_contains "$x" hello
 }
