@@ -1,11 +1,19 @@
 
-
-
-shelduck import ./parse.sh
 shelduck import ../assert.sh
+shelduck import ./setup.sh
+shelduck import ./parse.sh
+shelduck import ./help.sh
 shelduck import ../result/check.sh
 
-assert_parse() {
+
+test_cli() {
+
+	bobshell_cli_setup test_cli --var=param1 --param --default-unset         p param1
+	bobshell_cli_setup test_cli --var=param2 --param --default-value=defval1 q param2
+	bobshell_cli_setup test_cli --var=param3 --param --append --separator=', ' r param3
+	bobshell_cli_setup test_cli --var=flag1  --flag                          f flag1
+	bobshell_cli_setup test_cli --var=flag1  --flag  --flag-value=false      F no-flag1
+	bobshell_cli_setup test_cli --var=flag2  --flag  --flag-value=false --default-value=true g flag2
 
 	(
 		bobshell_cli_parse test_cli -p value1 -q value2 -f -g 1 2 3
@@ -42,9 +50,8 @@ assert_parse() {
 		assert_equals 3 "$z"
 	)
 
-
 	(
-		bobshell_cli_parse test_cli -p=value1 -q=value2 -f -g 1 2 3
+		bobshell_cli_parse test_cli -pvalue1 -qvalue2 -f -g 1 2 3
 		assert_equals 4 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals value2 "$param2"
@@ -68,8 +75,8 @@ assert_parse() {
 	)
 
 	(
-		bobshell_cli_parse test_cli -fgp value1 1 2 3
-		assert_equals 2 "$bobshell_cli_shift"
+		bobshell_cli_parse test_cli -fgpvalue1 1 2 3
+		assert_equals 1 "$bobshell_cli_shift"
 		assert_equals value1 "$param1"
 		assert_equals true  "$flag1"
 		assert_equals false "$flag2"
@@ -77,6 +84,11 @@ assert_parse() {
 		assert_equals 1 "$x"
 		assert_equals 2 "$y"
 		assert_equals 3 "$z"
+	)
+
+	(
+		bobshell_cli_parse test_cli -rhello --param3=you -rall 1 2 3
+		assert_equals 'hello, you, all' "$param3"
 	)
 
 }
