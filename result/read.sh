@@ -6,7 +6,7 @@ shelduck import ../resource/copy.sh
 bobshell_result_read() {
 
 	if [ "$#" -gt "${bobshell_result_size:-0}" ]; then
-		return 1
+		bobshell_die "number of resulting variables ($#) is greater than number of available values (${bobshell_result_size:-0}) "
 	fi
 
 	if   [ 1 = "$#" ]; then

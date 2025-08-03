@@ -3,7 +3,9 @@
 shelduck import ../base.sh
 
 bobshell_equals_any() {
-	if ! bobshell_isset_3 "$@"; then
+	if ! bobshell_isset_2 "$@"; then
+		return 1
+	elif ! bobshell_isset_3 "$@"; then
 		if [ "$1" = "$2" ]; then
 			return 0
 		else

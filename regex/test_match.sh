@@ -30,3 +30,11 @@ test_regex_var() {
 	assert_error bobshell_regex_match 1 '[A-Za-z_][A-Za-z_0-9]*'
 	
 }
+
+test_arg_var() {
+
+	assert_ok    bobshell_regex_match 'x-y' '[A-Za-z_0-9-]\+'
+	assert_error bobshell_regex_match x/y '[A-Za-z_0-9-]\+'
+	# assert_error bobshell_regex_match 1 '[A-Za-z_0-9-]+'
+	
+}
