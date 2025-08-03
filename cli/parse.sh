@@ -67,7 +67,7 @@ bobshell_cli_parse() {
 					bobshell_cli_shift=$(( bobshell_cli_shift + 1 ))
 					shift
 				else
-					bobshell_cli_parse__error "unkonwn arg: $1"
+					bobshell_cli_parse__error "unknown arg: $1"
 				fi
 			fi
 			unset _bobshell_cli_parse__x
