@@ -239,7 +239,11 @@ fi'
 		if bobshell_isset _bobshell_cli_setup__default_value; then
 			bobshell_str_quote "$_bobshell_cli_setup__default_value"
 			bobshell_event_listen "$_bobshell_cli_setup__scope"_start_event "$_bobshell_cli_setup__var=$bobshell_result_1"
-		elif bobshell_isset _bobshell_cli_setup__default_unset; then
+		elif [ true = "$_bobshell_cli_setup__default_unset" ]; then
+			bobshell_event_listen "$_bobshell_cli_setup__scope"_start_event "unset $_bobshell_cli_setup__var"
+		elif [ true = "$_bobshell_cli_setup__flag" ]; then
+			bobshell_event_listen "$_bobshell_cli_setup__scope"_start_event "$_bobshell_cli_setup__var=false"
+		elif [ true = "$_bobshell_cli_setup__param" ]; then
 			bobshell_event_listen "$_bobshell_cli_setup__scope"_start_event "unset $_bobshell_cli_setup__var"
 		fi
 

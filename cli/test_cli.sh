@@ -89,6 +89,7 @@ test_cli() {
 	(
 		bobshell_cli_parse test_cli -rhello --param3=you -rall 1 2 3
 		assert_equals 'hello, you, all' "$param3"
+		assert_equals false "$flag1"
 	)
 
 }
