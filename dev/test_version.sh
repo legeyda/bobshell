@@ -64,29 +64,52 @@ test_git_branch_show_current() {
 
 test_dev_version() {
 	cd "$(mktemp -d)"
-	assert_error bobshell_git_version
+	bobshell_dev_version
+	assert_error bobshell_result_check
+
+	bobshell_dev_version --allow-snapshot
+	assert_error bobshell_result_check
+
 
 	prepare_repo
 	bobshell_dev_version
-	assert_ok bobshell_result_check actual
-	assert_equals main-SNAPSHOT "$actual"
+	assert_error bobshell_result_check
 
-	git tag xyz
+	bobshell_dev_version -s
+	bobshell_result_check value
+	assert_equals main-SNAPSHOT "$value"
+
+	touch newfile
 	bobshell_dev_version
-	assert_ok bobshell_result_check actual
-	assert_equals xyz "$actual"
+	assert_error bobshell_result_check
+
+	bobshell_dev_version --allow-snapshot
+	assert_ok bobshell_result_check value
+	assert_equals main-SNAPSHOT "$value"
+
+	git add .
+	git commit --message=newfile
+	git checkout -b release/vXYZ
+	bobshell_dev_version
+	assert_error bobshell_result_check
+
+	bobshell_dev_version --allow-snapshot
+	assert_ok bobshell_result_check value
+	assert_equals vXYZ-SNAPSHOT "$value"
+
+
+	git tag vxyz
+	bobshell_dev_version
+	assert_ok bobshell_result_check value
+	assert_equals xyz "$value"
 
 	touch onemorefile
-	bobshell_dev_version --allow-dirty
-	assert_ok bobshell_result_check actual
-	assert_equals dirty-xyz-SNAPSHOT "$actual"
+	bobshell_dev_version
+	assert_error bobshell_result_check
 
-	prepare_repo
-	touch newfile
-	bobshell_dev_version --allow-dirty
-	assert_ok bobshell_result_check actual
-	assert_equals dirty-main-SNAPSHOT "$actual"
-
+	bobshell_dev_version --allow-snapshot
+	assert_ok bobshell_result_check value
+	assert_equals xyz-SNAPSHOT "$value"
 
 }
 
