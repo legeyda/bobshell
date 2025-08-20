@@ -7,7 +7,7 @@ shelduck import ./tag.sh
 
 bobshell_dev_run_start_listener() {
 	bobshell_dev_version
-	if ! bobshell_result_check bobshell_dev_release_version; then
+	if bobshell_result_check bobshell_dev_release_version; then
 		bobshell_dev_version="$bobshell_dev_release_version"
 	else
 		bobshell_dev_version --allow-snapshot
