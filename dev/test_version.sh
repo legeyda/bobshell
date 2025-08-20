@@ -89,13 +89,13 @@ test_dev_version() {
 
 	git add .
 	git commit --message=newfile
-	git checkout -b release/vXYZ
+	git checkout -b release/XYZ
 	bobshell_dev_version
 	assert_error bobshell_result_check
 
 	bobshell_dev_version --allow-snapshot
 	assert_ok bobshell_result_check value
-	assert_equals vXYZ-SNAPSHOT "$value"
+	assert_equals XYZ-SNAPSHOT "$value"
 
 
 	git tag vxyz
@@ -110,6 +110,18 @@ test_dev_version() {
 	bobshell_dev_version --allow-snapshot
 	assert_ok bobshell_result_check value
 	assert_equals xyz-SNAPSHOT "$value"
+
+	git add .
+	git commit --message=onemorefile
+	git tag noversiontag
+	bobshell_dev_version
+	assert_error bobshell_result_check
+
+	bobshell_dev_version --allow-snapshot
+	assert_ok bobshell_result_check value
+	assert_equals XYZ-SNAPSHOT "$value"
+
+	
 
 }
 

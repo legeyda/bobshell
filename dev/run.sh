@@ -9,8 +9,9 @@ bobshell_dev_run_start_listener() {
 	bobshell_dev_version --allow-snapshot
 	bobshell_result_check bobshell_dev_version
 
-	bobshell_dev_tag
-	bobshell_result_check bobshell_dev_tag || true
+	bobshell_dev_version
+	bobshell_result_check bobshell_dev_release_version || true
+
 }
 
 
@@ -26,9 +27,9 @@ do_deploy() {
 }
 
 do_release() {
-	gh release create --title "Release $bobshell_dev_tag" \
+	gh release create --title "Release v$bobshell_dev_release_version" \
 			--generate-notes --verify-tag \
-			"$bobshell_dev_tag" $bobshell_dev_artifacts
+			"v$bobshell_dev_release_version" $bobshell_dev_artifacts
 }
 
 run_deploy() {
@@ -55,8 +56,7 @@ run_ci() {
 	printf 'ok\n'
 
 	printf 'release... '
-	bobshell_dev_tag
-	if bobshell_result_check; then
+	if bobshell_isset bobsehll_dev_release_version; then
 		release
 		printf 'ok\n'
 	else

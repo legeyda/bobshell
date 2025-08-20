@@ -30,8 +30,8 @@ bobshell_dev_version() {
 	unset _bobshell_dev_version__status
 
 
-	if _bobshell_dev_version=$(git describe --exact-match --tags 2> /dev/null); then
-		bobshell_remove_prefix "$_bobshell_dev_version" v _bobshell_dev_version || true
+	if _bobshell_dev_version=$(git describe --exact-match --tags --match 'v*' 2> /dev/null); then
+		bobshell_remove_prefix "$_bobshell_dev_version" v _bobshell_dev_version
 	elif _bobshell_dev_version=$(git branch --show-current 2> /dev/null); then
 		if [ true != "$_bobshell_dev_version__allow_snapshot" ]; then
 			bobshell_dev_version_result false 'no tag, only branch snapshot, which is not allowed (or use --allow-snapshot)'
