@@ -57,7 +57,7 @@ run_ci() {
 
 	printf 'release... '
 	if bobshell_isset bobsehll_dev_release_version; then
-		release
+		do_release
 		printf 'ok\n'
 	else
 		printf 'skip\n'
