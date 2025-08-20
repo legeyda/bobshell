@@ -6,12 +6,13 @@ shelduck import ./version.sh
 shelduck import ./tag.sh
 
 bobshell_dev_run_start_listener() {
-	bobshell_dev_version --allow-snapshot
-	bobshell_result_check bobshell_dev_version
-
 	bobshell_dev_version
-	bobshell_result_check bobshell_dev_release_version || true
-
+	if ! bobshell_result_check bobshell_dev_release_version; then
+		bobshell_dev_version="$bobshell_dev_release_version"
+	else
+		bobshell_dev_version --allow-snapshot
+		bobshell_result_check bobshell_dev_version
+	fi
 }
 
 
@@ -56,7 +57,7 @@ run_ci() {
 	printf 'ok\n'
 
 	printf 'release... '
-	if bobshell_isset bobsehll_dev_release_version; then
+	if bobshell_isset bobshell_dev_release_version; then
 		do_release
 		printf 'ok\n'
 	else
