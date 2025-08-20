@@ -6,19 +6,32 @@ shelduck import require.sh
 shelduck import util.sh
 shelduck import app.sh
 
+shelduck import ./event/listen.sh
+shelduck import ./event/fire.sh
+
 main() {
 	if [ -z "${1:-}" ]; then
 		run_usage >&2
 		bobshell_die
 	fi
 	
-	on_start
+	bobshell_event_fire bobshell_run_start_event
 	bobshell_handle_subcommand "$@"
 }
 
-on_start() {
-	true # do nothing
+bobshell_run_listen() {
+	_bobshell_run_listen="$1"
+	shift
+	bobshell_event_listen bobshell_run_"$_bobshell_run_listen"_event "$@"
+	unset _bobshell_run_listen
 }
+
+on_start() {
+	true	
+}
+
+bobshell_run_listen on_start
+
 
 bobshell_handle_subcommand() {
 	if [ -z "${1:-}" ]; then
