@@ -16,6 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ci
-        run: sh -x ./run ci
+        run: sh ./run ci
         env:
           GH_TOKEN: ${{ github.token }}
