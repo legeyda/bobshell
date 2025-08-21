@@ -66,7 +66,7 @@ run_test() {
 
 do_build() {
 	_do_build__list=$(find . -path '*/.*' -o -path '*/test_*.sh' -o -path "$BOBSHELL_BUILD_ROOT/*" -prune \
-			-o -name '*.sh' -printf "do_build_each_file '%P'\n")
+			-o -name '*.sh' -printf "do_build_each_file '%P'\n" | sort)
 	mkdir -p "$BOBSHELL_BUILD_ROOT/release"
 	eval "$_do_build__list" > "$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
 	unset _do_build__list
@@ -79,14 +79,14 @@ do_build_each_file() {
 	cat "$@"
 	printf '\nBOBSHELL_BUNDLE_EOF\n'
 	printf ')\n'
-	do_build_each_file_printf "$bobshell_dev_branch" "$*"
+	do_build_each_file_printf "heads/main" "$*" # branch not available
 	if bobshell_isset bobshell_dev_tag; then
-		do_build_each_file_printf "$bobshell_dev_tag" "$*"
+		do_build_each_file_printf "tags/$bobshell_dev_tag" "$*"
 	fi
 }
 
 do_build_each_file_printf() {
-	printf "bobshell_cache_put shelduck_cached_fetch_url/https://raw.githubusercontent.com/legeyda/shelduck/refs/heads/%s/%s\n" "$@"
+	printf "bobshell_cache_put shelduck_cached_fetch_url/https://raw.githubusercontent.com/legeyda/shelduck/refs/%s/%s\n" "$@"
 }
 
 
