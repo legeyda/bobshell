@@ -1,5 +1,11 @@
+
+
 on:
-  [push]
+  push:
+    branches:
+      - '*'
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -9,10 +15,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: build
-        run: sh ./run ci_build
-      - name: Release
-        uses: softprops/action-gh-release@v2 # https://github.com/softprops/action-gh-release
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ./target/release/*
+      - name: ci
+        run: sh ./run ci
+        env:
+          GH_TOKEN: ${{ github.token }}

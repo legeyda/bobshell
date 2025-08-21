@@ -13,10 +13,22 @@ init_shelduck() {
 
 init_shelduck
 
-shelduck import ./run.sh
 shelduck import ./string.sh
+shelduck import ./run.sh
+shelduck import ./dev/tag.sh
+shelduck import ./dev/branch.sh
+shelduck import ./dev/run.sh
+
+
 
 on_start() {
+	
+	bobshell_dev_branch
+	bobshell_result_check bobshell_dev_branch
+	
+	bobshell_dev_tag
+	bobshell_result_check bobshell_dev_tag || true
+	
 	: "${BOBSHELL_BUILD_ROOT:=./target}"
 	mkdir -p "$BOBSHELL_BUILD_ROOT"
 	export BOBSHELL_BUILD_ROOT
@@ -27,12 +39,8 @@ on_start() {
 		return
 	fi
 	BOBSHELL_BUILD_ROOT="./$BOBSHELL_BUILD_ROOT"
-}
 
-run_ci_build() {
-	run_clean
-	run_test
-	run_build
+
 }
 
 run_test_run() {
@@ -55,21 +63,32 @@ run_test() {
 	bobtest "$@"
 }
 
-run_clean() {
-	rm -rf "$BOBSHELL_BUILD_ROOT/release"
-}
 
-run_build() {
-	_run_build__list=$(find . -path '*/.*' -o -path '*/test_*.sh' -o -path "$BOBSHELL_BUILD_ROOT/*" -prune \
-			-o -name '*.sh' -printf "run_build_each_file './%P'\n")
+do_build() {
+	_do_build__list=$(find . -path '*/.*' -o -path '*/test_*.sh' -o -path "$BOBSHELL_BUILD_ROOT/*" -prune \
+			-o -name '*.sh' -printf "do_build_each_file '%P'\n")
 	mkdir -p "$BOBSHELL_BUILD_ROOT/release"
-	eval "$_run_build__list" > "$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
-	unset _run_build__list
+	eval "$_do_build__list" > "$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
+	unset _do_build__list
+	bobshell_dev_artifacts="$BOBSHELL_BUILD_ROOT/release/bobshell.sh"
 }
 
-run_build_each_file() {
-	printf '\n\n\n\n\n\n# source for %s\n' "$1"
-	cat "$@" | sed "s|^shelduck import .*$||g" 
+do_build_each_file() {
+	printf '\n\n\n\n\n\n# %s\n' "$*"
+	printf 'bobshell_bundle_value=$(cat <<\BOBSHELL_BUNDLE_EOF\n'
+	cat "$@"
+	printf '\nBOBSHELL_BUNDLE_EOF\n'
+	printf ')\n'
+	do_build_each_file_printf "$bobshell_dev_branch" "$*"
+	if bobshell_isset bobshell_dev_tag; then
+		do_build_each_file_printf "$bobshell_dev_tag" "$*"
+	fi
 }
 
-main "$@"
+do_build_each_file_printf() {
+	printf "bobshell_cache_put shelduck_cached_fetch_url/https://raw.githubusercontent.com/legeyda/shelduck/refs/heads/%s/%s\n" "$@"
+}
+
+
+
+shelduck run ./entry_point.sh "$@"

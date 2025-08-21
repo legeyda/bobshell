@@ -27,10 +27,10 @@ bobshell_run_listen() {
 }
 
 on_start() {
-	true	
+	true
 }
 
-bobshell_run_listen on_start
+bobshell_run_listen start on_start
 
 
 bobshell_handle_subcommand() {
