@@ -86,7 +86,7 @@ do_build_each_file() {
 }
 
 do_build_each_file_printf() {
-	printf "bobshell_cache_put shelduck_cached_fetch_url/https://raw.githubusercontent.com/legeyda/shelduck/refs/%s/%s\n" "$@"
+	printf "bobshell_cache_put shelduck_cached_fetch_url/https://raw.githubusercontent.com/legeyda/bobshell/refs/%s/%s\n" "$@"
 }
 
 
