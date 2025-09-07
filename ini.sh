@@ -86,7 +86,7 @@ bobshell_ini_list_keys() {
 
 # fun: bobshell_ini_get_value INPUT GROUP KEY
 bobshell_ini_get_value() {
-	bobshell_awk "$1" stdout: -v target_group="${2:-}" -v target_key="${3:-}" "$bobshell_ini_awk_common"'
+	bobshell_awk "$1" "$2" -v target_group="${3:-}" -v target_key="${4:-}" "$bobshell_ini_awk_common"'
 {
 	if(is_target_group() && is_target_key()) {
 		current_value = $0

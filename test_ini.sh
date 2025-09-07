@@ -41,13 +41,13 @@ three' "$result"
 }
 
 test_get_value() {
-	result=$(bobshell_ini_get_value var:sample_file hello four)
+	result=$(bobshell_ini_get_value var:sample_file stdout: hello four)
 	assert_equals 4 "$result"
 
-	result=$(bobshell_ini_get_value var:sample_file '' two)
+	result=$(bobshell_ini_get_value var:sample_file stdout: '' two)
 	assert_equals '2 2 2' "$result"
 
-	result=$(bobshell_ini_get_value var:sample_file '' one)
+	result=$(bobshell_ini_get_value var:sample_file stdout: '' one)
 	assert_equals 1 "$result"
 
 }
