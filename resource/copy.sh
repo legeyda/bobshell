@@ -6,11 +6,21 @@ shelduck import ../base.sh
 shelduck import ../string.sh
 shelduck import ../str/quote.sh
 shelduck import ../url.sh
+shelduck import ../event/listen.sh
+shelduck import ../event/fire.sh
+shelduck import ../result/check.sh
 
-
+bobshell_event_listen bobshell_resource_copy_event
 
 # fun: bobshell_resource_copy SOURCE DESTINATION
 bobshell_resource_copy() {
+	bobshell_result_set false
+	bobshell_event_fire bobshell_resource_copy_event "$@" # can recursively call bobshell_resource_copy
+	if bobshell_result_check; then
+		return
+	fi
+
+
 	bobshell_locator_parse "$1" bobshell_resource_copy_source_type      bobshell_resource_copy_source_ref
 	bobshell_locator_parse "$2" bobshell_resource_copy_destination_type bobshell_resource_copy_destination_ref
 
@@ -106,13 +116,34 @@ bobshell_resource_copy_file_to_url()      { bobshell_resource_copy_to_url; }
 
 
 bobshell_resource_copy_url_to_val()       { bobshell_resource_copy_to_val; }
-bobshell_resource_copy_url_to_var()       { eval "$2"'=$(bobshell_fetch_url '"'""$1""'"')'; }
+bobshell_resource_copy_url_to_var()       { eval "$2"'=$(bobshell_resource_copy_url_to_stdout '"'""$1""'"')'; }
 bobshell_resource_copy_url_to_eval()      {
 	bobshell_resource_copy_url_to_var "$1" _bobshell_resource_copy_url_to_eval
 	eval "$_bobshell_resource_copy_url_to_eval"
 	unset _bobshell_resource_copy_url_to_eval 
 }
 bobshell_resource_copy_url_to_stdin()     { bobshell_resource_copy_to_stdin; }
-bobshell_resource_copy_url_to_stdout()    { bobshell_fetch_url "$1"; }
-bobshell_resource_copy_url_to_file()      { bobshell_fetch_url "$1" > "$2"; }
+bobshell_resource_copy_url_to_stdout()    { bobshell_resource_copy_url_to_file "$1" -; }
+bobshell_resource_copy_url_to_file()      {
+	bobshell_resource_copy_url_tool
+	case "$_bobshell_resource_copy_url_tool" in
+		(curl) curl --fail --silent --show-error --location --output "$2" "$1" ;;
+		(wget) wget --no-verbose --output-document --output-document="$2" "$1" ;;
+		(*)    bobshell_die "_bobshell_resource_copy_url_tool: unexpected value: $_bobshell_resource_copy_url_tool"
+	esac
+}
 bobshell_resource_copy_url_to_url()       { bobshell_resource_copy_to_url; }
+
+
+
+bobshell_resource_copy_url_tool() {
+	if bobshell_isset _bobshell_resource_copy_url_to_file__tool; then
+		return
+	elif bobshell_command_available curl; then
+		_bobshell_resource_copy_url_tool=curl
+	elif bobshell_command_available wget; then
+		_bobshell_resource_copy_url_tool=wget
+	else
+		bobshell_die 'error: neither curl nor wget installed'
+	fi
+}

@@ -72,5 +72,5 @@ bobshell_fetch_url_with_curl() {
 }
 
 bobshell_fetch_url_with_wget() {
-	wget --no-verbose --output-document -
+	wget --no-verbose --output-document --output-document=- "$1"
 }

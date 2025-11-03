@@ -5,7 +5,6 @@ shelduck import ./assert_isset.sh
 shelduck import ../result/assert.sh
 shelduck import ../result/unset.sh
 shelduck import ../array/isset.sh
-shelduck import ../array/size.sh
 
 # fun: bobshell_array_call ARRAYNAME COMMAND [ARGS...]
 bobshell_array_foreach() {
@@ -22,9 +21,9 @@ bobshell_array_foreach() {
 	shift
 	for _bobshell_array_foreach__i in $(seq "$_bobshell_array_foreach__size"); do
 		_bobshell_array_foreach__item=$(bobshell_getvar "${_bobshell_array_foreach__name}_$_bobshell_array_foreach__i")
-		bobshell_result_unset
 		"$@" "$_bobshell_array_foreach__item" "$_bobshell_array_foreach__i"
-		if bobshell_array_isset bobshell_result && [ "$bobshell_result_size_1" -ge 1 ] && bobshell_result_read _bobshell_array_foreach__result && [ 'break' = "$_bobshell_array_foreach__result" ]; then
+		unset bobshell_array_foreach_break
+		if bobshell_isset bobshell_array_foreach_break && [ "$bobshell_array_foreach_break" = true ]; then
 			unset _bobshell_array_foreach__result
 			break
 		fi
