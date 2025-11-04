@@ -7,7 +7,9 @@ shelduck import ./apply.sh
 bobshell_result_assert() {
 	if ! bobshell_result_check "$@"; then
 		bobshell_result_apply set --
-		shift
+		if bobshell_isset_1 "$@"; then
+			shift
+		fi
 		bobshell_die "$@" 
 	fi
 }
