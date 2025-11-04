@@ -17,6 +17,12 @@ main() {
 	
 	bobshell_event_fire bobshell_run_start_event
 	bobshell_handle_subcommand "$@"
+	bobshell_event_fire bobshell_run_start_event
+	if bobshell_result_isset; then
+		if [ false = "$bobshell_result_1" ]; then
+			bobshell_result_assert
+		fi
+	fi
 }
 
 bobshell_run_listen() {
