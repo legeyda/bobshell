@@ -9,6 +9,7 @@ bobshell_entry_point() {
 
 	bobshell_main_pid=$$
 	bobshell_script_path="${shelduck_run_script_path:-$0}"
+	bobshell_script_name=$(basename "$bobshell_script_path")
 	bobshell_script_dir=$(dirname "$bobshell_script_path")
 	bobshell_script_dir=$(CDPATH= cd -- "$bobshell_script_dir" && pwd -P)
 
