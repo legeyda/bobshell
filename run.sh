@@ -9,6 +9,8 @@ shelduck import app.sh
 shelduck import ./event/listen.sh
 shelduck import ./event/fire.sh
 
+shelduck import ./result/isset.sh
+
 main() {
 	if [ -z "${1:-}" ]; then
 		run_usage >&2
