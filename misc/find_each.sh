@@ -7,7 +7,7 @@ shelduck import ../result/set.sh
 shelduck import ../result/isset.sh
 
 # fun: find_each LISTENFUNC [FINDARGS...]
-find_each() {
+bobshell_find_each() {
 	_find_each__handler="$1"
 	shift
 
