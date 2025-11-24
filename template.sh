@@ -23,7 +23,7 @@ EOF
 
 
 
-# fun: mustache [-s|--scope SCOPE] TEMPLATE DESTINATION
+# fun: bobshell_mustache [-s|--scope SCOPE] TEMPLATE DESTINATION
 bobshell_mustache() {
 	bobshell_mustache_scope=
 	while bobshell_isset_1 "$@"; do
