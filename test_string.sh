@@ -75,6 +75,13 @@ test_split_first() {
 	assert_equals '***' "$value"
 	unset key value
 
+	bobshell_split_first '1*2' \* key value
+	assert_equals '1' "$key"
+	assert_equals '2' "$value"
+	unset key value
+
+
+
 	assert_error bobshell_split_first abc = key value
 	assert_unset key
 	assert_unset value
