@@ -93,3 +93,22 @@ test_cli() {
 	)
 
 }
+
+
+test_listener() {
+
+
+	param2=
+	bobshell_cli_setup test_cli --var=param --param --default-unset                  p param1
+	bobshell_cli_setup test_cli             --param --listener='param2="$param2 $1"' q param2
+
+	(
+		bobshell_cli_parse test_cli -p a -pb -pc --param1 d --param1=e \
+		                            -q 1 -q2 -q3 --param2 4 --param2=5
+		assert_equals 14 "$bobshell_cli_shift"
+		assert_equals e "$param"
+		assert_equals ' 1 2 3 4 5' "$param2"
+
+	)
+
+}

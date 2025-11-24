@@ -1,5 +1,6 @@
 
 shelduck import ../base.sh
+shelduck import ../eval.sh
 shelduck import ../str/quote.sh
 
 shelduck import ../event/listen.sh
@@ -13,8 +14,6 @@ shelduck import ./parse.sh
 bobshell_event_listen bobshell_cli_setup_start_event '
 	unset _bobshell_cli_setup__help
 
-	unset _bobshell_cli_setup__arg_listener
-
 	unset _bobshell_cli_setup__var
 	_bobshell_cli_setup__param=false
 	_bobshell_cli_setup__flag=false
@@ -23,6 +22,8 @@ bobshell_event_listen bobshell_cli_setup_start_event '
 	unset _bobshell_cli_setup__default_value
 
 	unset _bobshell_cli_setup__flag_value
+
+	unset _bobshell_cli_setup__listener
 	_bobshell_cli_setup__append=false
 	_bobshell_cli_setup__separator=	
 '
@@ -30,7 +31,6 @@ bobshell_event_listen bobshell_cli_setup_start_event '
 bobshell_event_listen bobshell_cli_setup_clear_event '
 	unset _bobshell_cli_setup__help
 
-	unset _bobshell_cli_setup__arg_listener
 
 	unset _bobshell_cli_setup__var
 	unset _bobshell_cli_setup__param
@@ -40,6 +40,8 @@ bobshell_event_listen bobshell_cli_setup_clear_event '
 	unset _bobshell_cli_setup__default_value
 
 	unset _bobshell_cli_setup__flag_value
+
+	unset _bobshell_cli_setup__listener
 	unset _bobshell_cli_setup__append
 	unset _bobshell_cli_setup__separator
 	
@@ -50,9 +52,6 @@ bobshell_event_listen bobshell_cli_setup_arg_event '
 	case "$1" in
 		(h|help|usage)
 			_bobshell_cli_setup__help="$2" ;;
-
-		(l|listener)
-			_bobshell_cli_setup__arg_listener="$2" ;;
 
 		(v|var|variable)
 			_bobshell_cli_setup__var="$2" ;;
@@ -70,6 +69,8 @@ bobshell_event_listen bobshell_cli_setup_arg_event '
 
 		(f|flag-value)
 			_bobshell_cli_setup__flag_value="$2" ;;
+		(l|listener)
+			_bobshell_cli_setup__listener="$2" ;;
 		(a|append)
 			_bobshell_cli_setup__append=true ;;
 		(s|separator)
@@ -147,13 +148,10 @@ bobshell_cli_setup() {
 		bobshell_die "bobshell_cli_setup: both --param or --flag forbidden"
 	fi
 
-	if ! bobshell_isset _bobshell_cli_setup__arg_listener && ! bobshell_isset _bobshell_cli_setup__var; then
+	if ! bobshell_isset _bobshell_cli_setup__listener && ! bobshell_isset _bobshell_cli_setup__var; then
 		bobshell_die "bobshell_cli_setup: either --listener or --var required"
 	fi
 
-	if bobshell_isset _bobshell_cli_setup__arg_listener && bobshell_isset _bobshell_cli_setup__var; then
-		bobshell_die "bobshell_cli_setup: both --listener and --var forbidden"
-	fi
 
 	if bobshell_isset _bobshell_cli_setup__var; then
 		if ! bobshell_regex_match "$_bobshell_cli_setup__var" '[A-Za-z_][A-Za-z0-9_]*'; then
@@ -168,11 +166,6 @@ bobshell_cli_setup() {
 
 	if [ false = "$_bobshell_cli_setup__flag" ] && bobshell_isset _bobshell_cli_setup__flag_value; then
 		bobshell_die "bobshell_cli_setup: --flag-value without --flag"
-	fi
-
-	# LISTENER --listener
-	if bobshell_isset _bobshell_cli_setup__arg_listener; then
-		bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event "$_bobshell_cli_setup__arg_listener"
 	fi
 
 	# VALIDATE POSITIONAL ARGUMENTS
@@ -226,14 +219,32 @@ printf "    %s\n" '"$bobshell_result_1"
 	fi
 
 
-	if bobshell_isset _bobshell_cli_setup__arg_listener; then
-		# shellcheck disable=SC2016
-		bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event '
+	if bobshell_isset _bobshell_cli_setup__listener; then
+		if [ true = "$_bobshell_cli_setup__param" ]; then
+			# todo check param value provided
+			# shellcheck disable=SC2016
+			bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event '
 if bobshell_equals_any "$1" '"$*"'; then
-	'"$_bobshell_cli_setup__arg_listener"'
+	bobshell_eval '"'val:$_bobshell_cli_setup__listener'"' "$2"
 fi'
+		else
+			if bobshell_isset _bobshell_cli_setup__flag_value; then
+				_bobshell_cli_setup__actual_flag_value="$_bobshell_cli_setup__flag_value"
+			else
+				_bobshell_cli_setup__actual_flag_value=true
+			fi
+			bobshell_str_quote "$_bobshell_cli_setup__actual_flag_value$_bobshell_cli_setup__separator"
+			# shellcheck disable=SC2016
+			bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event '
+if bobshell_equals_any "$1" '"$*"'; then
+	bobshell_eval '"'val:$_bobshell_cli_setup__listener'"' "'"$bobshell_result_1"'"
+fi'
+		fi
 
-	elif bobshell_isset _bobshell_cli_setup__var; then
+	fi
+	
+	
+	if bobshell_isset _bobshell_cli_setup__var; then
 
 
 		if bobshell_isset _bobshell_cli_setup__default_value; then
@@ -264,13 +275,13 @@ if bobshell_equals_any "$1" '"$*"'; then
 	fi
 	'"$_bobshell_cli_setup__var"'="${'"$_bobshell_cli_setup__var"':-}$2"
 fi'
+				unset _bobshell_cli_setup__quoted_separator
 			else
 				# shellcheck disable=SC2016
 				bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event '
 if bobshell_equals_any "$1" '"$*"'; then
 	'"$_bobshell_cli_setup__var"'="$2"
 fi'				
-				unset _bobshell_cli_setup__quoted_separator
 			fi
 			unset _bobshell_cli_setup__param_value
 
@@ -283,6 +294,8 @@ fi'
 
 			bobshell_str_quote "$_bobshell_cli_setup__actual_flag_value"
 			bobshell_result_read _bobshell_cli_setup__quoted_actual_flag_value
+
+
 
 			if [ true = "$_bobshell_cli_setup__append" ]; then
 				bobshell_str_quote "$_bobshell_cli_setup__separator"
@@ -311,8 +324,6 @@ fi'
 			bobshell_die "dev assertion faled"
 		fi
 		bobshell_event_listen "${_bobshell_cli_setup__scope}_clear" "unset $_bobshell_cli_setup__var" 
-	else
-		bobshell_die "bobshell_cli_setup: both --listener and --var forbidden"
 	fi
 
 	# CLEAR
