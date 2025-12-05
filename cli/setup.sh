@@ -281,7 +281,7 @@ fi'
 				bobshell_event_listen "$_bobshell_cli_setup__scope"_arg_event '
 if bobshell_equals_any "$1" '"$*"'; then
 	'"$_bobshell_cli_setup__var"'="$2"
-fi'				
+fi'
 			fi
 			unset _bobshell_cli_setup__param_value
 

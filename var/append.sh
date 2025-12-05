@@ -15,3 +15,5 @@ bobshell_var_append() {
 	bobshell_result_set true "$_bobshell_var_append__value"
 	unset _bobshell_var_append__value
 }
+
+
