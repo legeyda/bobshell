@@ -15,7 +15,8 @@ bobshell_find_each() {
 	_temp_file_path__pipe=$(temp_file_path)
 	mkfifo "$_temp_file_path__pipe"
 	(
-		find "$@" -printf "%p\n$_find_each__separator\n"
+		# shellcheck disable=SC2016
+		find "$@" -printf '%p\0' | sort -z | xargs -0 sh -c 'for i; do printf '"'"'%s\n'"$_find_each__separator"'\n'"'"' "$i"; done' dummy_arg
 		printf '\n'
 	) > "$_temp_file_path__pipe" &
 
