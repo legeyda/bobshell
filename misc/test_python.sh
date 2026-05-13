@@ -39,3 +39,12 @@ local_debug_python() {
 	bobshell_redirect_output var:x bobshell_python -c 'print("hello")'
 	assert_contains "$x" hello
 }
+
+test_python() {
+	XDG_CACHE_HOME=./target/test_python
+	#rm -rf "$XDG_CACHE_HOME"
+	mkdir -p "$XDG_CACHE_HOME"
+	unset x
+	bobshell_redirect_output var:x bobshell_python -c 'print("hello")'
+	assert_contains "$x" hello
+}
