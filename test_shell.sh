@@ -293,5 +293,199 @@ test_error() {
 	fi
 	assert_isset x
 
+}
+
+test_alias() {
+	script=$(cat << EOF
+alias aaa='echo hello from aaa'
+aaa
+
+
+alias bbb='echo hello from bbb'
+bbb
+
+unalias bbb
+bbb() {
+	echo hello from bbb function
+}
+bbb
+
+
+alias mycmd='echo "$*"'
+
+set -- 1 2 3
+mycmd
+
+
+
+
+EOF
+)
+	sh -ceux "$script"
+
 
 }
+
+
+# 
+test_eval() {
+
+	# 
+	set -- 1 2 3
+	x=$(eval 'printf "<%s> " "$@"' 'one more arg')
+	assert_equals '<1> <2> <3> <one> <more> <arg> ' "$x"
+
+
+
+}
+
+
+
+
+
+test_exec_0() {
+	sleep 3 &
+	wait # optional
+}
+
+test_exec_1() {
+	start=$(date +%s)
+	sleep 3 &
+	pid=$!
+	kill -INT $pid
+	wait
+	finish=$(date +%s)
+	assert_ok test "$start" -ge $(( finish - 1 )) 
+}
+
+test_exec_2() {
+	start=$(date +%s)
+	sh -c 'echo HERE2; sleep 3 && echo sleep ok || echo sleep error; echo $?' &
+	pid=$!
+	sleep .1
+	kill -INT $pid
+	finish=$(date +%s)
+	assert_ok test "$start" -ge $(( finish - 1 )) 
+	#bobshell_die DEBUG
+
+
+}
+
+
+test_interactive() {
+	# sh -c 'trap "echo signal" INT; sleep 999'
+	# sh -c 'trap "echo signal" INT; sleep 999 & wait && echo ok || echo err'
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999"'
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo waitok || echo waiterr"'
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo wait2ok || echo wait2err" & wait && echo wait1err || echo wait1err'
+	# 
+
+	# in shell "cmd" is equivalent to "cmd & wait"
+	# compare:
+	# sh -c 'trap "echo signal" INT; sleep 999'
+	# sh -c 'trap "echo signal" INT; sleep 999 & wait $!'
+	# sh -c 'trap "echo got signal" INT; sleep 999 & wait $!; echo wait exited with code $?'
+	# sh -c 'trap "echo signal" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
+	# sh -c 'trap "echo signal; exit" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
+	# 
+
+
+
+
+	# capturing output
+	# sh -c 'trap "echo signal" INT; x=$(echo hello; sleep 9 & wait $!); echo $x'
+	true
+
+}
+
+
+
+test_exit_trap() {
+	# exit trap after executed last command
+	x=$(sh -c 'trap "echo 1" EXIT')
+	assert_equals 1 $x
+
+	# exit on exit command
+	x=$(sh -c 'trap "echo 1" EXIT; true; exit; true')
+	assert_equals 1 $x
+
+
+
+
+
+
+	# posix shell does execute exit trap on command error if set -e 
+	x=$(sh -c 'set -eu; trap "echo 1" EXIT; false; trap "echo 2" EXIT' || true)
+	assert_equals 1 $x
+}
+
+
+
+
+# проверю как перехватывается выход последней команды в trap EXIT
+test_exit_trap_code() {
+
+	x=$(sh -c 'trap "echo $?" EXIT; true')
+	assert_equals 0 $x
+
+	x=$(sh -c 'trap "echo \$?" EXIT; false' || true)
+	assert_equals 1 $x
+
+	x=$(sh -c 'trap "echo $?" EXIT; false; true')
+	assert_equals 0 $x
+
+	x=$(sh -c 'trap "echo \$?" EXIT; true; false' || true)
+	assert_equals 1 $x
+
+	x=$(sh -c 'trap "echo $?" EXIT; exit')
+	assert_equals 0 $x
+
+	x=$(sh -c 'trap "echo $?" EXIT; exit 0')
+	assert_equals 0 $x
+
+	x=$(sh -c 'trap "echo \$?" EXIT; exit 1' || true)
+	assert_equals 1 $x
+
+
+
+
+}
+
+
+
+
+
+
+
+
+test_set_minus_e() {
+	x=$(sh -ec 'echo 1; false; echo 2' || true)
+	assert_equals 1 "$x"
+
+	x=$(sh -c 'set -e; echo 1; false; echo 2' || true)
+	assert_equals 1 "$x"
+
+	x=$(sh -c 'set -e; set +e; printf %s 1; false; echo 2' || true)
+	assert_equals 12 "$x"
+
+	x=$(sh -ec 'true; set +e; printf %s 1; false; echo 2' || true)
+	assert_equals 12 "$x"
+
+	# -e does not inherited to subshell if run explicitly via sh -c 
+	x=$(sh -ec 'sh -c "printf %s 1; false; echo 2"')
+	assert_equals 12 "$x"
+
+
+}
+
+
+test_inline_set_e() {
+	set -e
+	assert_die false
+
+	set +e
+	false
+
+	true
+}
+
