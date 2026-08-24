@@ -5,11 +5,12 @@ shelduck import ./apply.sh
 
 
 bobshell_result_assert() {
+	printf %s 'bobshell_result_assert: deprecated, use bobshell_result_assert_v2 instead' >&2
 	if ! bobshell_result_check "$@"; then
 		bobshell_result_apply set --
 		if bobshell_isset_1 "$@"; then
 			shift
 		fi
-		bobshell_die "$@" 
+		bobshell_die "$@"
 	fi
 }
