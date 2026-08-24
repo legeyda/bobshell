@@ -29,7 +29,7 @@ bobshell_cli_parse() {
 
 	bobshell_event_fire "${_bobshell_cli_parse__scope}_start_event"
 
-	while bobshell_isset_1 "$@"; do
+	while [ "$#" -gt 0 ]; do
 		# -- end of named options, start of positional arguments
 		if [ "$1" = -- ]; then
 			bobshell_cli_shift=$(( bobshell_cli_shift + 1 ))
@@ -41,8 +41,8 @@ bobshell_cli_parse() {
 		if [ "$1" = - ]; then
 			bobshell_cli_parse__error "unexpected argument: $1"
 		fi
-		
-		# 
+
+		#
 		if bobshell_remove_prefix "$1" -- _bobshell_cli_parse__x; then
 			if bobshell_split_first "$_bobshell_cli_parse__x" '=' _bobshell_cli_parse__name _bobshell_cli_parse__value; then
 				# shellcheck disable=SC2086
