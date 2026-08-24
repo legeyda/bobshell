@@ -6,6 +6,7 @@ shelduck import ./set.sh
 
 
 test_empty() {
+    bobshell_result_size=999
 	bobshell_result_set
 	assert_equals 0 "$bobshell_result_size"
 	assert_unset bobshell_result_1
