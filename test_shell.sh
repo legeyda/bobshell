@@ -341,13 +341,6 @@ test_eval() {
 
 
 
-
-
-test_exec_0() {
-	sleep 3 &
-	wait # optional
-}
-
 test_exec_1() {
 	start=$(date +%s)
 	sleep 3 &
@@ -371,6 +364,19 @@ test_exec_2() {
 
 }
 
+test_exec_code_bg_start() {
+
+
+	x=$(sh -c 'sleep 1 & echo $?')
+	assert_equals 0 "$x"
+}
+
+test_exec_capture() {
+	pid=$(sh -c 'sleep 999 & echo $!') # hangs
+	ps -e | grep "$pid"
+
+}
+
 
 test_interactive() {
 	# sh -c 'trap "echo signal" INT; sleep 999'
@@ -389,7 +395,10 @@ test_interactive() {
 	# sh -c 'trap "echo signal; exit" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
 	# 
 
-
+	#
+	# sh -c 'sleep 9 & echo $?' # exits immediately
+	# x=$(sh -c 'sleep 99 & echo $?'); echo $x # exits only after background sleep exits
+	# 
 
 
 	# capturing output
