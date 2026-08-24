@@ -19,5 +19,6 @@ bobshell_result_set() {
 		unset bobshell_result_"$_bobshell_result_set__i"
 		_bobshell_result_set__i=$(( _bobshell_result_set__i + 1 ))
 	done
+	unset _bobshell_result_set__i
 
 }
