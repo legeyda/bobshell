@@ -15,6 +15,10 @@ test_regex_match() {
 	assert_ok bobshell_regex_match hello '^.*lo$'
 	assert_ok bobshell_regex_match 123 '[0-9]\+'
 
+	assert_ok  bobshell_regex_match hello.AppImage '^.*\.AppImage$'
+	assert_ok  bobshell_regex_match d5727d84ac69a0235ebef74b26577f190c7ec8321d5612182c210886f7a8fc8a '^[0-9a-f]\{64\}*$'
+	
+
 
 	assert_ok bobshell_regex_match '  shelduck   import   blabla\n' '^\s*shelduck\s\+import\s\+.*$'
 	#assert_ok bobshell_regex_match "$bobshell_newline" '^\n.*$'
