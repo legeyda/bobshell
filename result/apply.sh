@@ -4,6 +4,7 @@ shelduck import ./assert.sh
 shelduck import ./isset.sh
 
 # fun: bobshell_result_apply [COMMAND [ARGS...]]
+# txt: apply given function to all result items
 bobshell_result_apply() {
 	if ! bobshell_result_isset; then
 		bobshell_die 'bobshell_result_apply: result is not set'
