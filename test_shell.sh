@@ -28,8 +28,8 @@ test_shell() {
 
 	# todo
 	# grep inside pipe
-	
-	
+
+
 	# grep return nonzero status code when nothing found
 	output=$(sh -c 'set -e; x=$(printf hello | grep x); echo hi' && error expected || true)
 	assert_empty "$output" hi is not printed
@@ -37,7 +37,7 @@ test_shell() {
 	output=$(sh -c 'set -e; x=$(printf hello | grep x || true); echo hi' || die ok expected)
 	assert_equals hi "$output"
 
-	# 
+	#
 
 	unset -f fun
 	fun() {
@@ -57,19 +57,19 @@ test_set_e() {
 
 	str=hello
 	str=$(sh -c 'set -e; x=$(false); printf hello' || true)
-	assert_empty "$str" 
-	
+	assert_empty "$str"
+
 	str=$(sh -c 'set -e; for x in $(false); do echo $x; done; printf hello')
-	assert_equals hello "$str" 
+	assert_equals hello "$str"
 
 	str=
 	str=$(sh -c 'set -e; printf %s "$(false || exit 1)"; printf hello')
-	assert_equals hello "$str" 
+	assert_equals hello "$str"
 
-	# printf %s "$(exit_on_error false; printf hello)" 
-	
+	# printf %s "$(exit_on_error false; printf hello)"
+
 	# exit_on_error false
-	
+
 	# echo i am here
 	# die debug
 }
@@ -102,8 +102,8 @@ print_is_subshell() {
 
 test_subshell() {
 	assert_error is_subshell
-	
-	# 
+
+	#
 	str=$(  (print_is_subshell)   )
 	assert_equals no_subshell "$str"
 
@@ -327,10 +327,10 @@ EOF
 }
 
 
-# 
+#
 test_eval() {
 
-	# 
+	#
 	set -- 1 2 3
 	x=$(eval 'printf "<%s> " "$@"' 'one more arg')
 	assert_equals '<1> <2> <3> <one> <more> <arg> ' "$x"
@@ -348,7 +348,7 @@ test_exec_1() {
 	kill -INT $pid
 	wait
 	finish=$(date +%s)
-	assert_ok test "$start" -ge $(( finish - 1 )) 
+	assert_ok test "$start" -ge $(( finish - 1 ))
 }
 
 test_exec_2() {
@@ -358,7 +358,7 @@ test_exec_2() {
 	sleep .1
 	kill -INT $pid
 	finish=$(date +%s)
-	assert_ok test "$start" -ge $(( finish - 1 )) 
+	assert_ok test "$start" -ge $(( finish - 1 ))
 	#bobshell_die DEBUG
 
 
@@ -372,7 +372,7 @@ test_exec_code_bg_start() {
 }
 
 test_exec_capture() {
-	pid=$(sh -c 'sleep 999 & echo $!') # hangs
+	pid=$(sh -c 'sleep 3 & echo $!') # hangs
 	ps -e | grep "$pid"
 
 }
@@ -384,7 +384,7 @@ test_interactive() {
 	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999"'
 	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo waitok || echo waiterr"'
 	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo wait2ok || echo wait2err" & wait && echo wait1err || echo wait1err'
-	# 
+	#
 
 	# in shell "cmd" is equivalent to "cmd & wait"
 	# compare:
@@ -393,12 +393,7 @@ test_interactive() {
 	# sh -c 'trap "echo got signal" INT; sleep 999 & wait $!; echo wait exited with code $?'
 	# sh -c 'trap "echo signal" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
 	# sh -c 'trap "echo signal; exit" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
-	# 
-
 	#
-	# sh -c 'sleep 9 & echo $?' # exits immediately
-	# x=$(sh -c 'sleep 99 & echo $?'); echo $x # exits only after background sleep exits
-	# 
 
 
 	# capturing output
@@ -423,7 +418,7 @@ test_exit_trap() {
 
 
 
-	# posix shell does execute exit trap on command error if set -e 
+	# posix shell does execute exit trap on command error if set -e
 	x=$(sh -c 'set -eu; trap "echo 1" EXIT; false; trap "echo 2" EXIT' || true)
 	assert_equals 1 $x
 }
@@ -480,7 +475,7 @@ test_set_minus_e() {
 	x=$(sh -ec 'true; set +e; printf %s 1; false; echo 2' || true)
 	assert_equals 12 "$x"
 
-	# -e does not inherited to subshell if run explicitly via sh -c 
+	# -e does not inherited to subshell if run explicitly via sh -c
 	x=$(sh -ec 'sh -c "printf %s 1; false; echo 2"')
 	assert_equals 12 "$x"
 
@@ -498,3 +493,51 @@ test_inline_set_e() {
 	true
 }
 
+test_wait() {
+    # sh -c 'trap "echo signal" INT; sleep 3' # press ctrl+c within 3 seconds
+	# sh -c 'trap "echo signal" INT; sleep 3 & wait && echo ok || echo err'
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 3"' # сигнал получают все процессы foreground группы
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"sleep 1; echo s2\" INT; sleep 3"'
+
+    # sh -c 'trap "echo signal" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done' # сразу обрабатывает сигнал, но не останавливает вычисление и не выходит
+    # sh -c 'trap "echo signal; exit" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done' # чтобы выйти надо явно выполнить exit
+
+    # допустим не успевает
+    # sh -c 'trap "echo signal" INT; sleep 3 & p=$! & i=0; while [ $i -lt 999999 ]; do i=$(( i + 1 )); done; x=$p; wait $p;' # чтобы выйти надо явно выполнить exit
+
+
+    #
+    #
+    #
+
+
+	#
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo waitok || echo waiterr"'
+	# sh -c 'trap "echo s1" INT; sh -c "trap \"echo s2\" INT; sleep 999 & wait && echo wait2ok || echo wait2err" & wait && echo wait1err || echo wait1err'
+	#
+
+	# in shell "cmd" is equivalent to "cmd & wait"
+	# compare:
+	# sh -c 'trap "echo signal" INT; sleep 999'
+	# sh -c 'trap "echo signal" INT; sleep 999 & wait $!'
+	# sh -c 'trap "echo got signal" INT; sleep 999 & wait $!; echo wait exited with code $?'
+	# sh -c 'trap "echo signal" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
+	# sh -c 'trap "echo signal; exit" INT; x=0; while [ $x -lt 9999999 ]; do x=$(( x + 1 )); done'
+	#
+
+	#
+
+
+
+	# capturing output
+	# sh -c 'trap "echo signal" INT; x=$(echo hello; sleep 9 & wait $!); echo $x'
+	#
+	true
+}
+
+test_capture() {
+   	# sh -c 'sleep 3 & echo $?' # exits immediately
+    # x=$(sh -c 'sleep 3 & echo $?'); echo $x # exits only after background sleep exits
+    # x=$(sh -c 'sleep 3 > /dev/null & echo $?'); echo $x # exits immediately
+    true
+}
