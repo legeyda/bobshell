@@ -6,6 +6,11 @@
 bobshell_entry_point() {
 	set -eu
 
+	if [ "${DEBUG:-false}" = true ]; then
+		set -x
+	fi
+
+
 
 	bobshell_main_pid=$$
 	bobshell_script_path="${shelduck_run_script_path:-$0}"
@@ -24,10 +29,10 @@ bobshell_entry_point() {
 # invoke bobshell_entry_point if script is actually run, not sourced (see https://stackoverflow.com/a/28776166)
 if [ -n "${shelduck_run_script_path:-}" ]; then
 	bobshell_entry_point "$@"
-elif [ -n "${ZSH_VERSION:-}" ]; then 
+elif [ -n "${ZSH_VERSION:-}" ]; then
 	case $ZSH_EVAL_CONTEXT in *:file) ;; *) bobshell_entry_point "$@";; esac
 elif [ -n "${KSH_VERSION:-}" ]; then
-	# shellcheck disable=SC2296 
+	# shellcheck disable=SC2296
 	# we have explicitly checked for ksh
 	[ "$(cd -- "$(dirname -- "$0")" && pwd -P)/$(basename -- "$0")" != "$(cd -- "$(dirname -- "${.sh.file}")" && pwd -P)/$(basename -- "${.sh.file}")" ] || bobshell_entry_point "$@"
 elif [ -n "${BASH_VERSION:-}" ]; then
