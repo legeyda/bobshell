@@ -35,9 +35,6 @@ bobshell_log_init() {
 		set +vx
 	fi
 
-	set -x
-
-
 	bobshell_log_def 0 emerg
 	bobshell_log_def 1 alert
 	bobshell_log_def 2 crit
