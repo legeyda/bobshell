@@ -7,7 +7,7 @@ shelduck import notrace.sh
 
 bobshell_die() {
   # https://github.com/biox/pa/blob/main/pa
-  printf '%s: %s.\n' "$(basename "$0")" "${*:-error}" >&2
+  printf '%s: %s\n' "${bobshell_app_name:-$(basename "$0")}" "${*:-error}" >&2
   exit 1
 }
 
@@ -17,7 +17,7 @@ bobshell_isset() {
 	eval "test \"\${$1+defined}\" = defined"
 }
 
-#  
+#
 bobshell_isset_1() {
 	eval "test \"\${1+defined}\" = defined"
 }
@@ -120,7 +120,7 @@ bobshell_vars() {
 
 # bobshell_not_empty "$@"
 bobshell_not_empty() {
-	test set = "${1+set}" 
+	test set = "${1+set}"
 }
 
 #bobshell_map
