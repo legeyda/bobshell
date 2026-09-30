@@ -1,5 +1,6 @@
 
 shelduck import ./read.sh
+shelduck import ../misc/log.sh
 
 bobshell_result_check() {
 	if [ '0' = "${bobshell_result_size:-0}" ]; then
