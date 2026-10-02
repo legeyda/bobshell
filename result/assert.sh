@@ -9,16 +9,15 @@ shelduck import ../misc/log.sh
 bobshell_result_assert() {
 
 
-	_bobshell_result_assert__required=0
-	if [ "${bobshell_result_size:-0}" -ge 0 ] && [ true = "${bobshell_result_size:-unefined}" ]; then
-		_bobshell_result_assert__required=1
+	_bobshell_result_assert__required=1
+	if [ "${bobshell_result_size:-0}" -ge 0 ] && [ true = "${bobshell_result_1:-unefined}" ]; then
 		while [ "$#" -gt 0 ]; do
 			if [ -- = "$1" ]; then
 				shift
 				break
 			fi
 			_bobshell_result_assert__required=$(( _bobshell_result_assert__required  + 1 ))
-			if [ "$1" ] && [ - != "$1" ]; then
+			if [ "$_bobshell_result_assert__required" -le "$bobshell_result_size" ] && [ "$1" ] && [ - != "$1" ]; then
 				bobshell_resource_copy_var_to_var bobshell_result_"$_bobshell_result_assert__required" "$1"
 			fi
 
@@ -35,19 +34,12 @@ bobshell_result_assert() {
 		done
 	fi
 
-
-
-
 	if [ "${bobshell_result_size:-0}" -gt 0 ]; then
-
-
-
 		if [ true = "${bobshell_result_1:-undefined}" ]; then
-			if [ "$_bobshell_result_assert__required" -gt "$bobshell_result_size" ]; then
+			if [ "$bobshell_result_size" -ge "$_bobshell_result_assert__required" ]; then
 				true
 			else
-				_bobshell_result_assert__msg1=
-				bobshell_die "${*:-assertion failed}: unsufficient result size"
+				bobshell_die "${*:-assertion failed}: unsufficient result size (required $_bobshell_result_assert__required, got $bobshell_result_size)"
 			fi
 		elif [ false = "${bobshell_result_1:-undefined}" ]; then
 			# message from assert command
@@ -76,6 +68,4 @@ bobshell_result_assert() {
 	else # empty or no result
 		bobshell_die "${*:-assertion failed: no result}"
 	fi
-
-	unset _bobshell_result_assert__i
 }

@@ -80,15 +80,13 @@ test_msg() {
 	assert_equals 'testapp: custom assertion failed: error message 2' "$x"
 
 
-
-
 	bobshell_result_set true 1 2
 	x=$(set +x; assert_die bobshell_result_assert x y z -- custom assertion failed 2>&1)
-	assert_equals 'testapp: custom assertion failed: unsufficient result size' "$x"
+	assert_equals 'testapp: custom assertion failed: unsufficient result size (required 4, got 3)' "$x"
 
 	bobshell_result_set true 1 2
 	x=$(set +x; assert_die bobshell_result_assert x y z 2>&1)
-	assert_equals 'testapp: assertion failed: unsufficient result size' "$x"
+	assert_equals 'testapp: assertion failed: unsufficient result size (required 4, got 3)' "$x"
 
-	
+
 }
