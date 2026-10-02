@@ -10,8 +10,6 @@ shelduck import ../event/listen.sh
 shelduck import ../event/fire.sh
 shelduck import ../result/check.sh
 
-bobshell_event_listen bobshell_resource_copy_event
-
 # fun: bobshell_resource_copy SOURCE DESTINATION
 bobshell_resource_copy() {
 	bobshell_result_set false
@@ -31,7 +29,7 @@ bobshell_resource_copy() {
 	fi
 
 	"$bobshell_resource_copy_command" "$bobshell_resource_copy_source_ref" "$bobshell_resource_copy_destination_ref"
-	
+
 	unset bobshell_resource_copy_source_type bobshell_resource_copy_source_ref
 	unset bobshell_resource_copy_destination_type bobshell_resource_copy_destination_ref
 }
@@ -47,7 +45,7 @@ bobshell_resource_copy_to_url()           { bobshell_die 'cannot write to stdin 
 
 bobshell_resource_copy_val_to_val()       { test "$1" != "$2" && bobshell_resource_copy_to_val; }
 bobshell_resource_copy_val_to_var()       {
-	bobshell_str_quote "$1"	
+	bobshell_str_quote "$1"
 	eval "$2=$bobshell_result_1"
 }
 bobshell_resource_copy_val_to_eval()      { eval "$1"; }
@@ -83,7 +81,7 @@ bobshell_resource_copy_stdin_to_var()     { eval "$2=\$(cat)"; }
 bobshell_resource_copy_stdin_to_eval()    {
 	bobshell_resource_copy_stdin_to_var "$1" bobshell_resource_copy_stdin_to_eval_data
 	bobshell_resource_copy_var_to_eval bobshell_resource_copy_stdin_to_eval_data ''
-	unset bobshell_resource_copy_stdin_to_eval_data; 
+	unset bobshell_resource_copy_stdin_to_eval_data;
 }
 bobshell_resource_copy_stdin_to_stdin()   { bobshell_resource_copy_to_stdin; }
 bobshell_resource_copy_stdin_to_stdout()  { cat; }
@@ -106,7 +104,7 @@ bobshell_resource_copy_file_to_var()      { eval "$2=\$(cat '$1'; printf z); $2=
 bobshell_resource_copy_file_to_eval()     {
 	bobshell_resource_copy_file_to_var "$1" bobshell_resource_copy_file_to_eval_data
 	bobshell_resource_copy_var_to_eval bobshell_resource_copy_file_to_eval_data ''
-	unset bobshell_resource_copy_file_to_eval_data; 
+	unset bobshell_resource_copy_file_to_eval_data;
 }
 bobshell_resource_copy_file_to_stdin()    { bobshell_resource_copy_to_stdin; }
 bobshell_resource_copy_file_to_stdout()   { cat "$1"; }
@@ -120,7 +118,7 @@ bobshell_resource_copy_url_to_var()       { eval "$2"'=$(bobshell_resource_copy_
 bobshell_resource_copy_url_to_eval()      {
 	bobshell_resource_copy_url_to_var "$1" _bobshell_resource_copy_url_to_eval
 	eval "$_bobshell_resource_copy_url_to_eval"
-	unset _bobshell_resource_copy_url_to_eval 
+	unset _bobshell_resource_copy_url_to_eval
 }
 bobshell_resource_copy_url_to_stdin()     { bobshell_resource_copy_to_stdin; }
 bobshell_resource_copy_url_to_stdout()    { bobshell_resource_copy_url_to_file "$1" -; }

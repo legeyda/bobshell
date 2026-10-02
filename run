@@ -22,13 +22,13 @@ shelduck import ./dev/run.sh
 
 
 on_start() {
-	
+
 	bobshell_dev_branch
 	bobshell_result_check bobshell_dev_branch
-	
+
 	bobshell_dev_tag
 	bobshell_result_check bobshell_dev_tag || true
-	
+
 	: "${BOBSHELL_BUILD_ROOT:=./target}"
 	mkdir -p "$BOBSHELL_BUILD_ROOT"
 	export BOBSHELL_BUILD_ROOT
@@ -48,6 +48,7 @@ run_test_run() {
 	export BOBTEST_FUNCTION="$2"
 	sh -euc ". '$BOBSHELL_BUILD_ROOT/shelduck.sh'"'
 _bobtest_shelduck_run=$(shelduck resolve "file://$BOBTEST_FILE")
+printf %s "$_bobtest_shelduck_run" > target/debug.txt
 ${BOBTEST_SHELL_COMMAND:-sh -euc} "$_bobtest_shelduck_run
 set -x
 $BOBTEST_FUNCTION"'
@@ -59,7 +60,7 @@ run_test() {
 	shelduck import file://./bobtest.sh
 	# shellcheck disable=SC2034
 	BOBTEST_RUN=run_test_run
-	
+
 	bobtest "$@"
 }
 
