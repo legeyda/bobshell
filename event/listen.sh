@@ -21,23 +21,14 @@ bobshell_event_listen() {
 	if [ "${*:-}" ]; then
 		bobshell_var_get "$_bobshell_event_listen__name"
 		if ! bobshell_result_check _bobshell_event_listen__script; then
-			_bobshell_event_listen__script='
-if [ true = "${_bobshell_event_running_flag_'"$_bobshell_event_listen__name"':-false}" ]; then
-	bobshell_die recursive event fire not allowed
-fi
-_bobshell_event_last_event='"$_bobshell_event_listen__name"'
-_bobshell_event_running_flag_'"$_bobshell_event_listen__name"'=true
-unset _bobshell_event_stop_flag_'"$_bobshell_event_listen__name"'
-'
+			_bobshell_event_listen__script=
 		fi
-
 
 		_bobshell_event_listen__script="$_bobshell_event_listen__script
 
 $*
 
 "
-
 
 		_bobshell_event_listen__script="$_bobshell_event_listen__script"'
 if [ true = "${_bobshell_event_stop_flag_'"$_bobshell_event_listen__name"':-false}" ]; then
@@ -50,18 +41,6 @@ fi
 		bobshell_var_set "$_bobshell_event_listen__name" "$_bobshell_event_listen__script"
 	elif bobshell_command_available "$_bobshell_event_listen__name"; then
 		return
-	fi
-
-
-	bobshell_var_get "$_bobshell_event_listen__name"
-	if ! bobshell_result_check _bobshell_event_listen__script; then
-		_bobshell_event_listen__script='
-if [ true = "${_bobshell_event_running_flag_'"$_bobshell_event_listen__name"':-false}" ]; then
-	bobshell_die recursive event fire not allowed
-fi
-_bobshell_event_running_flag_'"$_bobshell_event_listen__name"'=true
-unset _bobshell_event_stop_flag
-'
 	fi
 
 	# shellcheck disable=SC2016
