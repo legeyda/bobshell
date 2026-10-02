@@ -58,4 +58,25 @@ test_msg() {
 	x=$(set +x; assert_die bobshell_result_assert 2>&1)
 	assert_equals 'testapp: assertion failed' "$x"
 
+
+
+	bobshell_result_set false
+	x=$(set +x; assert_die bobshell_result_assert 2>&1)
+	assert_equals 'testapp: assertion failed: unknown error' "$x"
+
+	bobshell_result_set false
+	x=$(set +x; assert_die bobshell_result_assert -- custom assertion failed 2>&1)
+	assert_equals 'testapp: custom assertion failed: unknown error' "$x"
+
+	bobshell_result_set false error message 1
+	x=$(set +x; assert_die bobshell_result_assert 2>&1)
+	assert_equals 'testapp: assertion failed: error message 1' "$x"
+
+	bobshell_result_set false error message 2
+	x=$(set +x; assert_die bobshell_result_assert -- custom assertion failed 2>&1)
+	assert_equals 'testapp: custom assertion failed: error message 2' "$x"
+
+
+
+
 }
