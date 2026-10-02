@@ -56,7 +56,10 @@ test_msg() {
 	assert_equals 'testapp: errmsg' "$x"
 
 	x=$(set +x; assert_die bobshell_result_assert 2>&1)
-	assert_equals 'testapp: assertion failed' "$x"
+	assert_equals 'testapp: assertion failed: no result' "$x"
+
+
+
 
 
 
@@ -65,11 +68,11 @@ test_msg() {
 	assert_equals 'testapp: assertion failed: unknown error' "$x"
 
 	bobshell_result_set false
-	x=$(set +x; assert_die bobshell_result_assert -- custom assertion failed 2>&1)
+	x=$(set +x; assert_die bobshell_result_assert x y z -- custom assertion failed 2>&1)
 	assert_equals 'testapp: custom assertion failed: unknown error' "$x"
 
 	bobshell_result_set false error message 1
-	x=$(set +x; assert_die bobshell_result_assert 2>&1)
+	x=$(set +x; assert_die bobshell_result_assert x y z 2>&1)
 	assert_equals 'testapp: assertion failed: error message 1' "$x"
 
 	bobshell_result_set false error message 2
@@ -79,4 +82,13 @@ test_msg() {
 
 
 
+	bobshell_result_set true 1 2
+	x=$(set +x; assert_die bobshell_result_assert x y z -- custom assertion failed 2>&1)
+	assert_equals 'testapp: custom assertion failed: unsufficient result size' "$x"
+
+	bobshell_result_set true 1 2
+	x=$(set +x; assert_die bobshell_result_assert x y z 2>&1)
+	assert_equals 'testapp: assertion failed: unsufficient result size' "$x"
+
+	
 }
