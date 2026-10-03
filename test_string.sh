@@ -92,7 +92,7 @@ test_split_first() {
 	assert_equals 1 "$key"
 	assert_equals 2 "$value"
 	unset key value
-	
+
 }
 
 
@@ -112,7 +112,7 @@ test_contains() {
 }
 
 test_basic_regex_match() {
-	
+
 	assert_ok bobshell_basic_regex_match 123 '[[:digit:]]\+'
 	assert_error bobshell_basic_regex_match blabla '[[:digit:]]\+'
 
@@ -163,4 +163,9 @@ test_strip_right() {
 test_strip() {
 	result=$(bobshell_strip '  blabla  ')
 	assert_equals blabla "$result"
+}
+
+test_newline() {
+	assert_equals "$bobshell_newline" '
+'
 }
