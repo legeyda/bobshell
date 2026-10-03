@@ -2,12 +2,10 @@
 
 
 bobshell_regex_match() {
-	_bobshell_regex_match=$(expr "$1" : "$2")
-	if [ "$_bobshell_regex_match" = "${#1}" ]; then
-		unset _bobshell_regex_match
-		return
-	else
-		unset _bobshell_regex_match
-		return 1
-	fi
+	case "$2" in
+		(^*$) printf '%s\n' "$1" | grep -q -- "$2" ;;
+		(^*)  printf '%s\n' "$1" | grep -q -- "$2\$" ;;
+		 (*$) printf '%s\n' "$1" | grep -q -- "^$2" ;;
+		 (*)  printf '%s\n' "$1" | grep -q -- "^$2\$" ;;
+	esac
 }
