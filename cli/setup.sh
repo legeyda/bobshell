@@ -17,7 +17,7 @@ bobshell_event_listen bobshell_cli_setup_start_event '
 	unset _bobshell_cli_setup__var
 	_bobshell_cli_setup__param=false
 	_bobshell_cli_setup__flag=false
-	
+
 	_bobshell_cli_setup__default_unset=false
 	unset _bobshell_cli_setup__default_value
 
@@ -25,7 +25,7 @@ bobshell_event_listen bobshell_cli_setup_start_event '
 
 	unset _bobshell_cli_setup__listener
 	_bobshell_cli_setup__append=false
-	_bobshell_cli_setup__separator=	
+	_bobshell_cli_setup__separator=
 '
 
 bobshell_event_listen bobshell_cli_setup_clear_event '
@@ -35,7 +35,7 @@ bobshell_event_listen bobshell_cli_setup_clear_event '
 	unset _bobshell_cli_setup__var
 	unset _bobshell_cli_setup__param
 	unset _bobshell_cli_setup__flag
-	
+
 	unset _bobshell_cli_setup__default_unset
 	unset _bobshell_cli_setup__default_value
 
@@ -44,7 +44,7 @@ bobshell_event_listen bobshell_cli_setup_clear_event '
 	unset _bobshell_cli_setup__listener
 	unset _bobshell_cli_setup__append
 	unset _bobshell_cli_setup__separator
-	
+
 '
 
 # shellcheck disable=SC2016
@@ -75,7 +75,7 @@ bobshell_event_listen bobshell_cli_setup_arg_event '
 			_bobshell_cli_setup__append=true ;;
 		(s|separator)
 			_bobshell_cli_setup__separator="$2" ;;
-		
+
 		(*) bobshell_die "bobshell_cli_setup: unknown argument: $1"
 	esac
 '
@@ -119,7 +119,7 @@ bobshell_cli_setup_flags='p param  f flag  u default-unset  a append'
 #       default true for params, n/a for flags
 #     --flag-value=FLAGVALUE
 #       value to write to variable if flag is passed, default true, implies --flag, not compatible with --param
-#     
+#
 #
 #
 # FLAG OPTIONS:
@@ -180,11 +180,11 @@ bobshell_cli_setup() {
 	done
 	unset _bobshell_cli_setup__i
 
-	# 	
+	#
 	if [ true = "$_bobshell_cli_setup__param" ]; then
 		bobshell_var_default "$_bobshell_cli_setup__scope"_params ''
 		bobshell_var_append  "$_bobshell_cli_setup__scope"_params " $*"
-		
+
 	elif [ true = "$_bobshell_cli_setup__flag" ]; then
 		bobshell_var_default "$_bobshell_cli_setup__scope"_flags ''
 		bobshell_var_append  "$_bobshell_cli_setup__scope"_flags  " $*"
@@ -208,7 +208,7 @@ for x in '"$*"'; do
 done
 unset _bobshell_cli_setup_help_event__separator
 if [ true = '"$_bobshell_cli_setup__param"' ]; then
-	printf "%s" =VALUE 
+	printf "%s" =VALUE
 fi
 printf "\n"
 '
@@ -242,8 +242,8 @@ fi'
 		fi
 
 	fi
-	
-	
+
+
 	if bobshell_isset _bobshell_cli_setup__var; then
 
 
@@ -323,7 +323,7 @@ fi'
 		else
 			bobshell_die "dev assertion faled"
 		fi
-		bobshell_event_listen "${_bobshell_cli_setup__scope}_clear" "unset $_bobshell_cli_setup__var" 
+		bobshell_event_listen "${_bobshell_cli_setup__scope}_clear" "unset $_bobshell_cli_setup__var"
 	fi
 
 	# CLEAR
@@ -331,4 +331,3 @@ fi'
 	bobshell_event_fire bobshell_cli_setup_clear_event
 
 }
-
