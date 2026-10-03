@@ -6,11 +6,14 @@ shelduck import ./get.sh
 shelduck import ./set.sh
 
 bobshell_var_append() {
-	bobshell_var_get "$1"
-	bobshell_result_assert _bobshell_var_append__value -- bobshell_var_append: var "$1" not set
+	_bobshell_var_append__var="$1"
+	shift
+
+	bobshell_var_get "$_bobshell_var_append__var"
+	bobshell_result_assert _bobshell_var_append__value -- bobshell_var_append: var "$_bobshell_var_append__var" not set
 
 	_bobshell_var_append__value="$_bobshell_var_append__value$*"
-	bobshell_var_set "$1" "$_bobshell_var_append__value"
+	bobshell_var_set "$_bobshell_var_append__var" "$_bobshell_var_append__value"
 	bobshell_result_set true "$_bobshell_var_append__value"
 	unset _bobshell_var_append__value
 }

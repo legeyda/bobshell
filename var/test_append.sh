@@ -6,8 +6,7 @@ shelduck import ../string.sh
 
 test_append() {
 	unset x
-	bobshell_var_append x y
-	assert_error bobshell_result_check
+	assert_die bobshell_var_append x y
 	assert_unset x
 
 	x=1
