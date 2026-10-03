@@ -18,7 +18,8 @@ bobshell_event_listen() {
 		shift
 	fi
 
-	if [ "${*:-}" ]; then
+
+	if [ "$*" ]; then
 		bobshell_var_get "$_bobshell_event_listen__name"
 		if ! bobshell_result_check _bobshell_event_listen__script; then
 			_bobshell_event_listen__script=
@@ -29,19 +30,19 @@ bobshell_event_listen() {
 $*
 
 "
-
 		_bobshell_event_listen__script="$_bobshell_event_listen__script"'
-if [ true = "${_bobshell_event_stop_flag_'"$_bobshell_event_listen__name"':-false}" ]; then
-	unset _bobshell_event_running_flag_'"$_bobshell_event_listen__name"'
-	unset _bobshell_event_stop_flag_'"$_bobshell_event_listen__name"'
+if [ true = "${_bobshell_event_stop_flag:-false}" ]; then
+	unset _bobshell_event_stop_flag
 	return
 fi
 '
 
 		bobshell_var_set "$_bobshell_event_listen__name" "$_bobshell_event_listen__script"
+		unset _bobshell_event_listen__script
 	elif bobshell_command_available "$_bobshell_event_listen__name"; then
 		return
 	fi
+	unset _bobshell_event_listen__listener
 
 	# shellcheck disable=SC2016
 	bobshell_defun "$_bobshell_event_listen__name" "bobshell_event_compile $_bobshell_event_listen__name
