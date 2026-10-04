@@ -23,7 +23,14 @@ assert_equals() {
 assert_contains() {
 	case "$1" in
 		(*$2*) true ;;
-		(*)    assertion_error "actual value <$1> expected to contain substring <$2>${3:+ $3}"
+		(*)    assertion_error "actual value <$1> expected to contain substring <$2>${3:+ $3}" ;;
+	esac
+}
+
+assert_not_contains() {
+	case "$1" in
+		(*$2*) assertion_error "actual value <$1> expected NOT to contain substring <$2>${3:+ $3}" ;;
+		(*)    true ;;
 	esac
 }
 
