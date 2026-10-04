@@ -21,13 +21,14 @@ test_make() {
 
 
 	printf %s 2 > y
+	sleep 1
 	printf %s 1 > x
 	bobshell_make_build x
 	bobshell_result_assert -- should be ok
 	assert_file_exists x
 	assert_equals 1 "$(cat x)"
 
-
+	sleep 1
 	printf %s 3 > y
 	bobshell_make_build x
 	bobshell_result_assert -- should be ok

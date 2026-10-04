@@ -64,17 +64,17 @@ bobshell_make_rule() {
 
 
 	# проверить что правило не создаёт транзитивных циклические зависимости
-	for _bobshell_make_rule__i in $_bobshell_make_rule__deps; do
+	for _bobshell_make_rule__dep in $_bobshell_make_rule__deps; do
 		_bobshell_make_recurse__circle_found=false
-		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_rule__i" "$_bobshell_make_rule__target"
+		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_rule__dep" "$_bobshell_make_rule__target"
 		if [ false != "$_bobshell_make_recurse__circle_found" ]; then
 			unset _bobshell_make_rule__phony _bobshell_make_rule__target _bobshell_make_rule__quoted_target _bobshell_make_rule__deps
-			unset _bobshell_make_rule__i _bobshell_make_recurse__circle_found
+			unset _bobshell_make_rule__dep _bobshell_make_recurse__circle_found
 			bobshell_result_set false circular dependency found
 			return
 		fi
 	done
-	unset _bobshell_make_rule__i _bobshell_make_recurse__circle_found
+	unset _bobshell_make_rule__dep _bobshell_make_recurse__circle_found
 
 
 
@@ -96,17 +96,17 @@ fi
 	# событие проверить транзитивные циклические зависимости
 	bobshell_event_listen bobshell_make_recurse_event eval '
 if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
-	for _bobshell_make_recurse__i in '"$_bobshell_make_rule__deps"'; do
-		if [ "$2" = "$_bobshell_make_recurse__i" ]; then
+	for _bobshell_make_recurse__dep in '"$_bobshell_make_rule__deps"'; do
+		if [ "$2" = "$_bobshell_make_recurse__dep" ]; then
 			_bobshell_make_recurse__circle_found=true
 			break
 		fi
-		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_recurse__i" "$2"
+		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_recurse__dep" "$2"
 		if [ false != "$_bobshell_make_recurse__circle_found" ]; then
 			break
 		fi
 	done
-	unset _bobshell_make_recurse__i
+	unset _bobshell_make_recurse__dep
 	bobshell_event_stop
 fi
 '
@@ -115,10 +115,7 @@ fi
 
 	_bobshell_make_rule__listener='if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
 	# build dependencies
-	for _bobshell_make_rule__i in '"$_bobshell_make_rule__deps"'; do
-		bobshell_make_build "$_bobshell_make_rule__i"
-	done
-	unset _bobshell_make_rule__i
+	bobshell_make_build '"$_bobshell_make_rule__deps"'
 '
 
 	_bobshell_make_rule__script_do_build='
@@ -139,22 +136,17 @@ fi
 
 		_bobshell_make_rule__listener="$_bobshell_make_rule__listener"'
 	if [ -e "$1" ]; then
-		_bobshell_make_rule__pending=false
-		for _bobshell_make_rule__i in '"$_bobshell_make_rule__deps"'; do
-			if ! [ -f "$1" ] || ! [ "$_bobshell_make_rule__i" -ot "$1" ]; then
-				_bobshell_make_rule__pending=true
+		for _bobshell_make_rule__dep in '"$_bobshell_make_rule__deps"'; do
+			if ! [ "$_bobshell_make_rule__dep" -ot "$1" ]; then
+				'"$_bobshell_make_rule__script_do_build"'
 				break
 			fi
 		done
-		unset _bobshell_make_rule__i
+		unset _bobshell_make_rule__dep
 	else
-		_bobshell_make_rule__pending=true
-	fi
-
-	if [ true = "$_bobshell_make_rule__pending" ]; then
 		'"$_bobshell_make_rule__script_do_build"'
 	fi
-	unset _bobshell_make_rule__pending
+
 '
 
 	fi
@@ -186,8 +178,9 @@ bobshell_args_to_script() {
 
 
 bobshell_make_build() {
+	# validate arguments
 	while [ "$#" -eq 0 ]; do
-		bobshell_result_set false args expected
+		bobshell_result_set false at least one argument expected
 		return
 	done
 
