@@ -44,14 +44,24 @@ test_make_circular_1() {
 
 test_make_circular_2() {
 	bobshell_make_rule x y -- eval 'echo building... $1 ok'
-	bobshell_make_rule y x -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_rule y x -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_build y
 
-	assert_die bobshell_make_build x
-	x=$(set +x; assert_die bobshell_make_build x 2>&1)
+	bobshell_make_rule y z -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_rule z x -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_build z
 
-	assert_contains "$x" 'Maximum function recursion depth' # todo invert
+	bobshell_make_rule z fu -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_rule fu x -- eval 'echo building... $1 ok'
+	assert_die bobshell_make_build fu
+}
 
-	# assert_not_contains "$x" 'Maximum function recursion depth'
-	# assert_contains     "$x" 'bobshell_make_build: circular depenendency'
-
+test_make_circular_3() {
+	# a -> b, b->c, .... y->z
+	trg=a
+	for dep in b c d e f g h i j k l m n o p q r s t u v w x y z; do
+		bobshell_make_rule "$trg" "$dep" -- echo hello
+		trg="$dep"
+	done
+	assert_die bobshell_make_rule z a -- echo hello
 }

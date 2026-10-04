@@ -62,6 +62,25 @@ bobshell_make_rule() {
 	bobshell_args_to_script "$@"
 	bobshell_result_assert _bobshell_make_rule__script -- empty rule script
 
+
+
+	# проверить что правило не создаёт транзитивных циклические зависимости
+	for _bobshell_make_rule__i in $_bobshell_make_rule__deps; do
+		_bobshell_make_recurse__circle_found=false
+		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_rule__i" "$_bobshell_make_rule__target"
+		if [ false != "$_bobshell_make_recurse__circle_found" ]; then
+			bobshell_die circular dependency found
+		fi
+	done
+	unset _bobshell_make_rule__i
+
+
+
+	# валидации пройдены,
+	# настраиваем правило
+	#
+	#
+
 	# событие проверить существование правила
 	bobshell_event_listen bobshell_make_search_event eval '
 if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
@@ -69,15 +88,25 @@ if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
 	bobshell_event_stop
 fi
 '
-
+	# событие проверить транзитивные циклические зависимости
 	bobshell_event_listen bobshell_make_recurse_event eval '
 if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
-	_bobshell_make_search__found=true
+	bobshell_die HELLO HERE deps='"$_bobshell_make_rule__deps"' first=$1 second=$2
+	for _bobshell_make_recurse__i in '"$_bobshell_make_rule__deps"'; do
+		if [ "$2" = "$_bobshell_make_recurse__i" ]; then
+			_bobshell_make_recurse__circle_found=true
+			bobshell_die HELLO HERE
+			break
+		fi
+		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_recurse__i" "$2"
+		if [ false != "$_bobshell_make_recurse__circle_found" ]; then
+			break
+		fi
+	done
+	unset _bobshell_make_recurse__i
 	bobshell_event_stop
 fi
 '
-
-
 
 
 
