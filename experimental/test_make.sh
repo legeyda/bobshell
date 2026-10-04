@@ -35,22 +35,36 @@ test_make() {
 	assert_file_exists x
 	assert_equals 3 "$(cat x)"
 
-
-
-
 }
 
-test_make_undef() {
+test_phony() {
+	mkdir -p target/test_make_phony
+	cd       target/test_make_phony
+
+	bobshell_make_rule --phony x y -- eval 'cat $2 > $1'
+	bobshell_result_assert -- should be ok
+
+	printf %s 2 > y
+	sleep 1
+	printf %s 1 > x # target is newer than depenency
+	bobshell_make_build x
+	bobshell_result_assert -- should be ok
+	assert_file_exists x
+	assert_equals 2 "$(cat x)"
+}
+
+
+test_undef() {
 	bobshell_make_build x
 	assert_error bobshell_result_check
 }
 
-test_make_circular_1() {
+test_circular_1() {
 	bobshell_make_rule x x
 	assert_error bobshell_result_check bobshell_make_rule x x
 }
 
-test_make_circular_2() {
+test_circular_2() {
 	bobshell_make_rule x y -- eval 'echo building... $1 ok'
 	bobshell_result_assert -- should be ok
 	bobshell_make_rule y x -- eval 'echo building... $1 ok'
@@ -75,7 +89,7 @@ test_make_circular_2() {
 
 }
 
-test_make_circular_3() {
+test_circular_3() {
 	# a -> b, b->c, .... y->z
 	trg=a
 	for dep in b c d e f g h i j k l m n o p q r s t u v w x y z; do

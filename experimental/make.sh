@@ -127,13 +127,10 @@ fi
 
 
 	if [ true = "$_bobshell_make_rule__phony" ]; then
-
-	_bobshell_make_rule__listener="$_bobshell_make_rule__listener"'
+		_bobshell_make_rule__listener="$_bobshell_make_rule__listener"'
 	'"$_bobshell_make_rule__script_do_build"'
 '
-
 	else
-
 		_bobshell_make_rule__listener="$_bobshell_make_rule__listener"'
 	if [ -e "$1" ]; then
 		for _bobshell_make_rule__dep in '"$_bobshell_make_rule__deps"'; do
@@ -146,9 +143,7 @@ fi
 	else
 		'"$_bobshell_make_rule__script_do_build"'
 	fi
-
 '
-
 	fi
 	unset _bobshell_make_rule__script_do_build _bobshell_make_rule__phony
 
