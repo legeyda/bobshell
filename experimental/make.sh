@@ -1,11 +1,4 @@
 
-# fun: bobshell_make BUILDFILE --dependency=DEPFILE -d ANOTHERDEPFILE -- CMD [ARGS ... ]
-# fun: bobshell_make BUILDFILE [ DEPFILE ... ] -- CMD [ARGS ... ]
-# bobshell_cli_setup bobshell_make_cli --param --listener='bobshell_make_rule_dep "$1"' d dependency
-# bobshell_make_rule_dep() {
-# 	bobshell_str_quote "$@"
-# 	_bobshell_make_rule__deps="${_bobshell_make_rule__deps:-} $bobshell_result_1"
-# }
 
 shelduck import ../base.sh
 shelduck import ../event/listen.sh
@@ -41,7 +34,9 @@ bobshell_make_rule() {
 		fi
 
 		if [ "$1" = "$_bobshell_make_rule__target" ]; then
-			bobshell_die circular dependency on itself: "$1 -> $1"
+			unset _bobshell_make_rule__phony _bobshell_make_rule__target _bobshell_make_rule__quoted_target _bobshell_make_rule__deps
+			bobshell_result_set false circular dependency on itself: "$1 -> $1"
+			return
 		fi
 
 		bobshell_str_quote "$1"
@@ -50,12 +45,16 @@ bobshell_make_rule() {
 	done
 
 	if [ "${1:-}" != -- ]; then
-		bobshell_die bobshell_make_rule: -- expected
+		unset _bobshell_make_rule__phony _bobshell_make_rule__target _bobshell_make_rule__quoted_target _bobshell_make_rule__deps
+		bobshell_result_set false bobshell_make_rule: -- expected
+		return
 	fi
 	shift
 
 	if [ "$#" -eq 0 ]; then
-		bobshell_die bobshell_make_rule: -- cmd expected
+		unset _bobshell_make_rule__phony _bobshell_make_rule__target _bobshell_make_rule__quoted_target _bobshell_make_rule__deps
+		bobshell_result_set false -- cmd expected
+		return
 	fi
 
 
@@ -69,10 +68,13 @@ bobshell_make_rule() {
 		_bobshell_make_recurse__circle_found=false
 		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_rule__i" "$_bobshell_make_rule__target"
 		if [ false != "$_bobshell_make_recurse__circle_found" ]; then
-			bobshell_die circular dependency found
+			unset _bobshell_make_rule__phony _bobshell_make_rule__target _bobshell_make_rule__quoted_target _bobshell_make_rule__deps
+			unset _bobshell_make_rule__i _bobshell_make_recurse__circle_found
+			bobshell_result_set false circular dependency found
+			return
 		fi
 	done
-	unset _bobshell_make_rule__i
+	unset _bobshell_make_rule__i _bobshell_make_recurse__circle_found
 
 
 
@@ -88,14 +90,15 @@ if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
 	bobshell_event_stop
 fi
 '
+
+
+
 	# событие проверить транзитивные циклические зависимости
 	bobshell_event_listen bobshell_make_recurse_event eval '
 if [ "$1" = '"$_bobshell_make_rule__quoted_target"' ]; then
-	bobshell_die HELLO HERE deps='"$_bobshell_make_rule__deps"' first=$1 second=$2
 	for _bobshell_make_recurse__i in '"$_bobshell_make_rule__deps"'; do
 		if [ "$2" = "$_bobshell_make_recurse__i" ]; then
 			_bobshell_make_recurse__circle_found=true
-			bobshell_die HELLO HERE
 			break
 		fi
 		bobshell_event_fire bobshell_make_recurse_event "$_bobshell_make_recurse__i" "$2"
@@ -138,7 +141,7 @@ fi
 	if [ -e "$1" ]; then
 		_bobshell_make_rule__pending=false
 		for _bobshell_make_rule__i in '"$_bobshell_make_rule__deps"'; do
-			if ! [ -f "$_bobshell_make_rule__i" ] || [ "$_bobshell_make_rule__i" -nt "$1" ]; then
+			if ! [ -f "$1" ] || ! [ "$_bobshell_make_rule__i" -ot "$1" ]; then
 				_bobshell_make_rule__pending=true
 				break
 			fi
@@ -164,6 +167,8 @@ fi
 
 	bobshell_event_listen bobshell_make_build_event eval "$_bobshell_make_rule__listener"
 	unset _bobshell_make_rule__listener
+
+	bobshell_result_set true
 }
 
 
@@ -181,9 +186,9 @@ bobshell_args_to_script() {
 
 
 bobshell_make_build() {
-	#printf %s "==================================DEBUG: bobshel_make_build $*"
 	while [ "$#" -eq 0 ]; do
-		bobshell_die bobshell_make_build: args expected
+		bobshell_result_set false args expected
+		return
 	done
 
 	# сначала проверим что для всех целей существуют правила, прежде чем собирать зависимости
@@ -192,7 +197,10 @@ bobshell_make_build() {
 		bobshell_event_fire bobshell_make_search_event "$_bobshell_make_build__target"
 		if [ true != "$_bobshell_make_search__found" ]; then
 			if ! [ -e "$_bobshell_make_build__target" ]; then
-				bobshell_die bobshell_make_build: no build rule for "$_bobshell_make_build__target"
+				unset _bobshell_make_search__found
+				bobshell_result_set false no build rule for "$_bobshell_make_build__target"
+				unset _bobshell_make_build__target
+				return
 			fi
 		fi
 		unset _bobshell_make_search__found
@@ -204,4 +212,6 @@ bobshell_make_build() {
 		bobshell_event_fire bobshell_make_build_event "$_bobshell_make_build__target"
 	done
 	unset _bobshell_make_build__target
+
+	bobshell_result_set true
 }
