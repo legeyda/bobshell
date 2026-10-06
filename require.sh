@@ -35,6 +35,7 @@ bobshell_require_file_exists() {
 
 bobshell_require_not_empty() {
 	if [ -z "$1" ]; then
+		shift
 		bobshell_die '%s: ' "${*:-value required not to be empty}"
 	fi
 }
