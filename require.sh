@@ -11,13 +11,13 @@ bobshell_require_isset_1() {
 bobshell_require_isset_2() {
 	if ! bobshell_isset_2 "$@"; then
 		bobshell_die '%s: ' "${*:-argument 2 required to be set}"
-	fi	
+	fi
 }
 
 bobshell_require_isset_3() {
 	if ! bobshell_isset_3 "$@"; then
 		bobshell_die '%s: ' "${*:-argument 3 required to be set}"
-	fi	
+	fi
 }
 
 bobshell_require_isset() {
@@ -35,6 +35,6 @@ bobshell_require_file_exists() {
 
 bobshell_require_not_empty() {
 	if [ -z "$1" ]; then
-		bobshell_die '%s: ' "${*:value required not to be empty}"
+		bobshell_die '%s: ' "${*:-value required not to be empty}"
 	fi
 }
