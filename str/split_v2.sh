@@ -26,13 +26,11 @@ bobshell_str_split_v2() {
 		if [ "$1" = "$4" ]; then
 			break
 		fi
-			
 
 		# keep invariant for next iteration
 		set -- "$4" "$2" "$3" "${1%%"$2"*}"
 		bobshell_var_set "bobshell_result_$(( bobshell_result_size ))" "$4"
-		bobshell_result_add "$1"
+		bobshell_result_append "$1"
 	done
 
-#		bobshell_result_add "$1"
 }
