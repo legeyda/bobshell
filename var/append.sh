@@ -14,6 +14,7 @@ bobshell_var_append() {
 
 	_bobshell_var_append__value="$_bobshell_var_append__value$*"
 	bobshell_var_set "$_bobshell_var_append__var" "$_bobshell_var_append__value"
+	unset _bobshell_var_append__var
 	bobshell_result_set true "$_bobshell_var_append__value"
 	unset _bobshell_var_append__value
 }
