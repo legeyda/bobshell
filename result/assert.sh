@@ -60,10 +60,10 @@ bobshell_result_assert() {
 			: "${_bobshell_result_assert__msg2:=unknown error}"
 
 			bobshell_die "$_bobshell_result_assert__msg1: $_bobshell_result_assert__msg2"
-		elif [ "${bobshell_result_1:-}" ]; then
-			bobshell_die "${*:-assertion failed: non parseable result status: $bobshell_result_1}"
+		elif [ -n "${bobshell_result_1:-}" ]; then
+			bobshell_die "${*:-assertion failed}: non parseable result status: $bobshell_result_1"
 		else
-			bobshell_die "${*:-assertion failed: empty result status}"
+			bobshell_die "${*:-assertion failed}: empty result status"
 		fi
 	else # empty or no result
 		bobshell_die "${*:-assertion failed: no result}"
