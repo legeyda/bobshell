@@ -9,8 +9,9 @@ shelduck import ../var/set.sh
 shelduck import ../var/increment.sh
 
 
-# fun: bobshell_str_split STR [SEPARATOR=:] [MAX_PARTS=inf]
-# use: bobshell_str_split '1.2.3.4' '.' 2
+# fun: bobshell_str_split_v2 STR [SEPARATOR=:] [MAX_PARTS=inf]
+# use: bobshell_str_split_v2 '1.2.3.4' '.' 2
+# res: PART_1 PART_2 ... PART_N
 bobshell_str_split_v2() {
 	set -- "$1" "${2:-:}" "${3:-inf}"
 	bobshell_result_set "$1"
