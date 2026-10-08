@@ -16,6 +16,7 @@ test_replace() {
 	bobshell_str_replace hello 'l' ''
 	assert_equals heo "$bobshell_result_1"
 
-	assert_die bobshell_str_replace hello '' x
+	bobshell_str_replace hello '' x
+	assert_error bobshell_result_check
 
 }

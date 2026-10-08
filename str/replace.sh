@@ -4,7 +4,8 @@ shelduck import ./split_v2.sh
 
 bobshell_str_replace() {
 	if [ -z "$2" ]; then
-		bobshell_die 'bobshell_str_replace: empty needle'
+		bobshell_result_set false 'bobshell_str_replace: empty needle'
+		return
 	fi
 
 	_bobshell_replace__rest="$1"
