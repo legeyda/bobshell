@@ -40,3 +40,8 @@ test_false2() {
 	assert_unset b
 	assert_unset c
 }
+
+test_false3() {
+	bobshell_result_set true 1 2
+	assert_error bobshell_result_check a b c
+}
