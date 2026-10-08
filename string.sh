@@ -13,8 +13,8 @@ bobshell_starts_with() {
 	shift
 	while bobshell_isset_1 "$@"; do
 		case "$bobshell_starts_with_str" in
-			("$1"*) 
-				unset bobshell_starts_with_str			
+			("$1"*)
+				unset bobshell_starts_with_str
 				return 0
 		esac
 		shift
@@ -34,7 +34,7 @@ bobshell_remove_prefix() {
 	fi
 	if [ -n "$3" ]; then
 		bobshell_putvar "$3" "$4"
-	fi	
+	fi
 }
 
 # use: bobshell_starts_with hello he rest && echo "$rest" # prints llo
@@ -103,7 +103,8 @@ bobshell_split_last() {
 # DEPRECATED: str_replace
 bobshell_replace() {
 	bobshell_str_replace "$@"
-	printf %s "$bobshell_result_1"
+	bobshell_result_assert
+	printf %s "$bobshell_result_2"
 }
 
 
@@ -114,7 +115,7 @@ bobshell_replace() {
 # fun: bobshell_substr STR RANGE OUTPUTVAR
 bobshell_substr() {
 	bobshell_die "not implemented"
-	
+
 	set -- "$1"
 	bobshell_substr_result=$(printf %s "$1" | cut -c "$2-$3")
 	col2="$(printf 'foo    bar  baz\n' | cut -c 8-12)"
@@ -199,7 +200,7 @@ bobshell_join() {
 bobshell_strip_left() {
 	bobshell_strip_left_value="$1"
 	while true; do
-		case "$bobshell_strip_left_value" in 
+		case "$bobshell_strip_left_value" in
 			([[:space:]]*)
 				bobshell_strip_left_value="${bobshell_strip_left_value#?}" ;;
 			(*) break ;;
@@ -211,7 +212,7 @@ bobshell_strip_left() {
 bobshell_strip_right() {
 	bobshell_strip_right_value="$1"
 	while true; do
-		case "$bobshell_strip_right_value" in 
+		case "$bobshell_strip_right_value" in
 			(*[[:space:]])
 				bobshell_strip_right_value="${bobshell_strip_right_value%?}" ;;
 			(*) break ;;

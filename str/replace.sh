@@ -21,6 +21,6 @@ bobshell_str_replace() {
 		fi
 	done
 	unset _bobshell_replace__rest
-	bobshell_result_set "$_bobshell_replace__result"
+	bobshell_result_set true "$_bobshell_replace__result"
 	unset _bobshell_replace__result
 }
