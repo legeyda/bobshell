@@ -4,8 +4,6 @@ shelduck import ../base.sh
 shelduck import ../result/set.sh
 shelduck import ../regex/match.sh
 shelduck import ./replace.sh
-shelduck import ./quote.sh
-shelduck import ../string.sh
 
 
 bobshell_str_quote() {
