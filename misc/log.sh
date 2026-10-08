@@ -35,16 +35,19 @@ bobshell_log_init() {
 		set +vx
 	fi
 
-	bobshell_log_def 0 emerg
-	bobshell_log_def 1 alert
-	bobshell_log_def 2 crit
-	bobshell_log_def 3 error
-	bobshell_log_def 4 warn
-	bobshell_log_def 5 notice
-	bobshell_log_def 6 info
-	bobshell_log_def 7 debug
-	bobshell_log_def 8 trace
+	bobshell_log_def() {
+		local script=
+		if [ "${_bobshell_log_level:-3}" -ge "$1" ]; then
+			script='printf "%s: %s\n" '"$2"' "$*" >&2'
+		else
+			script=:
+		fi
+		eval 'bobshell_log_'"$2"'() {
+	'"$script"'
+}'
+	}
 
+	bobshell_log_def_all
 	bobshell_log_trace "bobshell_log_init: done, log level is $_bobshell_log_level"
 }
 
@@ -59,18 +62,23 @@ bobshell_log_parse_syslog() {
 }
 
 bobshell_log_def() {
-	local script=
-	if [ "${_bobshell_log_level:-3}" -ge "$1" ]; then
-		script='printf "%s: %s\n" '"$2"' "$*" >&2'
-	else
-		script=:
-	fi
 	eval 'bobshell_log_'"$2"'() {
-	'"$script"'
+	bobshell_log_init # lazy init on first usage
+	bobshell_log_'"$2"' "$@"
 }'
 }
 
 
+bobshell_log_def_all() {
+	bobshell_log_def 0 emerg
+	bobshell_log_def 1 alert
+	bobshell_log_def 2 crit
+	bobshell_log_def 3 error
+	bobshell_log_def 4 warn
+	bobshell_log_def 5 notice
+	bobshell_log_def 6 info
+	bobshell_log_def 7 debug
+	bobshell_log_def 8 trace
+}
 
-
-bobshell_log_init
+bobshell_log_def_all

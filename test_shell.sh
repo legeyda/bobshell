@@ -565,3 +565,16 @@ world'
 
 
 }
+
+
+
+test_nested_func() {
+	f() {
+		g() {
+			echo "$@"
+		}
+	}
+	f f
+	x=$(g g)
+	assert_equals g "$x"
+}

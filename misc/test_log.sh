@@ -48,3 +48,9 @@ check_debug_level() {
 	bobshell_log_init
 	assert_equals "$1" "$_bobshell_log_level"
 }
+
+test_lazy() {
+	unset DEBUG BOBSHELL_LOG_LEVEL
+	bobshell_log_trace hello
+	assert_equals 3 "$_bobshell_log_level"
+}
