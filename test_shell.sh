@@ -541,3 +541,27 @@ test_capture() {
     # x=$(sh -c 'sleep 3 > /dev/null & echo $?'); echo $x # exits immediately
     true
 }
+
+
+test_cmd() {
+	x='hello\
+world'
+	y=$(echo $x)
+	assert_equals 'hello\ world' "$y"
+
+	y=$(eval "echo $x")
+	assert_equals 'helloworld' "$y"
+
+
+	x='hello
+world'
+	x=$(echo $x)
+	assert_equals 'hello world' "$x"
+
+	x='"hello world"'
+	x=$(echo $x)
+	assert_equals '"hello world"' "$x"
+
+
+
+}
