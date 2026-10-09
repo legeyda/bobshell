@@ -26,16 +26,11 @@ bobshell_redirect_input() {
 		"$@" < "$_bobshell_redirect_input__file"
 		unset _bobshell_redirect_input__file
 	else
-		_bobshell_redirect_input__temp=$(mktemp -d) # todo common temp dir for all would be more performant
-		chmod u+rwx "$_bobshell_redirect_input__temp"
-		mkfifo "$_bobshell_redirect_input__temp/1" "$_bobshell_redirect_input__temp/2"
-		dd "if=$_bobshell_redirect_input__temp/1" "of=$_bobshell_redirect_input__temp/2" bs=256M status=none &
-		bobshell_redirect_input_dd_pid=$!
-		bobshell_resource_copy "$1" "$_bobshell_redirect_input__temp/1"
+		_bobshell_redirect_input__temp=$(mktemp) # todo common temp dir for all would be more performant
+		bobshell_resource_copy "$1" "file://$_bobshell_redirect_input__temp"
 		shift
-		unset bobshell_redirect_input_dd_pid
-		"$@" < "$_bobshell_redirect_input__temp/2"
-		rm -rf "$_bobshell_redirect_input__temp"
+		"$@" < "$_bobshell_redirect_input__temp"
+		rm -f "$_bobshell_redirect_input__temp"
 		unset _bobshell_redirect_input__temp
 	fi
 }
