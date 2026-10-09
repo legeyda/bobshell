@@ -48,13 +48,3 @@ check_debug_level() {
 	bobshell_log_init
 	assert_equals "$1" "$_bobshell_log_level"
 }
-
-test_lazy() {
-	unset DEBUG BOBSHELL_LOG_LEVEL
-	DEBUG=2
-	bobshell_log_trace touch
-	assert_equals 6 "$_bobshell_log_level"
-
-	x=$(bobshell_log_info hello 2>&1)
-	assert_equals 'info: hello' "$x"
-}

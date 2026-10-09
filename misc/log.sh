@@ -1,12 +1,11 @@
 
-shelduck import ../base.sh
-
 
 bobshell_log_init() {
 
 	unset _bobshell_log_level
-	if bobshell_isset BOBSHELL_LOG_LEVEL; then
-		BOBSHELL_LOG_LEVEL=$(bobshell_upper_case "${BOBSHELL_LOG_LEVEL:-}")
+	if [ -n "${BOBSHELL_LOG_LEVEL:-}" ]; then
+		BOBSHELL_LOG_LEVEL=$(printf %s "$BOBSHELL_LOG_LEVEL" | awk 'BEGIN { getline; print toupper($0) }')
+
 		bobshell_log_parse_syslog 0 EMERG        # The system is unusable
 		bobshell_log_parse_syslog 1 ALERT        # Action must be taken immediately
 		bobshell_log_parse_syslog 2 CRIT         # Critical conditions
@@ -18,7 +17,7 @@ bobshell_log_init() {
 		bobshell_log_parse_syslog 8 TRACE        # Trace level message (optional non standard extension)
 	fi
 
-	if ! bobshell_isset _bobshell_log_level; then
+	if [ -z "${_bobshell_log_level:-}" ]; then
 		case "${DEBUG:-0}" in
 			(true|1) _bobshell_log_level=5 ;;
 			(2)      _bobshell_log_level=6 ;;
@@ -35,19 +34,16 @@ bobshell_log_init() {
 		set +vx
 	fi
 
-	bobshell_log_def() {
-		local script=
-		if [ "${_bobshell_log_level:-3}" -ge "$1" ]; then
-			script='printf "%s: %s\n" '"$2"' "$*" >&2'
-		else
-			script=:
-		fi
-		eval 'bobshell_log_'"$2"'() {
-	'"$script"'
-}'
-	}
+	bobshell_log_def 0 emerg
+	bobshell_log_def 1 alert
+	bobshell_log_def 2 crit
+	bobshell_log_def 3 error
+	bobshell_log_def 4 warn
+	bobshell_log_def 5 notice
+	bobshell_log_def 6 info
+	bobshell_log_def 7 debug
+	bobshell_log_def 8 trace
 
-	bobshell_log_def_all
 	bobshell_log_trace "bobshell_log_init: done, log level is $_bobshell_log_level"
 }
 
@@ -62,23 +58,15 @@ bobshell_log_parse_syslog() {
 }
 
 bobshell_log_def() {
+	local script=
+	if [ "${_bobshell_log_level:-3}" -ge "$1" ]; then
+		script='printf "%s: %s\n" '"$2"' "$*" >&2'
+	else
+		script=:
+	fi
 	eval 'bobshell_log_'"$2"'() {
-	bobshell_log_init # lazy init on first usage
-	bobshell_log_'"$2"' "$@"
+'"$script"'
 }'
 }
 
-
-bobshell_log_def_all() {
-	bobshell_log_def 0 emerg
-	bobshell_log_def 1 alert
-	bobshell_log_def 2 crit
-	bobshell_log_def 3 error
-	bobshell_log_def 4 warn
-	bobshell_log_def 5 notice
-	bobshell_log_def 6 info
-	bobshell_log_def 7 debug
-	bobshell_log_def 8 trace
-}
-
-bobshell_log_def_all
+bobshell_log_init
