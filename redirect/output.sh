@@ -36,7 +36,7 @@ bobshell_redirect_output() {
 		_bobshell_redirect_output__temp=$(mktemp -d)
 		chmod u+rwx "$_bobshell_redirect_output__temp"
 		mkfifo "$_bobshell_redirect_output__temp/1" "$_bobshell_redirect_output__temp/2"
-		dd "if=$_bobshell_redirect_output__temp/1" "of=$_bobshell_redirect_output__temp/2" status=none &
+		dd "if=$_bobshell_redirect_output__temp/1" "of=$_bobshell_redirect_output__temp/2" bs=256M status=none&
 		bobshell_redirect_output_dd_pid=$!
 		"$@" > "$_bobshell_redirect_output__temp/1"
 		bobshell_resource_copy "file://$_bobshell_redirect_output__temp/2" "$_bobshell_redirect_output"
