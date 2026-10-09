@@ -30,12 +30,17 @@ bobshell_event_listen() {
 $*
 
 "
-		_bobshell_event_listen__script="$_bobshell_event_listen__script"'
+
+
+		# todo refactor
+		if ! bobshell_isset "${_bobshell_event_listen__name}_template"; then
+			_bobshell_event_listen__script="$_bobshell_event_listen__script"'
 if [ true = "${_bobshell_event_stop_flag:-false}" ]; then
 	unset _bobshell_event_stop_flag
 	return
 fi
 '
+		fi
 
 		bobshell_var_set "$_bobshell_event_listen__name" "$_bobshell_event_listen__script"
 		unset _bobshell_event_listen__script
