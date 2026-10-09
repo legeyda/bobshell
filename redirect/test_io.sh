@@ -11,16 +11,30 @@ test_io() {
 	assert_isset f
 
 	unset x f
-	bobshell_redirect_io file:target/test_io.txt var:x f 
+	bobshell_redirect_io file:target/test_io.txt var:x f
 	assert_equals 123 "$x"
 	assert_isset f
 
 	x=$(bobshell_redirect_io file:target/test_io.txt stdout: f)
-	assert_equals 123 "$x" 
+	assert_equals 123 "$x"
 }
 
 f() {
 	f=true
 	sleep 1
 	cat
+}
+
+test_i() {
+	bobshell_redirect_io val:123 stdout: cat
+	# x=$(bobshell_redirect_io val:123 stdout: cat)
+	# assert_equals 123 "$x"
+}
+
+test_o() {
+	bobshell_redirect_io stdin: var:x cat <<EOF
+hello
+EOF
+	assert_equals 'hello
+' "$x"
 }
