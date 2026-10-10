@@ -1,34 +1,36 @@
 
 
 bobshell_log_init() {
+	case "${BOBSHELL_LOG_LEVEL:-}" in
+		(0|EMERG|emerg)               bobshell_log_level 0 ;; # The system is unusable
+		(1|ALERT|alert)               bobshell_log_level 1 ;; # Action must be taken immediately
+		(2|CRIT|crit)                 bobshell_log_level 2 ;; # Critical conditions
+		(3|ERR|err|ERROR|error)       bobshell_log_level 3 ;; # Error conditions
+		(4|WARN|warn|WARNING|warning) bobshell_log_level 4 ;; # Warning conditions
+		(5|NOTICE|notice)             bobshell_log_level 5 ;; # Normal, but significant, condition
+		(6|INF|inf|INFO|info)         bobshell_log_level 6 ;; # Informational messages
+		(7|DEBUG|debug)               bobshell_log_level 7 ;; # Debug-level messages
+		(8|TRACE|trace)               bobshell_log_level 8 ;; # Trace level message (optional non standard extension)
+		(*)
+			case "${DEBUG:-0}" in
+				(true|1) bobshell_log_level 5 ;;
+				(2)      bobshell_log_level 6 ;;
+				(3)      bobshell_log_level 7 ;;
+				(*)      bobshell_log_level 3 ;;
+			esac
+		;;
+	esac
+}
 
-	unset _bobshell_log_level
-	if [ -n "${BOBSHELL_LOG_LEVEL:-}" ]; then
-		BOBSHELL_LOG_LEVEL=$(printf %s "$BOBSHELL_LOG_LEVEL" | awk 'BEGIN { getline; print toupper($0) }')
-
-		bobshell_log_parse_syslog 0 EMERG        # The system is unusable
-		bobshell_log_parse_syslog 1 ALERT        # Action must be taken immediately
-		bobshell_log_parse_syslog 2 CRIT         # Critical conditions
-		bobshell_log_parse_syslog 3 ERR ERROR    # Error conditions
-		bobshell_log_parse_syslog 4 WARN WARNING # Warning conditions
-		bobshell_log_parse_syslog 5 NOTICE       # Normal, but significant, condition
-		bobshell_log_parse_syslog 6 INF INFO     # Informational messages
-		bobshell_log_parse_syslog 7 DEBUG        # Debug-level messages
-		bobshell_log_parse_syslog 8 TRACE        # Trace level message (optional non standard extension)
+bobshell_log_level() {
+	bobshell_log_level="${1:-}"
+	if [ -z "$bobshell_log_level" ] || ! [ "$bobshell_log_level" -ge 0 ] || ! [ "$bobshell_log_level" -le 8 ]; then
+		bobshell_log_level=3
 	fi
 
-	if [ -z "${_bobshell_log_level:-}" ]; then
-		case "${DEBUG:-0}" in
-			(true|1) _bobshell_log_level=5 ;;
-			(2)      _bobshell_log_level=6 ;;
-			(3)      _bobshell_log_level=7 ;;
-			(*)      _bobshell_log_level=3 ;;
-		esac
-	fi
-
-	if   [ "$_bobshell_log_level" -ge 7 ]; then
+	if   [ "$bobshell_log_level" -ge 7 ]; then
 		set -x +v
-	elif [ "$_bobshell_log_level" -ge 6 ]; then
+	elif [ "$bobshell_log_level" -ge 6 ]; then
 		set -v +x
 	else
 		set +vx
@@ -44,29 +46,20 @@ bobshell_log_init() {
 	bobshell_log_def 7 debug
 	bobshell_log_def 8 trace
 
-	bobshell_log_trace "bobshell_log_init: done, log level is $_bobshell_log_level"
+	bobshell_log_trace "bobshell_log_level: $bobshell_log_level"
 }
 
-bobshell_log_parse_syslog() {
-	local code="$1"
-	while [ $# -gt 0 ]; do
-		if [ "$BOBSHELL_LOG_LEVEL" = "$1" ]; then
-			_bobshell_log_level="$code"
-		fi
-		shift
-	done
-}
 
 bobshell_log_def() {
-	local script=
-	if [ "${_bobshell_log_level:-3}" -ge "$1" ]; then
-		script='printf "%s: %s\n" '"$2"' "$*" >&2'
-	else
-		script=:
-	fi
-	eval 'bobshell_log_'"$2"'() {
-'"$script"'
+	if [ "$bobshell_log_level" -ge "$1" ]; then
+		eval 'bobshell_log_'"$2"'() {
+		printf "%s: %s\n" '"$2"' "$*" >&2
 }'
+	else
+		eval 'bobshell_log_'"$2"'() {
+	:
+}'
+	fi
 }
 
 bobshell_log_init

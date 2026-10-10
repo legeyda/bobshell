@@ -7,7 +7,7 @@ test_log() {
 	unset DEBUG BOBSHELL_LOG_LEVEL
 
 	bobshell_log_init
-	assert_equals 3 "$_bobshell_log_level"
+	assert_equals 3 "$bobshell_log_level"
 
 	#
 	check_log_level 0 EMERG
@@ -39,12 +39,12 @@ check_log_level() {
 	unset DEBUG
 	BOBSHELL_LOG_LEVEL="$2"
 	bobshell_log_init
-	assert_equals "$1" "$_bobshell_log_level"
+	assert_equals "$1" "$bobshell_log_level"
 }
 
 check_debug_level() {
 	unset BOBSHELL_LOG_LEVEL
 	DEBUG="$2"
 	bobshell_log_init
-	assert_equals "$1" "$_bobshell_log_level"
+	assert_equals "$1" "$bobshell_log_level"
 }
