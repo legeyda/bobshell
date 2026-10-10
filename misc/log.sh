@@ -13,28 +13,35 @@ bobshell_log_init() {
 		(8|TRACE|trace)               bobshell_log_level 8 ;; # Trace level message (optional non standard extension)
 		(*)
 			case "${DEBUG:-0}" in
-				(true|1) bobshell_log_level 5 ;;
-				(2)      bobshell_log_level 6 ;;
-				(3)      bobshell_log_level 7 ;;
-				(*)      bobshell_log_level 3 ;;
+				(0|'')     bobshell_log_level 3 ;;
+				(true|1)   bobshell_log_level 5 ;;
+				(2)        bobshell_log_level 6 ;;
+				(3)        bobshell_log_level 7 ;;
+				(*)        bobshell_log_level 8 ;;
 			esac
 		;;
 	esac
 }
 
 bobshell_log_level() {
-	bobshell_log_level="${1:-}"
-	if [ -z "$bobshell_log_level" ] || ! [ "$bobshell_log_level" -ge 0 ] || ! [ "$bobshell_log_level" -le 8 ]; then
-		bobshell_log_level=3
-	fi
-
-	if   [ "$bobshell_log_level" -ge 7 ]; then
-		set -x +v
-	elif [ "$bobshell_log_level" -ge 6 ]; then
-		set -v +x
-	else
-		set +vx
-	fi
+	case "${1:-}" in
+		(7|8)
+			set -x +v
+			bobshell_log_level=$1
+			;;
+		(6)
+			set -v +x
+			bobshell_log_level=$1
+			;;
+		(0|1|2|3|4|5|6)
+			set +vx
+			bobshell_log_level=$1
+			;;
+		(*)
+			set +vx
+			bobshell_log_level=$1
+			;;
+	esac
 
 	bobshell_log_def 0 emerg
 	bobshell_log_def 1 alert
