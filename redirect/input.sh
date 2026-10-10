@@ -34,3 +34,29 @@ bobshell_redirect_input() {
 		unset _bobshell_redirect_input__temp
 	fi
 }
+
+
+# 		bobshell_str_prefix "$1" var:
+# 		if bobshell_result_check _bobshell_redirect_input__var; then
+# 			shift
+# 			bobshell_str_quote "$@"
+# 			eval "$bobshell_result_1"' <<EOF_29f4d9ac341548b8916763cba64b9d6d17dcf8ec46854559904eca7769d39b83
+# $(printf %s "$'"$_bobshell_redirect_input__var"'")
+# EOF_29f4d9ac341548b8916763cba64b9d6d17dcf8ec46854559904eca7769d39b83'
+# 			unset _bobshell_redirect_input__var
+# 		else
+# 			bobshell_str_prefix "$1" val:
+# 			if bobshell_result_check; then
+# 				shift
+# 				"$@" <<EOF_df6a224c68e84a89b9a6b8cc38e80f427a31e5aa06384ad78f9e6c46557de94c
+# $(printf %s "$bobshell_result_2")
+# EOF_df6a224c68e84a89b9a6b8cc38e80f427a31e5aa06384ad78f9e6c46557de94c
+# 			else
+# 				_bobshell_redirect_input__temp=$(mktemp) # todo common temp dir for all would be more performant
+# 				bobshell_resource_copy "$1" "file://$_bobshell_redirect_input__temp"
+# 				shift
+# 				"$@" < "$_bobshell_redirect_input__temp"
+# 				rm -f "$_bobshell_redirect_input__temp"
+# 				unset _bobshell_redirect_input__temp
+# 			fi
+# 		fi
