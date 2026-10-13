@@ -16,10 +16,13 @@ bobshell_result_check() {
 		return 1
 	fi
 
-	for _bobshell_result_check__i in $(seq 2 $(( $# + 1 )) ); do
-	    if [ "$1" ] && [ - != "$1" ]; then
-		    bobshell_resource_copy_var_to_var "bobshell_result_$_bobshell_result_check__i" "$1"
-        fi
+
+	_bobshell_result_check__i=2
+	while [ "$#" -gt 0 ] ; do
+		if [ "$1" ] && [ - != "$1" ]; then
+			bobshell_resource_copy_var_to_var "bobshell_result_$_bobshell_result_check__i" "$1"
+		fi
+		_bobshell_result_check__i=$(( _bobshell_result_check__i + 1 ))
 		shift
 	done
 	unset _bobshell_result_check__i
