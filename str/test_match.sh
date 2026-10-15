@@ -34,8 +34,23 @@ test_empty() {
 
 	bobshell_str_match '' 'x'
 	assert_result_equals false
+
 }
 
+test_quote() {
+	bobshell_str_match xyz/=. '*[!-A-Za-z0-9_/=.]*'
+	assert_result_equals false
+
+	bobshell_str_match ' ' '*[!-A-Za-z0-9_/=.]*'
+	assert_result_equals true
+
+	bobshell_str_match '&' '*[!-A-Za-z0-9_/=.]*'
+	assert_result_equals true
+
+	bobshell_str_match ':' '*[!-A-Za-z0-9_/=.]*'
+	assert_result_equals true
+
+}
 
 test_var() {
 	bobshell_str_match x '*[!0-9]*'
@@ -46,6 +61,7 @@ test_var() {
 
 
 }
+
 
 test_1() {
 	bobshell_str_match 123 '[123][123]*'
@@ -71,26 +87,20 @@ test_1() {
 # 	#assert_ok bobshell_str_match "$bobshell_newline" '^\n.*$'
 }
 
-test_bashslash() {
-	local regex='^.*\\$'
+test_backslash() {
+	bobshell_str_match '\' '*\\*'
+	assert_result_equals true
 
-# 	assert_ok    bobshell_str_match 'xyz\' "$regex"
-# 	assert_ok    bobshell_str_match '\'    "$regex"
-#
-# 	assert_error bobshell_str_match 'xyz'  "$regex"
-	assert_error bobshell_str_match ''     "$regex"
+	bobshell_str_match '*' '*\\*'
+	assert_result_equals false
+
+
 }
 
+test_url() {
+	bobshell_str_match 'https://raw.githubusercontent.com/legeyda/shelduck/refs/heads/main/shelduck.sh' 'https://raw.githubusercontent.com/*'
+	assert_result_equals true
 
-test_2() {
-	assert_ok bobshell_str_match -W '-W\|-x$'
-}
-
-
-test_arg_var() {
-
-	assert_ok    bobshell_str_match 'x-y' '[A-Za-z_0-9-]\+'
-	assert_error bobshell_str_match  x/y  '[A-Za-z_0-9-]\+'
-	# assert_error bobshell_str_match 1 '[A-Za-z_0-9-]+'
-
+	bobshell_str_match "https://example.com" 'https://raw.githubusercontent.com/*'
+	assert_result_equals false
 }
