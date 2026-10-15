@@ -26,20 +26,20 @@ bobshell_log_init() {
 bobshell_log_level() {
 	case "${1:-}" in
 		(7|8)
-			set -x +v
+			set -xv
 			bobshell_log_level=$1
 			;;
 		(6)
 			set -v +x
 			bobshell_log_level=$1
 			;;
-		(0|1|2|3|4|5|6)
+		(0|1|2|3|4|5)
 			set +vx
 			bobshell_log_level=$1
 			;;
 		(*)
 			set +vx
-			bobshell_log_level=$1
+			bobshell_log_level=8
 			;;
 	esac
 
