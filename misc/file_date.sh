@@ -22,7 +22,7 @@ function civil_to_days(year, month, day) {
 function offset_to_minutes(offset) {
 	offset_minutes=int(offset);
 	result = int(offset_minutes/100)*60 + (offset_minutes%100);
-	
+
 	return result;
 }
 
@@ -130,7 +130,7 @@ bobshell_file_date_ls() {
 	} else if ($8 ~ /^[[:digit:]]{2}:[[:digit:]]{2}$/) {
 		hour = substr($8, 1, 2);
 		minute = substr($8, 4, 2);
-		
+
 		if(month <= int(current_month)) {
 			year = int(current_year)
 		} else {
@@ -187,7 +187,7 @@ bobshell_file_date() {
 				;;
 			(-*)
 				bobshell_die "bobshell_file_date: unsupported option: $1"
-				;; 
+				;;
 			(*) break
 		esac
 	done
