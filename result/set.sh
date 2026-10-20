@@ -46,6 +46,9 @@ bobshell_result_set_'"$i"'() {
 '
 		done
 		x="$x}"'
+if [ $# -gt '"$i"' ]; then
+	bobshell_die bobshell_result_set: wrong number of arguments
+fi
 '
 		eval "$x"
 	done

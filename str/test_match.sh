@@ -2,18 +2,6 @@
 shelduck import ../assert.sh
 shelduck import ./match.sh
 
-assert_result_equals() {
-	assert_equals "$#" "$bobshell_result_size"
-
-	_assert_result_equals__i=1
-	while [ $# -gt 0 ]; do
-		eval 'x="$bobshell_result_'"$_assert_result_equals__i"'"'
-		assert_equals "$1" "$x"
-		_assert_result_equals__i=$(( _assert_result_equals__i + 1 ))
-		shift
-	done
-	unset assert_result_equals
-}
 
 test_0() {
 	bobshell_str_match hello '*ll*'
@@ -103,4 +91,40 @@ test_url() {
 
 	bobshell_str_match "https://example.com" 'https://raw.githubusercontent.com/*'
 	assert_result_equals false
+}
+
+
+test_obstacle() {
+	# check2   abc          cde                     '*b*'      'test_simple'
+	# check2   abc\'def     'hello''"""''again'     "*'*"      'test single quote'
+
+	check2 'abc*def' 'abcdef' '*\**' asterisk
+	check2 'abc*def' 'abcdef' '*"*"*' asterisk
+	check2 'abc*def' 'abcdef' '*'"'"'*'"'"'*' asterisk
+
+
+	check2 'abc def' 'abcdef' '*" "*' space
+
+	check2 'abc
+def' 'abcdef' "*'$bobshell_newline'*" space
+
+
+
+}
+
+test_shelduck() {
+	check2 'hello
+''shelduck import url
+' hello '*"shelduck import "*' '\nshelduck import'
+}
+
+
+
+#fun: check4 OKSTR BADSTR OKPATTERN ERRMESSAGE
+check2() {
+	bobshell_str_match "$1" "$3"
+	assert_result_equals true -- "$4"': good str good pattern should be true'
+
+	bobshell_str_match "$2" "$3"
+	assert_result_equals false -- "$4"': bad str good pattern should be false'
 }

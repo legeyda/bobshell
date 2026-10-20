@@ -21,27 +21,31 @@ bobshell_log_init() {
 			esac
 		;;
 	esac
+
+
+	bobshell_log_shell_config
+}
+
+bobshell_log_shell_config() {
+	case "${BOBSHELL_SHELL_TRACE:-}" in
+		(1|true)  set -x ;;
+		(0|false) set +x ;;
+		(*) test "$bobshell_log_level" -ge 6 && set -x || set +x
+	esac
+	case "${BOBSHELL_SHELL_VERBOSE:-}" in
+		(1|true)  set -v ;;
+		(0|false) set +v ;;
+		(*) test "$bobshell_log_level" -ge 7 && set -v || set +v
+	esac
 }
 
 bobshell_log_level() {
-	case "${1:-}" in
-		(7|8)
-			set -xv
-			bobshell_log_level=$1
-			;;
-		(6)
-			set -v +x
-			bobshell_log_level=$1
-			;;
-		(0|1|2|3|4|5)
-			set +vx
-			bobshell_log_level=$1
-			;;
-		(*)
-			set +vx
-			bobshell_log_level=8
-			;;
+	case "${1:-3}" in
+		(0|1|2|3|4|5|6|7|8) bobshell_log_level=$1 ;;
+		(*)                 bobshell_log_level=8  ;;
 	esac
+
+	bobshell_log_shell_config
 
 	bobshell_log_def 0 emerg
 	bobshell_log_def 1 alert
@@ -68,5 +72,6 @@ bobshell_log_def() {
 }'
 	fi
 }
+
 
 bobshell_log_init
