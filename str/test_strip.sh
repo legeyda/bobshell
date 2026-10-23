@@ -16,3 +16,8 @@ test_2() {
 
 	assert_result_equals ''
 }
+
+test_3() {
+	bobshell_str_strip abcabaabxyzabbca '[abc]'
+	assert_result_equals xyz
+}
