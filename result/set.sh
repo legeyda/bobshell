@@ -35,6 +35,9 @@ bobshell_result_set_init() {
 	for i in $(seq 0 9); do
 		x='
 bobshell_result_set_'"$i"'() {
+	if ! [ $# -eq '"$i"' ]; then
+		bobshell_die bobshell_result_set_'"$i"': wrong number of arguments: "$#"
+	fi
 	bobshell_result_size='"$i"'
 '
 		for j in $(seq 1 $i); do
@@ -46,9 +49,6 @@ bobshell_result_set_'"$i"'() {
 '
 		done
 		x="$x}"'
-if [ $# -gt '"$i"' ]; then
-	bobshell_die bobshell_result_set: wrong number of arguments
-fi
 '
 		eval "$x"
 	done
