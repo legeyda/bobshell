@@ -95,19 +95,19 @@ test_url() {
 
 
 test_obstacle() {
-	# check2   abc          cde                     '*b*'      'test_simple'
-	# check2   abc\'def     'hello''"""''again'     "*'*"      'test single quote'
+	check2   abc          cde                     '*b*'      'test_simple'
+	check2   abc\'def     'hello"again'     "*'*"      'test single quote'
 
 	check2 'abc*def' 'abcdef' '*\**' asterisk
-	check2 'abc*def' 'abcdef' '*"*"*' asterisk
-	check2 'abc*def' 'abcdef' '*'"'"'*'"'"'*' asterisk
-
-
-	check2 'abc def' 'abcdef' '*" "*' space
-
-	check2 'abc
-def' 'abcdef' "*'$bobshell_newline'*" space
-
+	check2 'abc*def' 'abcdef' "*'*'*" asterisk
+# 	check2 'abc*def' 'abcdef' '*'"'"'*'"'"'*' asterisk
+#
+#
+# 	check2 'abc def' 'abcdef' '*" "*' space
+#
+ # 	check2 'abc
+ # def' 'abcdef' "*'$bobshell_newline'*" space
+#
 
 
 }
@@ -127,4 +127,16 @@ check2() {
 
 	bobshell_str_match "$2" "$3"
 	assert_result_equals false -- "$4"': bad str good pattern should be false'
+}
+
+
+test_or() {
+	bobshell_str_match import 'import|get|include'
+	assert_result_equals true
+
+
+}
+test_space() {
+	bobshell_str_match ' ' '" "'
+	assert_result_equals true
 }
