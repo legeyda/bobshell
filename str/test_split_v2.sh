@@ -72,3 +72,8 @@ newline' '
 	assert_equals hello "$bobshell_result_1"
 
 }
+
+test_split_v2_2() {
+	bobshell_str_split_v2 'hello hi' ' ' 2
+	assert_result_equals hello hi
+}
