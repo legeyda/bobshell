@@ -5,8 +5,16 @@ shelduck import ../result/set.sh
 # res: true
 # res: false
 bobshell_str_match() {
-	case "$1" in
-		($2) bobshell_result_set_1 true  ;;
-		(*)  bobshell_result_set_1 false ;;
-	esac
+	_bobshell_str_match="$1"
+	shift
+	bobshell_result_set_1 false
+	while [ $# -gt 0 ]; do
+		case "$_bobshell_str_match" in
+			($1)
+				bobshell_result_set_1 true
+				break
+				;;
+		esac
+		shift
+	done
 }

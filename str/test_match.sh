@@ -138,3 +138,13 @@ test_space() {
 	bobshell_str_match ' ' '" "'
 	assert_result_equals true
 }
+
+test_001() {
+	bobshell_str_match a a b c
+	assert_result_equals true
+
+	bobshell_str_match x a b c
+	assert_result_equals false
+	#check2   a     x          'a|b'   'test pipe'
+
+}
