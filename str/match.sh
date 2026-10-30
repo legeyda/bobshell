@@ -5,8 +5,8 @@ shelduck import ../result/set.sh
 # res: true
 # res: false
 bobshell_str_match() {
-	eval 'case "$1" in
-		('"$2"') bobshell_result_set_1 true  ;;
+	case "$1" in
+		($2) bobshell_result_set_1 true  ;;
 		(*)  bobshell_result_set_1 false ;;
-	esac'
+	esac
 }

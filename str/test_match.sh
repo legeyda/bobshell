@@ -96,18 +96,16 @@ test_url() {
 
 test_obstacle() {
 	check2   abc          cde                     '*b*'      'test_simple'
-	check2   abc\'def     'hello"again'     "*'*"      'test single quote'
+ 	check2   abc\'def     'hello"again'     "*'*"      'test single quote'
 
-	check2 'abc*def' 'abcdef' '*\**' asterisk
-	check2 'abc*def' 'abcdef' "*'*'*" asterisk
-# 	check2 'abc*def' 'abcdef' '*'"'"'*'"'"'*' asterisk
-#
-#
-# 	check2 'abc def' 'abcdef' '*" "*' space
-#
- # 	check2 'abc
- # def' 'abcdef' "*'$bobshell_newline'*" space
-#
+ 	check2 'abc*def' 'abcdef' '*\**' asterisk
+ 	check2 'abc*def' 'abcdef' "*[*]*" asterisk
+
+ 	check2 'abc def' 'abcdef' '*\ *' space
+
+ 	check2 'abc
+def' 'abcdef' "*$bobshell_newline*" space
+
 
 
 }
