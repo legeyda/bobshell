@@ -21,3 +21,9 @@ test_3() {
 	bobshell_str_strip abcabaabxyzabbca '[abc]'
 	assert_result_equals xyz
 }
+
+test_4() {
+	bobshell_str_strip ' abc ' ' '
+
+	assert_result_equals abc
+}
