@@ -8,22 +8,24 @@ test_1() {
 	bobshell_str_strip '
 			hello world " \ $ !   			'
 
-	assert_result_equals 'hello world " \ $ !'
+	assert_result_equals '
+			' 'hello world " \ $ !' '   			'
 }
 test_2() {
 	bobshell_str_strip '
 			   			'
 
-	assert_result_equals ''
+	assert_result_equals '
+			   			'                     ''        ''
 }
 
 test_3() {
 	bobshell_str_strip abcabaabxyzabbca '[abc]'
-	assert_result_equals xyz
+	assert_result_equals abcabaab xyz abbca
 }
 
 test_4() {
 	bobshell_str_strip ' abc ' ' '
 
-	assert_result_equals abc
+	assert_result_equals ' ' abc ' '
 }
