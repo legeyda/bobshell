@@ -11,10 +11,9 @@ bobshell_result_apply() {
 	fi
 
 	for _bobshell_result_apply__i in $(seq "$bobshell_result_size"); do
-		_bobshell_result_apply__item=$(bobshell_getvar "bobshell_result_$_bobshell_result_apply__i")
-		set -- "$@" "$_bobshell_result_apply__item"
+		eval 'set -- "$@" "$bobshell_result_'"$_bobshell_result_apply__i"'"'
 	done
-	unset _bobshell_result_apply__i _bobshell_result_apply__item
+	unset _bobshell_result_apply__i
 
 	"$@"
 }
